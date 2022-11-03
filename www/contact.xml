@@ -28,4 +28,5 @@
 	Since RECOIL is written in <a href="https://github.com/pfusik/cito">Ć</a>,
 	it is also available as pure C++, Java, C# and JavaScript.</p>
 	<p>There are also <a href="https://github.com/gasman/pyrecoil">Python bindings</a>.</p>
+	<img src="recoil-internals.png" alt="Architecture diagram" />
 </page>
