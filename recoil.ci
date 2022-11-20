@@ -1112,11 +1112,7 @@ class DrpStream : RleStream
 	internal static byte[] UnpackFile(byte[] content, int contentLength, string signature, byte[]! unpacked, int unpackedLength)
 	{
 		if (contentLength > 16 && RECOIL.IsStringAt(content, 2, signature)) {
-			DrpStream() rle;
-			rle.Content = content;
-			rle.ContentOffset = 16;
-			rle.ContentLength = contentLength;
-			rle.Escape = content[15];
+			DrpStream() rle = { Content = content, ContentOffset = 16, ContentLength = contentLength, Escape = content[15] };
 			return rle.Unpack(unpacked, 2, 1, unpackedLength) ? unpacked : null;
 		}
 		if (contentLength != unpackedLength)
@@ -1627,11 +1623,7 @@ class AmstradStream : RleStream
 
 	internal static bool UnpackFile(byte[] content, int contentOffset, int contentLength, byte[]! unpacked, int unpackedLength)
 	{
-		AmstradStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = contentOffset;
-		rle.ContentLength = contentLength;
-		rle.BlockLength = 0;
+		AmstradStream() rle = { Content = content, ContentOffset = contentOffset, ContentLength = contentLength, BlockLength = 0 };
 		return rle.Unpack(unpacked, 0, 1, unpackedLength);
 	}
 }
@@ -1902,9 +1894,7 @@ class CaStream : RleStream
 
 	internal static bool UnpackDel(byte[] content, int contentLength, byte[]! unpacked, int blocks)
 	{
-		CaStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = blocks << 2;
+		CaStream() rle = { Content = content, ContentOffset = blocks << 2 };
 		if (rle.ContentOffset >= contentLength)
 			return false;
 		for (int block = 0; block < blocks; block++) {
@@ -4778,10 +4768,7 @@ public class RECOIL
 			DecodeR8G8B8Colors(content, 0, 256, Atari8Palette, 0);
 			return true;
 		case PackExt("VPL"):
-			VplStream() vpl;
-			vpl.Content = content;
-			vpl.ContentOffset = 0;
-			vpl.ContentLength = contentLength;
+			VplStream() vpl = { Content = content, ContentOffset = 0, ContentLength = contentLength };
 			switch (vpl.Decode()) {
 			case 16:
 				vpl.CopyTo(C64Palette, 16);
@@ -5241,10 +5228,7 @@ public class RECOIL
 		 || content[0] != 'P' || content[1] != 'G' || content[2] != 1)
 			return false;
 		SetSize(240, 64, RECOILResolution.Portfolio1x1);
-		PgcStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = 3;
-		rle.ContentLength = contentLength;
+		PgcStream() rle = { Content = content, ContentOffset = 3, ContentLength = contentLength };
 		return DecodeRleBlackAndWhite(rle, 0xffffff);
 	}
 
@@ -5304,10 +5288,7 @@ public class RECOIL
 		const string asciiHeader = "%%HP: T(0)A(D)F(.);\rGROB ";
 		if (contentLength >= $"{asciiHeader}1 1\r00".Length
 		 && IsStringAt(content, 0, asciiHeader)) {
-			Stream() s;
-			s.Content = content;
-			s.ContentOffset = asciiHeader.Length;
-			s.ContentLength = contentLength;
+			Stream() s = { Content = content, ContentOffset = asciiHeader.Length, ContentLength = contentLength };
 			int width = s.ParseInt(10, 65535); // actual size limits unknown
 			if (width <= 0 || s.ReadByte() != ' ')
 				return false;
@@ -5360,10 +5341,7 @@ public class RECOIL
 	bool DecodeTrsShr!(byte[] content, int contentLength)
 	{
 		SetSize(640, 480, RECOILResolution.Trs1x2);
-		PgcStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = 0;
-		rle.ContentLength = contentLength;
+		PgcStream() rle = { Content = content, ContentOffset = 0, ContentLength = contentLength };
 		return DecodeRleBlackAndWhite(rle, 0);
 	}
 
@@ -5460,10 +5438,7 @@ public class RECOIL
 		if (content[contentOffset] != 0 || content[contentOffset + 1] != 0 || content[contentOffset + 2] != 0 || content[contentOffset + 3] > 3)
 			return false;
 		SetSize(576, 720, RECOILResolution.Macintosh1x1);
-		PackBitsStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = contentOffset + 512;
-		rle.ContentLength = contentLength;
+		PackBitsStream() rle = { Content = content, ContentOffset = contentOffset + 512, ContentLength = contentLength };
 		return DecodeRleBlackAndWhite(rle, 0xffffff);
 	}
 
@@ -5646,10 +5621,7 @@ public class RECOIL
 
 	bool DecodeBbg!(byte[] content, int contentLength)
 	{
-		BbgStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = 0;
-		rle.ContentLength = contentLength;
+		BbgStream() rle = { Content = content, ContentOffset = 0, ContentLength = contentLength };
 		rle.ValueBits = rle.ReadBitsReverse(8);
 		if (rle.ValueBits < 1 || rle.ValueBits > 8)
 			return false;
@@ -6239,10 +6211,7 @@ public class RECOIL
 	bool DecodeZp1!(byte[] content, int contentLength)
 	{
 		byte[32 * 24] screen;
-		Stream() s;
-		s.Content = content;
-		s.ContentOffset = 0;
-		s.ContentLength = contentLength;
+		Stream() s = { Content = content, ContentOffset = 0, ContentLength = contentLength };
 		for (int i = 0; i < screen.Length; i++) {
 			int b = s.ReadHexByte();
 			if (b < 0)
@@ -6254,9 +6223,7 @@ public class RECOIL
 
 	bool DecodeP!(byte[] content, int contentLength)
 	{
-		PInterpreter() interp;
-		interp.Content = content;
-		interp.ContentLength = contentLength;
+		PInterpreter() interp = { Content = content, ContentLength = contentLength };
 		return interp.Run() && DecodeZx81(interp.Screen);
 	}
 
@@ -6669,10 +6636,7 @@ public class RECOIL
 	{
 		if (contentLength < 25 || !IsStringAt(content, 0, "ZX-Paintbrush "))
 			return false;
-		ZxpStream() s;
-		s.Content = content;
-		s.ContentOffset = IsStringAt(content, 14, "extended ") ? 23 : 14;
-		s.ContentLength = contentLength;
+		ZxpStream() s = { Content = content, ContentOffset = IsStringAt(content, 14, "extended ") ? 23 : 14, ContentLength = contentLength };
 		if (!s.Expect("image") || s.ReadChar() != '\n' || s.ReadChar() != '\n')
 			return false;
 
@@ -7429,10 +7393,7 @@ public class RECOIL
 		case 0xfd:
 			if (7 + GetMsxHeader(content) != contentLength)
 				return null;
-			SrStream() rle;
-			rle.Content = content;
-			rle.ContentOffset = 7;
-			rle.ContentLength = contentLength;
+			SrStream() rle = { Content = content, ContentOffset = 7, ContentLength = contentLength };
 			rle.Unpack(unpacked, 7, 1, 54279); // ignore decompression errors because some SR7 are truncated
 			return unpacked;
 		default:
@@ -7574,10 +7535,7 @@ public class RECOIL
 		else
 			return false;
 		SetSize(512, height << 1, RECOILResolution.Msx21x2);
-		CciStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = contentOffset;
-		rle.ContentLength = contentLength;
+		CciStream() rle = { Content = content, ContentOffset = contentOffset, ContentLength = contentLength };
 		for (int y = 0; y < height; y++) {
 			int b = 0;
 			for (int x = 0; x < 512; x++) {
@@ -7608,10 +7566,7 @@ public class RECOIL
 		int verbatimLines = content[2];
 		if (verbatimLines == 0 || verbatimLines > height)
 			return false;
-		ZimStream() stream;
-		stream.Content = content;
-		stream.ContentOffset = 3;
-		stream.ContentLength = contentLength;
+		ZimStream() stream = { Content = content, ContentOffset = 3, ContentLength = contentLength };
 		int flagsOffset = 64;
 		byte[212 * 128] unpacked;
 		int unpackedOffset = 0;
@@ -7862,9 +7817,7 @@ public class RECOIL
 			return true;
 		case 1:
 			byte[]# unpacked = new byte[unpackedLength];
-			G9bStream() s;
-			s.Content = content;
-			s.ContentLength = contentLength;
+			G9bStream() s = { Content = content, ContentLength = contentLength };
 			bool ok = s.Unpack(unpacked, headerLength, unpackedLength);
 			if (ok)
 				DecodeG9bUnpacked(unpacked, depth);
@@ -7884,9 +7837,7 @@ public class RECOIL
 		 || Get32LittleEndian(content, 6) != contentLength - 6)
 			return false;
 		byte[MigStream.MaxUnpackedLength] unpacked;
-		MigStream() s;
-		s.Content = content;
-		s.ContentLength = contentLength;
+		MigStream() s = { Content = content, ContentLength = contentLength };
 		int unpackedLength = s.Unpack(unpacked);
 
 		int colors = 0;
@@ -8076,10 +8027,7 @@ public class RECOIL
 		if (contentLength == 32768)
 			return DecodeAppleIIShrUnpacked(content);
 		byte[32768] unpacked;
-		PackBytesStream() stream;
-		stream.Content = content;
-		stream.ContentOffset = 0;
-		stream.ContentLength = contentLength;
+		PackBytesStream() stream = { Content = content, ContentOffset = 0, ContentLength = contentLength };
 		for (int unpackedOffset = 0; unpackedOffset < 32768; unpackedOffset++) {
 			int b = stream.ReadUnpacked();
 			if (b < 0)
@@ -8113,10 +8061,7 @@ public class RECOIL
 	{
 		SetSize(AppleSprStream.Width, AppleSprStream.Height, RECOILResolution.AppleII1x1);
 		Pixels.Fill(0, 0, AppleSprStream.Width * AppleSprStream.Height);
-		AppleSprStream() s;
-		s.Content = content;
-		s.ContentOffset = 0;
-		s.ContentLength = contentLength;
+		AppleSprStream() s = { Content = content, ContentOffset = 0, ContentLength = contentLength };
 		for (;;) {
 			int cols = s.ReadSprInt();
 			if (cols < 0)
@@ -8188,10 +8133,7 @@ public class RECOIL
 			return false;
 		SetSize(320, 396, RECOILResolution.AppleIIGS1x1);
 		SetAppleIIGSPalette(content, 0, 0);
-		PackBytesStream() stream;
-		stream.Content = content;
-		stream.ContentOffset = 0x222;
-		stream.ContentLength = contentLength;
+		PackBytesStream() stream = { Content = content, ContentOffset = 0x222, ContentLength = contentLength };
 		return DecodePackBytes(stream, 0, 160 * 396);
 	}
 
@@ -8201,10 +8143,7 @@ public class RECOIL
 		 || content[0] != 0xc1 || content[1] != 0xd0 || content[2] != 0xd0 || content[3] != 0)
 			return false;
 		SetSize(320, 200, RECOILResolution.AppleIIGS1x1);
-		PackBytesStream() stream;
-		stream.Content = content;
-		stream.ContentOffset = 0x1904;
-		stream.ContentLength = contentLength;
+		PackBytesStream() stream = { Content = content, ContentOffset = 0x1904, ContentLength = contentLength };
 		for (int y = 0; y < 200; y++) {
 			SetAppleIIGSPalette(content, 4 + (y << 5), 0xf);
 			if (!DecodePackBytes(stream, y * 320, 160))
@@ -8265,10 +8204,7 @@ public class RECOIL
 		contentOffset = dirOffset + (height << 2);
 		if (contentOffset >= contentLength)
 			return false;
-		PackBytesStream() stream;
-		stream.Content = content;
-		stream.ContentOffset = contentOffset;
-		stream.ContentLength = contentLength;
+		PackBytesStream() stream = { Content = content, ContentOffset = contentOffset, ContentLength = contentLength };
 		for (int y = 0; y < height; y++) {
 			if (multipalOffset >= 0)
 				SetAppleIIGSPalette(content, multipalOffset + (y << 5), 0);
@@ -8511,10 +8447,7 @@ public class RECOIL
 		if (contentLength < 14 || content[0] != 'P' || content[1] != 'I' || content[2] != 'C')
 			return false;
 		RECOILResolution resolution = IsStringAt(content, 3, "/MM/") ? RECOILResolution.Msx21x1 : RECOILResolution.X68K1x1;
-		X68KPicStream() stream;
-		stream.Content = content;
-		stream.ContentOffset = 3;
-		stream.ContentLength = contentLength;
+		X68KPicStream() stream = { Content = content, ContentOffset = 3, ContentLength = contentLength };
 		for (;;) {
 			int b = stream.ReadByte();
 			if (b < 0)
@@ -8606,10 +8539,7 @@ public class RECOIL
 		if ((contentLength & 0xff) != 0)
 			return false;
 		SetSize(640, 400, RECOILResolution.Pc881x2);
-		DaVinciStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = 0;
-		rle.ContentLength = contentLength;
+		DaVinciStream() rle = { Content = content, ContentOffset = 0, ContentLength = contentLength };
 		for (int y = 0; y < 200; y++) {
 			for (int column = 0; column < 640; column += 8) {
 				int b = rle.ReadRle();
@@ -8628,10 +8558,7 @@ public class RECOIL
 		 || content[0x13] != 'B' || content[0x14] != 'R' || content[0x15] != 'G'
 		 || content[0x18] != 0x80 || content[0x19] != 2) // TODO: width != 640
 			return false;
-		ArtMaster88Stream() rle;
-		rle.Content = content;
-		rle.ContentOffset = 0x28;
-		rle.ContentLength = contentLength;
+		ArtMaster88Stream() rle = { Content = content, ContentOffset = 0x28, ContentLength = contentLength };
 		if (content[0x10] == 'I' && !rle.SkipChunk())
 			return false;
 		switch (content[0x1a] | content[0x1b] << 8) {
@@ -8717,13 +8644,10 @@ public class RECOIL
 
 	bool DecodeNl3!(byte[] content, int contentLength)
 	{
-		Nl3Stream() stream;
-		stream.Content = content;
+		Nl3Stream() stream = { Content = content, ContentOffset = 0, ContentLength = contentLength };
 		// XXX: https://emk.name/2015/04/ml1.html contains additional code in nl3.js
 		// to skip some initial bytes and use alternative decoding table for some images.
 		// This is not necessary for the test files I have.
-		stream.ContentOffset = 0;
-		stream.ContentLength = contentLength;
 		for (int i = 0; i < 64; i++) {
 			int c = stream.ReadValue();
 			if (c < 0 || c > 127)
@@ -8879,10 +8803,7 @@ public class RECOIL
 
 	bool DecodeMl1!(byte[] content, int contentLength)
 	{
-		X68KPicStream() stream;
-		stream.Content = content;
-		stream.ContentOffset = 0;
-		stream.ContentLength = contentLength;
+		X68KPicStream() stream = { Content = content, ContentOffset = 0, ContentLength = contentLength };
 		return DecodeMl1Mx1(stream, Ml1SingleImage) > 0;
 	}
 
@@ -8901,10 +8822,7 @@ public class RECOIL
 
 	bool DecodeMx1!(byte[] content, int contentLength)
 	{
-		Mx1Stream() stream;
-		stream.Content = content;
-		stream.ContentOffset = 0;
-		stream.ContentLength = contentLength;
+		Mx1Stream() stream = { Content = content, ContentOffset = 0, ContentLength = contentLength };
 		if (!stream.FindImage() || DecodeMl1Mx1(stream, Ml1SingleImage) < 0)
 			return false;
 		if (!stream.FindImage())
@@ -8984,10 +8902,7 @@ public class RECOIL
 			Pixels[pixelsOffset] = ContentPalette[0];
 		byte[64] flags3;
 		byte[512] data;
-		ZimStream() stream;
-		stream.Content = content;
-		stream.ContentOffset = contentOffset;
-		stream.ContentLength = contentLength;
+		ZimStream() stream = { Content = content, ContentOffset = contentOffset, ContentLength = contentLength };
 		int skip = stream.ReadWord();
 		stream.ContentOffset += skip << 1;
 		for (;;) {
@@ -9045,10 +8960,7 @@ public class RECOIL
 		 || content[8] + (content[9] << 8) != contentLength
 		 || !IsStringAt(content, 11, "MAJYO"))
 			return false;
-		Q4Stream() rle;
-		rle.Content = content;
-		rle.ContentOffset = 16;
-		rle.ContentLength = contentLength;
+		Q4Stream() rle = { Content = content, ContentOffset = 16, ContentLength = contentLength };
 		int nextChunkOffset = rle.StartChunk();
 		if (nextChunkOffset < 0 || !rle.UnpackQ4())
 			return false;
@@ -9114,10 +9026,7 @@ public class RECOIL
 	{
 		if (contentLength < 18 || content[0] != 'P' || content[1] != 'i')
 			return false;
-		PiStream() s;
-		s.Content = content;
-		s.ContentOffset = 2;
-		s.ContentLength = contentLength;
+		PiStream() s = { Content = content, ContentOffset = 2, ContentLength = contentLength };
 		if (!s.SkipUntilByte(0x1a) || !s.SkipUntilByte(0))
 			return false;
 		int contentOffset = s.ContentOffset;
@@ -9163,10 +9072,7 @@ public class RECOIL
 		int contentOffset = 1096;
 
 		ushort[8000] haveBuffer;
-		BitStream() haveBlock;
-		haveBlock.Content = content;
-		haveBlock.ContentOffset = 96;
-		haveBlock.ContentLength = 1096;
+		BitStream() haveBlock = { Content = content, ContentOffset = 96, ContentLength = 1096 };
 		for (int i = 0; i < 8000; i++) {
 			int have = 0;
 			if (haveBlock.ReadBit() == 1) {
@@ -9200,10 +9106,7 @@ public class RECOIL
 
 	static bool UnpackMag(byte[] content, int headerOffset, int contentLength, int bytesPerLine, int height, byte[]! unpacked)
 	{
-		BitStream() haveDelta;
-		haveDelta.Content = content;
-		haveDelta.ContentOffset = headerOffset + Get32LittleEndian(content, headerOffset + 12);
-		haveDelta.ContentLength = contentLength;
+		BitStream() haveDelta = { Content = content, ContentOffset = headerOffset + Get32LittleEndian(content, headerOffset + 12), ContentLength = contentLength };
 		int deltaOffset = headerOffset + Get32LittleEndian(content, headerOffset + 16);
 		int colorOffset = headerOffset + Get32LittleEndian(content, headerOffset + 24);
 		if (haveDelta.ContentOffset < 0 || deltaOffset < 0 || colorOffset < 0)
@@ -9399,10 +9302,7 @@ public class RECOIL
 			int contentOffset = 18 + (content[16] << 8) + content[17];
 			if (content[8] == 0)
 				return DecodeBlackAndWhite(content, contentOffset, contentLength, false, 0);
-			VbmStream() rle;
-			rle.Content = content;
-			rle.ContentOffset = contentOffset;
-			rle.ContentLength = contentLength;
+			VbmStream() rle = { Content = content, ContentOffset = contentOffset, ContentLength = contentLength };
 			return DecodeRleBlackAndWhite(rle, 0);
 		default:
 			return false;
@@ -9427,10 +9327,7 @@ public class RECOIL
 
 		int bitmapLength = height * columns;
 		byte[maxHeight * maxColumns] bitmap;
-		PgcStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = 18;
-		rle.ContentLength = contentLength;
+		PgcStream() rle = { Content = content, ContentOffset = 18, ContentLength = contentLength };
 		if (!rle.Unpack(bitmap, 0, 1, bitmapLength))
 			return false;
 		int contentOffset = rle.ContentOffset;
@@ -9664,10 +9561,7 @@ public class RECOIL
 			return false;
 		int columns;
 		int rows;
-		PrintfoxStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = 1;
-		rle.ContentLength = contentLength;
+		PrintfoxStream() rle = { Content = content, ContentOffset = 1, ContentLength = contentLength };
 		switch (content[0]) {
 		case 'B':
 			columns = 40;
@@ -9759,11 +9653,7 @@ public class RECOIL
 	{
 		if (!SetSize(width, height, RECOILResolution.C641x1))
 			return false;
-		UflStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = contentOffset;
-		rle.ContentLength = contentLength;
-		rle.Escape = 0xad;
+		UflStream() rle = { Content = content, ContentOffset = contentOffset, ContentLength = contentLength, Escape = 0xad };
 		for (int row = 0; row < height; row += 8) {
 			for (int column = 0; column < width; column += 8) {
 				for (int y = 0; y < 8; y++) {
@@ -9869,10 +9759,7 @@ public class RECOIL
 	bool DecodeJj!(byte[] content, int contentLength)
 	{
 		byte[9024] unpacked;
-		C64KoalaStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = 2;
-		rle.ContentLength = contentLength;
+		C64KoalaStream() rle = { Content = content, ContentOffset = 2, ContentLength = contentLength };
 		return rle.Unpack(unpacked, 0, 1, 9024)
 			&& DecodeC64Hires(unpacked, 0x400, 0);
 	}
@@ -9999,10 +9886,7 @@ public class RECOIL
 		if (contentLength < 6)
 			return false;
 		byte[10001] unpacked;
-		UifStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = contentLength - 1;
-		rle.Escape = content[contentLength - 1];
+		UifStream() rle = { Content = content, ContentOffset = contentLength - 1, Escape = content[contentLength - 1] };
 		return rle.UnpackBackwards(unpacked, 0, 10000)
 			&& DecodeKoa(unpacked, 10001);
 	}
@@ -10018,10 +9902,7 @@ public class RECOIL
 	{
 		if (contentLength < 2)
 			return false;
-		C64KoalaStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = 2;
-		rle.ContentLength = contentLength;
+		C64KoalaStream() rle = { Content = content, ContentOffset = 2, ContentLength = contentLength };
 		return DecodeKoaPacked(rle);
 	}
 
@@ -10041,11 +9922,7 @@ public class RECOIL
 	{
 		if (contentLength < 2)
 			return false;
-		DrpStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = 2;
-		rle.ContentLength = contentLength;
-		rle.Escape = 0xc2;
+		DrpStream() rle = { Content = content, ContentOffset = 2, ContentLength = contentLength, Escape = 0xc2 };
 		return DecodeKoaPacked(rle);
 	}
 
@@ -10055,25 +9932,15 @@ public class RECOIL
 			return false;
 		if (content[2] == 2 && content[3] == 4 && content[4] == 0x10
 		 && content[5] == 0x36 && content[6] == 0x30 && content[7] == 0x30) {
-			UflStream() rle;
-			rle.Content = content;
-			rle.ContentOffset = 10;
-			rle.ContentLength = contentLength;
-			rle.Escape = content[8];
+			UflStream() rle = { Content = content, ContentOffset = 10, ContentLength = contentLength, Escape = content[8] };
 			return DecodeKoaPacked(rle);
 		}
 		if (IsStringAt(content, 2, "BDP 5.00")) {
-			Bdp5Stream() rle;
-			rle.Content = content;
-			rle.ContentOffset = 12;
-			rle.ContentLength = contentLength;
+			Bdp5Stream() rle = { Content = content, ContentOffset = 12, ContentLength = contentLength };
 			return DecodeKoaPacked(rle);
 		}
 		else {
-			Bdp4Stream() rle;
-			rle.Content = content;
-			rle.ContentOffset = 2;
-			rle.ContentLength = contentLength;
+			Bdp4Stream() rle = { Content = content, ContentOffset = 2, ContentLength = contentLength };
 			return DecodeKoaPacked(rle);
 		}
 	}
@@ -10211,10 +10078,7 @@ public class RECOIL
 		if (contentLength == 17389)
 			return DecodeC64HiresInterlace(content, 2, 0x4002, 0x2002, 0x4002);
 		byte[17384] unpacked;
-		VhiStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = 2;
-		rle.ContentLength = contentLength;
+		VhiStream() rle = { Content = content, ContentOffset = 2, ContentLength = contentLength };
 		return rle.Unpack(unpacked, 0, 1, unpacked.Length)
 			&& DecodeC64HiresInterlace(unpacked, 0, 0x4000, 0x2000, 0x4000);
 	}
@@ -10239,9 +10103,7 @@ public class RECOIL
 		if (contentLength < 142)
 			return false;
 		byte[19434] unpacked;
-		MciStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = contentLength - 1;
+		MciStream() rle = { Content = content, ContentOffset = contentLength - 1 };
 		return rle.UnpackBackwards(unpacked, 2, 19433) && DecodeMciUnpacked(unpacked);
 	}
 
@@ -10322,9 +10184,7 @@ public class RECOIL
 		 || content[4] != 0xf2 || content[5] != 0x7f)
 			return false;
 		byte[16372] unpacked;
-		HimStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = contentLength - 1;
+		HimStream() rle = { Content = content, ContentOffset = contentLength - 1 };
 		return rle.UnpackBackwards(unpacked, 2 + 320, 16371)
 			&& DecodeHimUnpacked(unpacked);
 	}
@@ -10344,11 +10204,7 @@ public class RECOIL
 		if (contentLength < 6)
 			return false;
 		byte[32770] unpacked;
-		DrpStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = 3;
-		rle.ContentLength = contentLength;
-		rle.Escape = content[2];
+		DrpStream() rle = { Content = content, ContentOffset = 3, ContentLength = contentLength, Escape = content[2] };
 		return rle.Unpack(unpacked, 2, 1, 32770)
 			&& DecodeEci(unpacked, 32770);
 	}
@@ -10369,10 +10225,7 @@ public class RECOIL
 		if (contentLength < 19)
 			return false;
 		byte[17216] unpacked;
-		UifStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = contentLength;
-		rle.Escape = content[2];
+		UifStream() rle = { Content = content, ContentOffset = contentLength, Escape = content[2] };
 		return rle.UnpackBackwards(unpacked, 0, 17215)
 			&& DecodeC64MulticolorFli(unpacked, 0x2400, 0x400, 0, 0);
 	}
@@ -10388,10 +10241,7 @@ public class RECOIL
 			if (contentLength < 5)
 				return false;
 			byte[17472] unpacked;
-			UifStream() rle;
-			rle.Content = content;
-			rle.ContentOffset = contentLength;
-			rle.Escape = content[2];
+			UifStream() rle = { Content = content, ContentOffset = contentLength, Escape = content[2] };
 			return rle.UnpackBackwards(unpacked, 0, 17471)
 				&& DecodeC64MulticolorFliBars(unpacked, 0x2500, 0x500, 0x100, 0);
 		}
@@ -10414,9 +10264,7 @@ public class RECOIL
 		if (contentLength < 6)
 			return false;
 		byte[17280] unpacked;
-		UifStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = contentLength;
+		UifStream() rle = { Content = content, ContentOffset = contentLength };
 		rle.Escape = rle.ReadValue();
 		if (!rle.UnpackBackwards(unpacked, 0, 17279))
 			return false;
@@ -10457,11 +10305,7 @@ public class RECOIL
 			return false;
 		if (content[2] == 0x10 && content[3] == 0x10 && content[4] == 0x10) {
 			byte[33602] unpacked;
-			CmpStream() rle;
-			rle.Content = content;
-			rle.ContentOffset = 6;
-			rle.ContentLength = contentLength;
-			rle.Escape = content[5];
+			CmpStream() rle = { Content = content, ContentOffset = 6, ContentLength = contentLength, Escape = content[5] };
 			return rle.Unpack(unpacked, 2, 1, 33602)
 				&& rle.ReadRle() < 0
 				&& DecodePpUnpacked(unpacked);
@@ -10478,11 +10322,7 @@ public class RECOIL
 			return false;
 		if (content[16] != 0) {
 			byte[33694] unpacked;
-			DrpStream() rle;
-			rle.Content = content;
-			rle.ContentOffset = 18;
-			rle.ContentLength = contentLength;
-			rle.Escape = content[17];
+			DrpStream() rle = { Content = content, ContentOffset = 18, ContentLength = contentLength, Escape = content[17] };
 			return rle.Unpack(unpacked, 18, 1, 33694)
 				&& rle.ReadRle() < 0
 				&& DecodeFunUnpacked(unpacked);
@@ -10559,10 +10399,7 @@ public class RECOIL
 	bool DecodeMilPacked!(byte[] content, int contentLength, bool vertical)
 	{
 		byte[10000] unpacked;
-		XeKoalaStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = 22;
-		rle.ContentLength = contentLength;
+		XeKoalaStream() rle = { Content = content, ContentOffset = 22, ContentLength = contentLength };
 		if (!rle.Unpack(unpacked, 0, 1, 10000))
 			return false;
 		SetSize(320, 200, RECOILResolution.C642x1);
@@ -10978,10 +10815,7 @@ public class RECOIL
 		if (content[2] == 0)
 			return contentLength == 20454 && DecodeEshUnpacked(content);
 		byte[20452] unpacked;
-		PgcStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = 3;
-		rle.ContentLength = contentLength;
+		PgcStream() rle = { Content = content, ContentOffset = 3, ContentLength = contentLength };
 		return rle.Unpack(unpacked, 3, 1, unpacked.Length)
 			&& DecodeEshUnpacked(unpacked);
 	}
@@ -11013,9 +10847,7 @@ public class RECOIL
 		if (contentLength < 6)
 			return false;
 		byte[9168] unpacked;
-		UifStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = contentLength;
+		UifStream() rle = { Content = content, ContentOffset = contentLength };
 		rle.Escape = rle.ReadValue();
 		if (!rle.UnpackBackwards(unpacked, 0, 9167))
 			return false;
@@ -11098,11 +10930,7 @@ public class RECOIL
 	{
 		if (contentLength < 3)
 			return false;
-		DrpStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = 1;
-		rle.ContentLength = contentLength;
-		rle.Escape = content[0];
+		DrpStream() rle = { Content = content, ContentOffset = 1, ContentLength = contentLength, Escape = content[0] };
 		return rle.Unpack(unpacked, 0, 1, unpackedLength);
 	}
 
@@ -11128,10 +10956,7 @@ public class RECOIL
 		if (contentLength == 15355 && content[2] == 0)
 			return DecodeShiUnpacked(content);
 		byte[15355] unpacked;
-		PgcStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = 3;
-		rle.ContentLength = contentLength;
+		PgcStream() rle = { Content = content, ContentOffset = 3, ContentLength = contentLength };
 		return rle.Unpack(unpacked, 3, 1, 15355)
 			&& DecodeShiUnpacked(unpacked);
 	}
@@ -11294,11 +11119,7 @@ public class RECOIL
 		if (contentLength < 6)
 			return false;
 		byte[8170] unpacked;
-		UflStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = 3;
-		rle.ContentLength = contentLength;
-		rle.Escape = content[2];
+		UflStream() rle = { Content = content, ContentOffset = 3, ContentLength = contentLength, Escape = content[2] };
 		if (!rle.Unpack(unpacked, 0, 1, 8170))
 			return false;
 		SetSize(96, 167, RECOILResolution.C641x1);
@@ -11308,9 +11129,7 @@ public class RECOIL
 
 	bool DecodeC64Sif!(byte[] content, int contentLength)
 	{
-		UifStream() rle;
-		rle.Content = content;
-		rle.ContentLength = contentLength;
+		UifStream() rle = { Content = content, ContentLength = contentLength };
 		if (!rle.StartSifFrame(0))
 			return false;
 		int frame2Offset = rle.ContentOffset;
@@ -11357,11 +11176,7 @@ public class RECOIL
 		if (contentLength < 6)
 			return false;
 		byte[16194] unpacked;
-		UflStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = 3;
-		rle.ContentLength = contentLength;
-		rle.Escape = content[2];
+		UflStream() rle = { Content = content, ContentOffset = 3, ContentLength = contentLength, Escape = content[2] };
 		return rle.Unpack(unpacked, 2, 1, 16194)
 			&& DecodeUflUnpacked(unpacked);
 	}
@@ -11371,10 +11186,7 @@ public class RECOIL
 		if (contentLength < 6)
 			return false;
 		byte[32576] unpacked;
-		UifStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = contentLength;
-		rle.Escape = content[2];
+		UifStream() rle = { Content = content, ContentOffset = contentLength, Escape = content[2] };
 		if (!rle.UnpackBackwards(unpacked, 0, 32575))
 			return false;
 		SetSize(288, 200, RECOILResolution.C641x1, 2);
@@ -11386,10 +11198,7 @@ public class RECOIL
 	bool DecodeXfl!(byte[] content, int contentLength)
 	{
 		byte[16192] unpacked;
-		UifStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = contentLength;
-		rle.Escape = content[2];
+		UifStream() rle = { Content = content, ContentOffset = contentLength, Escape = content[2] };
 		if (!rle.UnpackBackwards(unpacked, 0, 16191))
 			return false;
 		byte[16] spriteColors;
@@ -11504,10 +11313,7 @@ public class RECOIL
 		if (contentLength < 6)
 			return false;
 		byte[21762] unpacked;
-		UifStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = contentLength;
-		rle.Escape = content[2];
+		UifStream() rle = { Content = content, ContentOffset = contentLength, Escape = content[2] };
 		return rle.UnpackBackwards(unpacked, 2, 21761)
 			&& DecodeMuf(unpacked, 21826);
 	}
@@ -11604,10 +11410,7 @@ public class RECOIL
 		if (contentLength < 7 || content[2] != 0xfd)
 			return false;
 		byte[23042] unpacked;
-		UifStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = contentLength;
-		rle.Escape = content[3];
+		UifStream() rle = { Content = content, ContentOffset = contentLength, Escape = content[3] };
 		return rle.UnpackBackwards(unpacked, 2, 23041)
 			&& DecodeNuf(unpacked, 23042);
 	}
@@ -11640,11 +11443,7 @@ public class RECOIL
 		default:
 			return false;
 		}
-		CmpStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = 2;
-		rle.ContentLength = contentLength;
-		rle.Escape = content[0];
+		CmpStream() rle = { Content = content, ContentOffset = 2, ContentLength = contentLength, Escape = content[0] };
 		return DecodeRleBlackAndWhite(rle, 0xffffff);
 	}
 
@@ -11659,10 +11458,7 @@ public class RECOIL
 				&& DecodeBlackAndWhite(content, 4, contentLength, false, 0xffffff);
 		if (!SetSize(65536 - width, height, RECOILResolution.St1x1))
 			return false;
-		BldStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = 4;
-		rle.ContentLength = contentLength;
+		BldStream() rle = { Content = content, ContentOffset = 4, ContentLength = contentLength };
 		return DecodeRleBlackAndWhite(rle, 0xffffff);
 	}
 
@@ -11675,10 +11471,7 @@ public class RECOIL
 		int height = Get32BigEndian(content, 24);
 		if (!SetSize(width, height, RECOILResolution.St1x1))
 			return false;
-		CciStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = 42;
-		rle.ContentLength = contentLength;
+		CciStream() rle = { Content = content, ContentOffset = 42, ContentLength = contentLength };
 		return DecodeRleBlackAndWhite(rle, 0xffffff);
 	}
 
@@ -11698,10 +11491,7 @@ public class RECOIL
 		default:
 			return false;
 		}
-		PacStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = 7;
-		rle.ContentLength = contentLength;
+		PacStream() rle = { Content = content, ContentOffset = 7, ContentLength = contentLength };
 		byte[32000] unpacked;
 		return rle.UnpackColumns(unpacked, 0, unpackedStride, 32000)
 			&& DecodeDoo(unpacked, 32000);
@@ -12119,10 +11909,7 @@ public class RECOIL
 		if (contentLength < 68 || content[0] != 0x80 || content[1] > 2)
 			return false;
 		int bitplanes = 4 >> content[1];
-		PackBitsStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = 34;
-		rle.ContentLength = contentLength;
+		PackBitsStream() rle = { Content = content, ContentOffset = 34, ContentLength = contentLength };
 		byte[32000] unpacked;
 		return rle.UnpackBitplaneLines(unpacked, 320 << content[1], 200, bitplanes, true, false) // handle 640x400 as 1280x200 ;)
 			&& DecodeSt(unpacked, 0, content, 2, content[1], 0);
@@ -12132,10 +11919,7 @@ public class RECOIL
 	{
 		if (contentLength < 44 || content[0] != 'E' || content[1] != 'Z' || content[2] != 0 || content[3] != 0xc8)
 			return false;
-		PackBitsStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = 44;
-		rle.ContentLength = contentLength;
+		PackBitsStream() rle = { Content = content, ContentOffset = 44, ContentLength = contentLength };
 		byte[32000] unpacked;
 		return rle.UnpackBitplaneLines(unpacked, 320, 200, 4, true, false)
 			&& DecodeStLow(unpacked, 0, content, 4, 320, 200);
@@ -12152,11 +11936,7 @@ public class RECOIL
 				if (ReadCompanionFile(filename, "RST", "rst", rst, rst.Length) == 6800) {
 					SetSize(320, 200, RECOILResolution.St1x1);
 					SetStPalette(content, 4, 16);
-					RastPalette() palette;
-					palette.Content = rst;
-					palette.ContentOffset = 0;
-					palette.ContentLength = 6800;
-					palette.Colors = 16;
+					RastPalette() palette = { Content = rst, ContentOffset = 0, ContentLength = 6800, Colors = 16 };
 					DecodeScaledBitplanes(content, 128, 320, 200, 4, false, palette);
 					return true;
 				}
@@ -12186,8 +11966,7 @@ public class RECOIL
 		case 32032:
 			return DecodeStLow(content, 32, content, 0, 320, 200);
 		case 34360:
-			GfaArtistPalette() palette;
-			palette.Content = content;
+			GfaArtistPalette() palette = { Content = content };
 			SetSize(320, 200, RECOILResolution.St1x1);
 			DecodeScaledBitplanes(content, 4, 320, 200, 4, false, palette);
 			return true;
@@ -12213,8 +11992,7 @@ public class RECOIL
 		if (contentLength != 36864 || content[0x8c80] != 0xff || content[0x8c81] != 0xff)
 			return false;
 		SetSize(320, 200, RECOILResolution.St1x1);
-		ArtPalette() palette;
-		palette.Content = content;
+		ArtPalette() palette = { Content = content };
 		DecodeScaledBitplanes(content, 0, 320, 200, 4, false, palette);
 		return true;
 	}
@@ -12283,10 +12061,7 @@ public class RECOIL
 				&& DecodeBlackAndWhite(content, 6, contentLength, true, 0xffffff);
 		}
 
-		Stream() s;
-		s.Content = content;
-		s.ContentOffset = 0;
-		s.ContentLength = contentLength;
+		Stream() s = { Content = content, ContentOffset = 0, ContentLength = contentLength };
 		for (int i = 0; i < 16; i++) {
 			int rgb = s.ParseDaliInt();
 			if (rgb < 0 || rgb > 1911)
@@ -12316,10 +12091,7 @@ public class RECOIL
 		 || content[0x40] != 0xc8 || content[0x41] != 2)
 			return false;
 		byte[32000] unpacked;
-		IcStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = 0x43;
-		rle.ContentLength = contentLength;
+		IcStream() rle = { Content = content, ContentOffset = 0x43, ContentLength = contentLength };
 		return rle.UnpackColumns(unpacked, 0, 160, 32000)
 			&& DecodeSt(unpacked, 0, content, 6, content[5], 0);
 	}
@@ -12363,10 +12135,7 @@ public class RECOIL
 
 	bool DecodeDaliCompressed!(byte[] content, int contentLength, int mode)
 	{
-		DaliStream() stream;
-		stream.Content = content;
-		stream.ContentOffset = 32;
-		stream.ContentLength = contentLength;
+		DaliStream() stream = { Content = content, ContentOffset = 32, ContentLength = contentLength };
 		int countLength = stream.ParseDaliInt();
 		return countLength > 0 && stream.ParseDaliInt() > 0
 			&& stream.Decode(countLength, this, 0, mode);
@@ -12376,10 +12145,7 @@ public class RECOIL
 	{
 		if (contentLength < 14 || !IsStringAt(content, 0, "(c)F.MARCHAL"))
 			return false;
-		DaliStream() stream;
-		stream.Content = content;
-		stream.ContentOffset = 12;
-		stream.ContentLength = contentLength;
+		DaliStream() stream = { Content = content, ContentOffset = 12, ContentLength = contentLength };
 		int countLength = stream.ParseDaliInt();
 		int paletteOffset = stream.ContentOffset;
 		stream.ContentOffset = paletteOffset + 32;
@@ -12407,10 +12173,7 @@ public class RECOIL
 		int mode = flags >> 4 & 3;
 		if (flags >= 0x80) {
 			byte[64000] unpacked;
-			ScStream() rle;
-			rle.Content = content;
-			rle.ContentOffset = 128;
-			rle.ContentLength = contentLength;
+			ScStream() rle = { Content = content, ContentOffset = 128, ContentLength = contentLength };
 			int bytesPer16Pixels = 8 >> mode;
 			for (int bitplane = 0; bitplane < bytesPer16Pixels; bitplane += 2) {
 				if (!rle.UnpackWords(unpacked, bitplane, bytesPer16Pixels, bitmapLength))
@@ -12477,10 +12240,7 @@ public class RECOIL
 				&& DecodeSt(content, contentOffset, content, 4, content[3], 0);
 		case 1: {
 				byte[32000] unpacked;
-				CaStream() rle;
-				rle.Content = content;
-				rle.ContentOffset = contentOffset;
-				rle.ContentLength = contentLength;
+				CaStream() rle = { Content = content, ContentOffset = contentOffset, ContentLength = contentLength };
 				return rle.UnpackCa(unpacked, 0)
 					&& DecodeSt(unpacked, 0, content, 4, content[3], 0);
 			}
@@ -12508,9 +12268,7 @@ public class RECOIL
 		int valueLength = (content[contentOffset + 35] << 8 | content[contentOffset + 36]) << 1;
 		if (contentOffset + 37 + controlLength + valueLength > contentLength)
 			return false;
-		TnyStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = contentOffset + 37;
+		TnyStream() rle = { Content = content, ContentOffset = contentOffset + 37 };
 		rle.ValueOffset = rle.ContentLength = contentOffset + 37 + controlLength;
 		rle.ValueLength = contentOffset + 37 + controlLength + valueLength;
 
@@ -12592,9 +12350,7 @@ public class RECOIL
 			byte[3248 + 1] hbl;
 			int hblLength = ReadCompanionFile(filename, "HBL", "hbl", hbl, hbl.Length);
 			if (hblLength >= 896 && hblLength <= 3248) {
-				HblPalette() palette;
-				palette.Content = hbl;
-				palette.ContentLength = hblLength;
+				HblPalette() palette = { Content = hbl, ContentLength = hblLength };
 				if (palette.Init())
 					return DecodeCptFul(content, 0, contentLength, palette);
 			}
@@ -12606,9 +12362,7 @@ public class RECOIL
 	{
 		if (contentLength < 896 + 608 + 40)
 			return false;
-		HblPalette() palette;
-		palette.Content = content;
-		palette.ContentLength = contentLength;
+		HblPalette() palette = { Content = content, ContentLength = contentLength };
 		return palette.Init()
 			&& palette.ContentOffset + (608 + 33) < contentLength
 			&& content[palette.ContentOffset + (608 + 33)] <= 1
@@ -12748,10 +12502,7 @@ public class RECOIL
 			return false;
 		}
 
-		ImgStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = headerLength;
-		rle.ContentLength = contentLength;
+		ImgStream() rle = { Content = content, ContentOffset = headerLength, ContentLength = contentLength };
 		int bytesPerBitplane = width + 7 >> 3;
 		if (bitplanes == 24) // XXX: only 24?
 			bytesPerBitplane = (bytesPerBitplane + 1) & ~1;
@@ -12821,10 +12572,7 @@ public class RECOIL
 
 	bool DecodeP3c!(byte[] content, int contentLength)
 	{
-		CaStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = 0;
-		rle.ContentLength = contentLength;
+		CaStream() rle = { Content = content, ContentOffset = 0, ContentLength = contentLength };
 		int compressedLength = rle.ParseDaliInt();
 		if (compressedLength < 0)
 			return false;
@@ -12852,9 +12600,7 @@ public class RECOIL
 		 || content[0] != 0x04 || content[1] != 0x22 || content[2] != 0x4d || content[3] != 0x18
 		 || (content[4] & 0xc3) != 0x40)
 			return false;
-		Lz4Stream() stream;
-		stream.Content = content;
-		stream.ContentOffset = 6 + 1;
+		Lz4Stream() stream = { Content = content, ContentOffset = 6 + 1 };
 		if ((content[4] & 0x08) != 0)
 			stream.ContentOffset += 8; // content size
 		stream.Unpacked = unpacked;
@@ -12982,10 +12728,7 @@ public class RECOIL
 		byte[51104] unpacked;
 
 		// bitmap
-		SpcStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = 12;
-		rle.ContentLength = contentLength;
+		SpcStream() rle = { Content = content, ContentOffset = 12, ContentLength = contentLength };
 		if (!UnpackSpc(rle, unpacked))
 			return false;
 
@@ -13025,10 +12768,7 @@ public class RECOIL
 		byte[51104] unpacked;
 
 		// bitmap
-		SpsStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = 12;
-		rle.ContentLength = contentLength;
+		SpsStream() rle = { Content = content, ContentOffset = 12, ContentLength = contentLength };
 		if ((content[contentLength - 1] & 1) == 0) {
 			for (int bitplane = 0; bitplane < 8; bitplane += 2) {
 				for (int x = 0; x < 40; x++) {
@@ -13041,9 +12781,7 @@ public class RECOIL
 			return false;
 
 		// palettes
-		BitStream() bitStream;
-		bitStream.Content = content;
-		bitStream.ContentOffset = 12 + Get32BigEndian(content, 4);
+		BitStream() bitStream = { Content = content, ContentOffset = 12 + Get32BigEndian(content, 4) };
 		if (bitStream.ContentOffset < 12)
 			return false;
 		bitStream.ContentLength = contentLength;
@@ -13137,10 +12875,7 @@ public class RECOIL
 
 		// determine height
 		int bitmapLength = Get32BigEndian(content, contentOffset);
-		SpxStream() stream;
-		stream.Content = content;
-		stream.ContentStart = contentOffset + 8;
-		stream.ContentOffset = contentOffset + 8 + bitmapLength;
+		SpxStream() stream = { Content = content, ContentStart = contentOffset + 8, ContentOffset = contentOffset + 8 + bitmapLength };
 		if (stream.ContentOffset > contentLength)
 			return false;
 		switch (content[4]) {
@@ -13218,10 +12953,7 @@ public class RECOIL
 		 || content[0] != 0x01 || content[1] != 0x40 || content[2] != 0x00 || content[3] != 0xc8)
 			return false;
 
-		PcsStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = 6;
-		rle.ContentLength = contentLength;
+		PcsStream() rle = { Content = content, ContentOffset = 6, ContentLength = contentLength };
 		byte[PcsStream.UnpackedLength] unpacked1;
 		if (!rle.UnpackPcs(unpacked1))
 			return false;
@@ -13252,10 +12984,7 @@ public class RECOIL
 	{
 		if (content[4] != 0x80 || content[5] != 1)
 			return contentLength == unpackedLength ? content : null;
-		PackBitsStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = 128;
-		rle.ContentLength = contentLength;
+		PackBitsStream() rle = { Content = content, ContentOffset = 128, ContentLength = contentLength };
 		if (!rle.Unpack(unpacked, 128, 1, bitmapOffset))
 			return null;
 		for (int bitplane = 0; bitplane < bytesPer16Pixels; bitplane += 2) {
@@ -13339,10 +13068,7 @@ public class RECOIL
 		int mode = content[3];
 		int bitmapOffset = paletteOffset + paletteLength;
 		int[16] palette = 0;
-		MppPaletteStream() paletteStream;
-		paletteStream.Content = content;
-		paletteStream.ContentOffset = paletteOffset;
-		paletteStream.ContentLength = bitmapOffset;
+		MppPaletteStream() paletteStream = { Content = content, ContentOffset = paletteOffset, ContentLength = bitmapOffset };
 
 		for (int y = 0; y < Height; y++) {
 			// For modes 0,1,2 palette[0] is black here.
@@ -13474,10 +13200,7 @@ public class RECOIL
 	{
 		const int maxWidth = 256;
 		const int maxHeight = 256;
-		IcnParser() parser;
-		parser.Content = content;
-		parser.ContentOffset = 0;
-		parser.ContentLength = contentLength;
+		IcnParser() parser = { Content = content, ContentOffset = 0, ContentLength = contentLength };
 		int width = parser.ParseDefine("ICON_W");
 		if (width <= 0 || width >= maxWidth)
 			return false;
@@ -13873,10 +13596,7 @@ public class RECOIL
 		int height = content[6] << 8 | content[7];
 		if (!SetSize(width, height, RECOILResolution.Falcon1x1))
 			return false;
-		Tre1Stream() rle;
-		rle.Content = content;
-		rle.ContentOffset = 12;
-		rle.ContentLength = contentLength;
+		Tre1Stream() rle = { Content = content, ContentOffset = 12, ContentLength = contentLength };
 		int pixelsLength = width * height;
 		for (int i = 0; i < pixelsLength; i++) {
 			int rgb = rle.ReadRle();
@@ -14117,10 +13837,7 @@ public class RECOIL
 				&& DecodePntUnpacked(content, content, bitmapOffset, width, height);
 		case 1:
 			byte[]# unpacked = new byte[unpackedLength];
-			PackBitsStream() rle;
-			rle.Content = content;
-			rle.ContentOffset = bitmapOffset;
-			rle.ContentLength = contentLength;
+			PackBitsStream() rle = { Content = content, ContentOffset = bitmapOffset, ContentLength = contentLength };
 			return rle.UnpackBitplaneLines(unpacked, width, height, bitplanes, true, false)
 				&& DecodePntUnpacked(content, unpacked, 0, width, height);
 		default:
@@ -14395,8 +14112,7 @@ public class RECOIL
 		int height = 0;
 		int compression = 0;
 		RECOILResolution resolution = RECOILResolution.Amiga1x1;
-		DeepStream() rle;
-		rle.Content = content;
+		DeepStream() rle = { Content = content };
 		int tvdcOffset = -1;
 		for (int contentOffset = 12; contentOffset < contentLength - 7; ) {
 			int chunkLength = Get32BigEndian(content, contentOffset + 4);
@@ -14513,11 +14229,7 @@ public class RECOIL
 	{
 		if (!SetSizeStOrFalcon(width, height, bitplanes, false))
 			return false;
-		RastPalette() rast;
-		rast.Content = content;
-		rast.ContentOffset = contentOffset + 8;
-		rast.ContentLength = contentLength;
-		rast.Colors = 1 << bitplanes;
+		RastPalette() rast = { Content = content, ContentOffset = contentOffset + 8, ContentLength = contentLength, Colors = 1 << bitplanes };
 		DecodeScaledBitplanes(unpacked, 0, width, height, bitplanes, false, rast);
 		return true;
 	}
@@ -14930,9 +14642,7 @@ public class RECOIL
 				byte[]# unpacked;
 				if (compression == 2) {
 					unpacked = new byte[bytesPerLine * height];
-					VdatStream() rle;
-					rle.Content = content;
-					rle.ContentOffset = contentOffset + 8;
+					VdatStream() rle = { Content = content, ContentOffset = contentOffset + 8 };
 					for (int bitplane = 0; bitplane < bitplanes; bitplane++) {
 						if (rle.ContentOffset + 14 > chunkEndOffset || !IsStringAt(content, rle.ContentOffset, "VDAT"))
 							return false;
@@ -14958,10 +14668,7 @@ public class RECOIL
 					resolution = resolution == RECOILResolution.Amiga1x2 ? RECOILResolution.St1x2 : RECOILResolution.St1x1;
 				}
 				else {
-					PackBitsStream() rle;
-					rle.Content = content;
-					rle.ContentOffset = contentOffset + 8;
-					rle.ContentLength = chunkEndOffset;
+					PackBitsStream() rle = { Content = content, ContentOffset = contentOffset + 8, ContentLength = chunkEndOffset };
 
 					if (type == IffType.Pbm) {
 						if (colors == 0 || !SetScaledSize(width, height, resolution))
@@ -15468,10 +15175,7 @@ public class RECOIL
 	{
 		if (contentLength < 2)
 			return false;
-		XeKoalaStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = 1;
-		rle.ContentLength = contentLength;
+		XeKoalaStream() rle = { Content = content, ContentOffset = 1, ContentLength = contentLength };
 		if (!rle.UnpackRaw(content[0], 7680))
 			return false;
 		GtiaColors[6] = 0x0c;
@@ -15648,16 +15352,13 @@ public class RECOIL
 
 	bool DecodeA4r!(byte[] content, int contentLength)
 	{
-		A4rStream() a4r;
-		a4r.Content = content;
-		a4r.ContentOffset = 0;
-		a4r.ContentLength = contentLength;
-		if (!a4r.UnpackA4r())
+		A4rStream() s = { Content = content, ContentOffset = 0, ContentLength = contentLength };
+		if (!s.UnpackA4r())
 			return false;
 		SetSize(320, 256, RECOILResolution.Xe4x1);
 		byte[320 * 256] frame;
 		GtiaColors[8] = 0x00;
-		DecodeAtari8Gr9(a4r.Unpacked, 0x5010 - A4rStream.MinAddress, 40, frame, 0, 320, 320, 256);
+		DecodeAtari8Gr9(s.Unpacked, 0x5010 - A4rStream.MinAddress, 40, frame, 0, 320, 320, 256);
 		return ApplyAtari8Palette(frame);
 	}
 
@@ -15789,9 +15490,7 @@ public class RECOIL
 				byte[128 * 1024] asm;
 				int asmLength = ReadCompanionFile(filename, "RP.INI", "rp.ini", asm, asm.Length);
 				if (asmLength > 0) {
-					RastaStream() s;
-					s.Content = asm;
-					s.ContentLength = asmLength;
+					RastaStream() s = { Content = asm, ContentLength = asmLength };
 					if (!s.ReadIni())
 						return false;
 					s.ContentLength = ReadCompanionFile(filename, "PMG", "pmg", asm, asm.Length);
@@ -15836,10 +15535,7 @@ public class RECOIL
 	{
 		// This format appears in Grass' Slideshow.
 		byte[7684] unpacked;
-		HpmStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = 0;
-		rle.ContentLength = contentLength;
+		HpmStream() rle = { Content = content, ContentOffset = 0, ContentLength = contentLength };
 		if (!rle.Unpack(unpacked, 0, 1, 7680))
 			return false;
 
@@ -15902,10 +15598,7 @@ public class RECOIL
 	bool DecodeCpi!(byte[] content, int contentLength)
 	{
 		byte[7936] unpacked;
-		CpiStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = 0;
-		rle.ContentLength = contentLength;
+		CpiStream() rle = { Content = content, ContentOffset = 0, ContentLength = contentLength };
 		if (!rle.Unpack(unpacked, 0, 1, 7936))
 			return false;
 		SetSize(320, 192, RECOILResolution.Xe2x1);
@@ -15940,10 +15633,7 @@ public class RECOIL
 
 	bool DecodeAtari8Koala!(byte[] content, int contentOffset, int contentLength)
 	{
-		XeKoalaStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = contentOffset;
-		rle.ContentLength = contentLength;
+		XeKoalaStream() rle = { Content = content, ContentOffset = contentOffset, ContentLength = contentLength };
 		if (!rle.UnpackWrapped(7680))
 			return false;
 		SetSize(320, 192, RECOILResolution.Xe2x1);
@@ -16440,9 +16130,7 @@ public class RECOIL
 
 	bool DecodeXlp!(byte[] content, int contentLength)
 	{
-		XlpStream() rle;
-		rle.Content = content;
-		rle.ContentLength = contentLength;
+		XlpStream() rle = { Content = content, ContentLength = contentLength };
 		byte[16000] unpacked;
 		int height;
 		int colorsOffset;
@@ -16482,10 +16170,7 @@ public class RECOIL
 	{
 		if (contentLength < 4 + 9 * 192 || !IsStringAt(content, 0, "XLPM"))
 			return false;
-		XlpStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = 4 + 9 * 192;
-		rle.ContentLength = contentLength;
+		XlpStream() rle = { Content = content, ContentOffset = 4 + 9 * 192, ContentLength = contentLength };
 		byte[15360] unpacked;
 		if (!rle.UnpackColumns(unpacked, 0, 40, 15360))
 			return false;
@@ -16670,9 +16355,7 @@ public class RECOIL
 	bool DecodeG9s!(byte[] content, int contentLength)
 	{
 		byte[7680] unpacked;
-		SfdnStream() s;
-		s.Content = content;
-		s.ContentLength = contentLength;
+		SfdnStream() s = { Content = content, ContentLength = contentLength };
 		return s.Unpack(unpacked, unpacked.Length)
 			&& DecodeGr9(unpacked, unpacked.Length);
 	}
@@ -16680,9 +16363,7 @@ public class RECOIL
 	bool DecodeIns!(byte[] content, int contentLength)
 	{
 		byte[16004] unpacked;
-		SfdnStream() s;
-		s.Content = content;
-		s.ContentLength = contentLength;
+		SfdnStream() s = { Content = content, ContentLength = contentLength };
 		return s.Unpack(unpacked, unpacked.Length)
 			&& DecodeInp(unpacked, unpacked.Length);
 	}
@@ -16690,9 +16371,7 @@ public class RECOIL
 	bool DecodePls!(byte[] content, int contentLength)
 	{
 		byte[7680] unpacked;
-		SfdnStream() s;
-		s.Content = content;
-		s.ContentLength = contentLength;
+		SfdnStream() s = { Content = content, ContentLength = contentLength };
 		return s.Unpack(unpacked, unpacked.Length)
 			&& DecodeApc(unpacked, unpacked.Length);
 	}
@@ -16700,9 +16379,7 @@ public class RECOIL
 	bool DecodeAps!(byte[] content, int contentLength)
 	{
 		byte[7720] unpacked;
-		SfdnStream() s;
-		s.Content = content;
-		s.ContentLength = contentLength;
+		SfdnStream() s = { Content = content, ContentLength = contentLength };
 		return s.Unpack(unpacked, unpacked.Length)
 			&& DecodeApc(unpacked, unpacked.Length);
 	}
@@ -16710,9 +16387,7 @@ public class RECOIL
 	bool DecodeIls!(byte[] content, int contentLength)
 	{
 		byte[15360] unpacked;
-		SfdnStream() s;
-		s.Content = content;
-		s.ContentLength = contentLength;
+		SfdnStream() s = { Content = content, ContentLength = contentLength };
 		return s.Unpack(unpacked, unpacked.Length)
 			&& DecodeAp3(unpacked, unpacked.Length);
 	}
@@ -16720,9 +16395,7 @@ public class RECOIL
 	bool DecodeApp!(byte[] content, int contentLength)
 	{
 		byte[15872] unpacked;
-		SfdnStream() s;
-		s.Content = content;
-		s.ContentLength = contentLength;
+		SfdnStream() s = { Content = content, ContentLength = contentLength };
 		return s.Unpack(unpacked, unpacked.Length)
 			&& DecodeAp3(unpacked, unpacked.Length);
 	}
@@ -16730,9 +16403,7 @@ public class RECOIL
 	bool DecodeHps!(byte[] content, int contentLength)
 	{
 		byte[16009] unpacked;
-		SfdnStream() s;
-		s.Content = content;
-		s.ContentLength = contentLength;
+		SfdnStream() s = { Content = content, ContentLength = contentLength };
 		return s.Unpack(unpacked, unpacked.Length)
 			&& DecodeHip(unpacked, unpacked.Length);
 	}
@@ -16801,10 +16472,7 @@ public class RECOIL
 	{
 		if (contentLength < 24 || !IsStringAt(content, 0, "CIN 1.2 "))
 			return false;
-		CciStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = 8;
-		rle.ContentLength = contentLength;
+		CciStream() rle = { Content = content, ContentOffset = 8, ContentLength = contentLength };
 		byte[16384] unpacked;
 		if (!rle.UnpackGr15(unpacked, 0)
 		 || !rle.UnpackGr15(unpacked, 40))
@@ -16852,10 +16520,7 @@ public class RECOIL
 		literalTree.Create(content, contentOffset + 16 + 32 + 128, 256);
 
 		// LZ77
-		BitStream() bitStream;
-		bitStream.Content = content;
-		bitStream.ContentOffset = contentOffset + 16 + 288;
-		bitStream.ContentLength = contentLength;
+		BitStream() bitStream = { Content = content, ContentOffset = contentOffset + 16 + 288, ContentLength = contentLength };
 		for (int unpackedOffset = 0; unpackedOffset < unpackedLength; ) {
 			switch (bitStream.ReadBit()) {
 			case 0:
@@ -17085,10 +16750,7 @@ public class RECOIL
 
 	bool DecodeRm!(byte[] content, int contentLength, int mode, RECOILResolution resolution)
 	{
-		XeKoalaStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = 0;
-		rle.ContentLength = contentLength - 464;
+		XeKoalaStream() rle = { Content = content, ContentOffset = 0, ContentLength = contentLength - 464 };
 		if (rle.UnpackWrapped(mode == 0 ? 3840 : 7680)) {
 			// File written by a Rambrandt plugin ("DOS module").
 			// Documentation suggests RM0-RM4 extensions.
@@ -18482,10 +18144,7 @@ public class RECOIL
 
 		int[192] leftRgbs;
 		byte[3 * 40 * 192] screens;
-		RgbStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = 9 + titleLength;
-		rle.ContentLength = contentLength;
+		RgbStream() rle = { Content = content, ContentOffset = 9 + titleLength, ContentLength = contentLength };
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 				int rgb = rle.ReadRle();
@@ -19307,11 +18966,7 @@ public class RECOIL
 			}
 		}
 
-		G2fRenderer() gtia;
-		gtia.Content = content;
-		gtia.PlayfieldColumns = columns;
-		gtia.Inverse2Offset = inverse2Offset;
-		gtia.VbxeOffset = vbxeOffset;
+		G2fRenderer() gtia = { Content = content, PlayfieldColumns = columns, Inverse2Offset = inverse2Offset, VbxeOffset = vbxeOffset };
 		for (int y = 0; y < 240; y++) {
 			int row = y >> 3;
 			gtia.FontOffset = fontsOffset + ((content[fontNumberOffset + row] & 0x7f) << 10);
@@ -19377,10 +19032,7 @@ public class RECOIL
 			return false;
 		if (IsStringAt(content, 0, "G2FZLIB")) {
 			byte[]# unpacked = new byte[G2fMaxUnpackedLength];
-			InflateStream() stream;
-			stream.Content = content;
-			stream.ContentOffset = 7;
-			stream.ContentLength = contentLength;
+			InflateStream() stream = { Content = content, ContentOffset = 7, ContentLength = contentLength };
 			contentLength = stream.Uncompress(unpacked, G2fMaxUnpackedLength);
 			return DecodeG2fUnpacked(unpacked, contentLength, frame, yOffset);
 		}
@@ -19399,10 +19051,7 @@ public class RECOIL
 
 	bool DecodeVsc!(string vscFilename, byte[] content, int contentLength)
 	{
-		Stream() s;
-		s.Content = content;
-		s.ContentOffset = 0;
-		s.ContentLength = contentLength;
+		Stream() s = { Content = content, ContentOffset = 0, ContentLength = contentLength };
 		int height = 0;
 		for (;;) {
 			int c = s.ReadByte();
@@ -19533,10 +19182,7 @@ public class RECOIL
 				&& DecodeBlackAndWhite(content, 32, contentLength, false, 0);
 		if (IsStringAt(content, 0, "LinS") && SetSize(width, height, RECOILResolution.Pc1x1)) {
 			// Microsoft Paint 2
-			MspStream() rle;
-			rle.Content = content;
-			rle.ContentOffset = 32 + (height << 1);
-			rle.ContentLength = contentLength;
+			MspStream() rle = { Content = content, ContentOffset = 32 + (height << 1), ContentLength = contentLength };
 			return DecodeRleBlackAndWhite(rle, 0);
 		}
 		return false;
@@ -19713,9 +19359,7 @@ public class RECOIL
 
 	bool DecodeVectorSpr!(byte[] content, int contentLength)
 	{
-		VectorSprStream() rle;
-		rle.Content = content;
-		rle.ContentOffset = contentLength;
+		VectorSprStream() rle = { Content = content, ContentOffset = contentLength };
 		byte[32768] unpacked;
 		if (!rle.Unpack(unpacked, 0, 1, 32768))
 			return false;
