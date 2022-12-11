@@ -1589,7 +1589,7 @@ class XlpStream : RleStream
 
 class AmstradStream : RleStream
 {
-	int BlockLength;
+	int BlockLength = 0;
 
 	protected override bool ReadCommand!()
 	{
@@ -1623,7 +1623,7 @@ class AmstradStream : RleStream
 
 	internal static bool UnpackFile(byte[] content, int contentOffset, int contentLength, byte[]! unpacked, int unpackedLength)
 	{
-		AmstradStream() rle = { Content = content, ContentOffset = contentOffset, ContentLength = contentLength, BlockLength = 0 };
+		AmstradStream() rle = { Content = content, ContentOffset = contentOffset, ContentLength = contentLength };
 		return rle.Unpack(unpacked, 0, 1, unpackedLength);
 	}
 }
