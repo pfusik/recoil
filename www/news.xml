@@ -1,4 +1,12 @@
 ﻿<page title="News">
+	<release project="RECOIL" version="6.3.2" date="2022-12-11">
+		<ul>
+			<li>New C64 formats: Printfox (BS, GB), Pagefox (PG), Star Painter (GR/CS, ZS)</li>
+			<li>New Atari 8-bit format: SprEd (SPR)</li>
+			<li>Fixed crashes on some invalid files</li>
+		</ul>
+	</release>
+
 	<release project="RECOIL" version="6.3.1" date="2022-10-05">
 		<ul>
 			<li>New format: C64 Loadstar (SHP)</li>
