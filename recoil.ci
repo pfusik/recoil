@@ -13641,7 +13641,12 @@ public class RECOIL
 				SetStPalette(content, 30, 16);
 			else
 				SetFalconPalette(content, 30);
-			DecodeBitplanes(content, 30 + paletteLength, bytesPerLine, bitplanes, 0, width, height);
+			if (bitplanes == 8 && content[22] == 0xff) {
+				// variant used by "Music Compile 2", https://sourceforge.net/p/recoil/bugs/74/
+				DecodeBytes(content, 30 + paletteLength);
+			}
+			else
+				DecodeBitplanes(content, 30 + paletteLength, bytesPerLine, bitplanes, 0, width, height);
 			return true;
 		case 16:
 			return paletteLength == 1024
