@@ -6555,14 +6555,9 @@ public class RECOIL
 
 	bool DecodeCh8!(byte[] content, int contentLength)
 	{
-		if (contentLength % 8 != 0)
+		if ((contentLength & 7) != 0
+		 || !SetSize(256, contentLength + (31 << 3) >> 8 << 3, RECOILResolution.Spectrum1x1))
 			return false;
-
-		int charCount = contentLength / 8;
-		int rows = (charCount + 31) / 32; // Round up to nearest 32
-		int height = rows * 8;
-
-		SetSize(256, height, RECOILResolution.Spectrum1x1);
 		DecodeBlackAndWhiteFont(content, 0, contentLength, 8);
 		return true;
 	}
