@@ -726,17 +726,23 @@
 		<format name="Dynamic Publisher font" width="512" height="160" colors="2"><ext>FNT</ext></format>
 		<format colors="16">
 			<ext>GL5</ext>
+			<ext>SH5</ext>
 			<companionExt optional="true">PL5</companionExt>
 		</format>
 		<format colors="4">
 			<ext>GL6</ext>
+			<ext>SH6</ext>
 			<companionExt optional="true">PL6</companionExt>
 		</format>
 		<format colors="16">
 			<ext>GL7</ext>
+			<ext>SH7</ext>
 			<companionExt optional="true">PL7</companionExt>
 		</format>
-		<format colors="256"><ext>GL8</ext></format>
+		<format colors="256">
+			<ext>GL8</ext>
+			<ext>SH8</ext>
+		</format>
 		<format name="Maki-chan Graphics">
 			<ext>MAG</ext>
 			<ext>MAX</ext>
@@ -797,11 +803,13 @@
 	<platform name="MSX2+" href="https://en.wikipedia.org/wiki/MSX">
 		<format colors="12515">
 			<ext>GLA</ext>
+			<ext>SHA</ext>
 			<companionExt optional="true">PLA</companionExt>
 		</format>
 		<format colors="19268">
 			<ext>GLC</ext>
 			<ext>GLS</ext>
+			<ext>SHC</ext>
 		</format>
 		<format name="Screen 10" width="256" height="212" colors="12515"><ext>SCA</ext></format>
 		<format name="Screen 10 interlaced" width="256" height="424" colors="12515" frames="2">

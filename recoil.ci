@@ -19796,10 +19796,15 @@ public class RECOIL
 		case PackExt("GHG"):
 		case PackExt("GIG"):
 		case PackExt("GL5"):
+		case PackExt("SH5"):
 		case PackExt("GL6"):
+		case PackExt("SH6"):
 		case PackExt("GL7"):
+		case PackExt("SH7"):
 		case PackExt("GL8"):
+		case PackExt("SH8"):
 		case PackExt("GLA"):
+		case PackExt("SHA"):
 		case PackExt("GLC"):
 		case PackExt("GLS"):
 		case PackExt("GOD"):
@@ -20485,14 +20490,19 @@ public class RECOIL
 			return DecodeIph(content, contentLength)
 				|| DecodeKoa(content, contentLength);
 		case PackExt("GL5"):
+		case PackExt("SH5"):
 			return DecodeGl5(filename, content, contentLength);
 		case PackExt("GL6"):
+		case PackExt("SH6"):
 			return DecodeGl6(filename, content, contentLength);
 		case PackExt("GL7"):
+		case PackExt("SH7"):
 			return DecodeGl7(filename, content, contentLength);
 		case PackExt("GL8"):
+		case PackExt("SH8"):
 			return DecodeGl8(content, contentLength);
 		case PackExt("GLA"):
+		case PackExt("SHA"):
 			return DecodeGlYjk(filename, content, contentLength);
 		case PackExt("GLC"):
 		case PackExt("GLS"):
@@ -21001,7 +21011,8 @@ public class RECOIL
 				|| DecodeSh3(content, contentLength)
 				|| DecodeAppleIIShr(content, contentLength);
 		case PackExt("SHC"):
-			return DecodeShc(content, contentLength);
+			return DecodeShc(content, contentLength)
+				|| DecodeGlYjk(null, content, contentLength);
 		case PackExt("SHE"):
 			return DecodeShe(content, contentLength);
 		case PackExt("SHF"):
