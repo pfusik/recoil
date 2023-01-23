@@ -19804,7 +19804,9 @@ public class RECOIL
 		case PackExt("GL8"):
 		case PackExt("SH8"):
 		case PackExt("GLA"):
+		case PackExt("GLB"):
 		case PackExt("SHA"):
+		case PackExt("SHB"):
 		case PackExt("GLC"):
 		case PackExt("GLS"):
 		case PackExt("GOD"):
@@ -20058,6 +20060,7 @@ public class RECOIL
 		case PackExt("GE8"):
 		case PackExt("SR8"):
 		case PackExt("SCA"):
+		case PackExt("SCB"):
 		case PackExt("SCC"):
 		case PackExt("SD0"):
 		case PackExt("SD1"):
@@ -20502,7 +20505,9 @@ public class RECOIL
 		case PackExt("SH8"):
 			return DecodeGl8(content, contentLength);
 		case PackExt("GLA"):
+		case PackExt("GLB"):
 		case PackExt("SHA"):
+		case PackExt("SHB"):
 			return DecodeGlYjk(filename, content, contentLength);
 		case PackExt("GLC"):
 		case PackExt("GLS"):
@@ -20976,6 +20981,7 @@ public class RECOIL
 		case PackExt("SR8"):
 			return DecodeSc8(filename, content, contentLength);
 		case PackExt("SCA"):
+		case PackExt("SCB"):
 			return DecodeSca(filename, content, contentLength);
 		case PackExt("SCC"):
 		case PackExt("SRS"):

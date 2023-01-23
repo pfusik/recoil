@@ -803,7 +803,9 @@
 	<platform name="MSX2+" href="https://en.wikipedia.org/wiki/MSX">
 		<format colors="12515">
 			<ext>GLA</ext>
+			<ext skip="uwp">GLB</ext>
 			<ext skip="uwp">SHA</ext>
+			<ext skip="uwp">SHB</ext>
 			<companionExt optional="true">PLA</companionExt>
 		</format>
 		<format colors="19268">
@@ -811,7 +813,10 @@
 			<ext>GLS</ext>
 			<ext>SHC</ext>
 		</format>
-		<format name="Screen 10" width="256" height="212" colors="12515"><ext>SCA</ext></format>
+		<format name="Screen 10" width="256" height="212" colors="12515">
+			<ext>SCA</ext>
+			<ext skip="uwp">SCB</ext>
+		</format>
 		<format name="Screen 10 interlaced" width="256" height="424" colors="12515" frames="2">
 			<ext>SCA</ext>
 			<companionExt>S1A</companionExt>
