@@ -53,7 +53,7 @@
 			<companionExt>EVE</companionExt>
 		</format>
 		<format name="Advanced OCP Art Studio">
-			<ext>SCR</ext>
+			<ext skip="uwp">SCR</ext>
 			<companionExt>PAL</companionExt>
 		</format>
 		<format name="SymbOS graphic" colors="16"><ext>SGX</ext></format>
@@ -92,7 +92,7 @@
 		<format name="MacPaint" width="576" height="720" colors="2">
 			<ext>MAC</ext>
 			<ext>PNT</ext>
-			<ext>PNTG</ext>
+			<ext skip="uwp">PNTG</ext>
 		</format>
 	</platform>
 	<platform name="Atari 8-bit" href="https://en.wikipedia.org/wiki/Atari_8-bit_family">
@@ -167,7 +167,7 @@
 		<format name="Mad Studio Graphics 0" width="40" height="24" unit="characters" colors="2">
 			<ext>GR0</ext>
 			<ext>ASC</ext>
-			<ext>SCR</ext>
+			<ext skip="uwp">SCR</ext>
 		</format>
 		<format name="Mad Studio Graphics 1" width="20" height="24" unit="characters" colors="5"><ext>GR1</ext></format>
 		<!-- FIVE_CHAR_EXT <format name="Graphics 10+" width="80" height="60" colors="9"><ext>GR10P</ext></format> -->
@@ -237,7 +237,7 @@
 		<format name="Mad Studio multi-color player" maxWidth="56" maxHeight="40" colors="5"><ext>MPL</ext></format>
 		<format name="Mad Studio missile" width="2" maxHeight="34" colors="2"><ext>MSL</ext></format>
 		<format name="Daisy-Dot font" colors="2"><ext>NLQ</ext></format>
-		<format name="OD Font Editor" colors="2"><ext>ODF</ext></format>
+		<format name="OD Font Editor" colors="2"><ext skip="uwp">ODF</ext></format>
 		<format name="PowerGraphics" maxWidth="336" height="240" colors="256"><ext>PGR</ext></format>
 		<format maxWidth="320" height="192"><ext>PI8</ext></format>
 		<format width="80"><ext>PI9</ext></format>
@@ -311,9 +311,9 @@
 		<format name="Cyber Paint Cell" maxWidth="320" maxHeight="200" colors="16"><ext>CEL</ext></format>
 		<format name="Public Painter" width="640" maxHeight="800" colors="2"><ext>CMP</ext></format>
 		<format name="Picworks" width="640" height="400" colors="2"><ext>CP3</ext></format>
-		<format name="Canvas (compressed)"><ext>CPT</ext></format>
+		<format name="Canvas (compressed)"><ext skip="uwp">CPT</ext></format>
 		<format name="Canvas (raster)" maxWidth="640" height="200">
-			<ext>CPT</ext>
+			<ext skip="uwp">CPT</ext>
 			<companionExt>HBL</companionExt>
 		</format>
 		<format name="Calamus Raster Graphic" colors="2"><ext>CRG</ext></format>
@@ -355,8 +355,8 @@
 			<ext>NEO</ext>
 			<companionExt>RST</companionExt>
 		</format>
-		<format name="ColorSTar object" maxWidth="320" maxHeight="200" colors="16"><ext>OBJ</ext></format>
-		<format name="MonoSTar object" maxWidth="640" maxHeight="400" colors="2"><ext>OBJ</ext></format>
+		<format name="ColorSTar object" maxWidth="320" maxHeight="200" colors="16"><ext skip="uwp">OBJ</ext></format>
+		<format name="MonoSTar object" maxWidth="640" maxHeight="400" colors="2"><ext skip="uwp">OBJ</ext></format>
 		<format name="D-GRAPH (compressed)" width="320" height="200" colors="136" frames="2"><ext>P3C</ext></format>
 		<format name="Pablo Paint 2.5" width="640" height="400" colors="2"><ext>PA3</ext></format>
 		<format name="STAD" width="640" height="400" colors="2"><ext>PAC</ext></format>
@@ -412,11 +412,11 @@
 		</format>
 		<format name="Tiny Stuff" width="640" height="200" colors="4">
 			<ext>TN2</ext>
-			<ext>TN5</ext><!-- with palette animation we don't support -->
+			<ext skip="uwp">TN5</ext><!-- with palette animation we don't support -->
 		</format>
 		<format name="Tiny Stuff" width="640" height="400" colors="2">
 			<ext>TN3</ext>
-			<ext>TN6</ext><!-- I don't think there are black and white pictures with palette animation... -->
+			<ext skip="uwp">TN6</ext><!-- I don't think there are black and white pictures with palette animation... -->
 		</format>
 		<format name="Tiny Stuff"><ext>TNY</ext></format>
 		<format name="Extended GEM Bit Image"><ext>XIMG</ext></format>
@@ -519,7 +519,7 @@
 		<format name="Create with Garfield" width="160" height="200" colors="16"><ext>CWG</ext></format>
 		<format name="Doodle" width="320" height="200" colors="16">
 			<ext>DD</ext>
-			<ext>DDP</ext>
+			<ext skip="uwp">DDP</ext>
 		</format>
 		<format name="Dolphin Ed" width="160" height="200" colors="16">
 			<ext>DOL</ext>
@@ -566,7 +566,7 @@
 		<format name="Koala Painter (compressed)" width="320" height="200" colors="16"><ext>GG</ext></format>
 		<format name="Star Painter" colors="2">
 			<ext>GR</ext>
-			<ext>CS</ext>
+			<ext skip="uwp">CS</ext>
 		</format>
 		<format name="Gunpaint" width="296" height="200" frames="2">
 			<ext>GUN</ext>
@@ -622,14 +622,14 @@
 		<format name="MUFLI Editor (compressed)" width="296" height="200" colors="16"><ext>MUP</ext></format>
 		<format name="Art Studio window" maxWidth="160" maxHeight="200" colors="16">
 			<ext>MWI</ext>
-			<ext>MWIN</ext>
+			<ext skip="uwp">MWIN</ext>
 		</format>
 		<format name="NUFLI Editor" width="320" height="200" colors="16"><ext>NUF</ext></format>
 		<format name="NUFLI Editor (compressed)" width="320" height="200" colors="16"><ext>NUP</ext></format>
 		<format name="Advanced Art Studio" width="160" height="200" colors="16">
 			<ext>OCP</ext>
 			<ext>MPI</ext>
-			<ext>MPIC</ext>
+			<ext skip="uwp">MPIC</ext>
 		</format>
 		<format name="Picasso 64" width="160" height="200" colors="16">
 			<ext>P64</ext>
@@ -647,14 +647,14 @@
 		<format name="Pixel Perfect (compressed)" width="296" height="200" frames="2"><ext>PPP</ext></format>
 		<format name="Rainbow Painter" width="160" height="200" colors="16"><ext>RP</ext></format>
 		<format name="Run Paint" width="320" height="200" colors="16"><ext>RPH</ext></format>
-		<format name="Run Paint" width="160" height="200" colors="16"><ext>RPM</ext></format>
+		<format name="Run Paint" width="160" height="200" colors="16"><ext skip="uwp">RPM</ext></format>
 		<format name="Run Paint" width="320" height="200" colors="2">
 			<ext>RPO</ext>
 			<ext name="Gigapaint">GIH</ext>
 		</format>
 		<format name="Saracen Paint" width="160" height="200" colors="16"><ext>SAR</ext></format>
 		<format name="PETSCII Editor" width="40" height="25" unit="characters" colors="16">
-			<ext>SCR</ext>
+			<ext skip="uwp">SCR</ext>
 			<companionExt>COL</companionExt>
 		</format>
 		<format name="Super-hires Editor I" width="96" height="168" colors="16"><ext>SH1</ext></format>
@@ -698,7 +698,7 @@
 		<format maxWidth="512" height="256" maxFrames="2"><ext>BKS</ext></format>
 	</platform>
 	<platform name="Electronika MC 0515" href="http://www.leningrad.su/museum/show_calc.php?n=267">
-		<format width="640" height="200" colors="2"><ext>SCR</ext></format>
+		<format width="640" height="200" colors="2"><ext skip="uwp">SCR</ext></format>
 	</platform>
 	<platform name="FM Towns" href="https://en.wikipedia.org/wiki/FM_Towns">
 		<format><ext>PI</ext></format>
@@ -726,22 +726,22 @@
 		<format name="Dynamic Publisher font" width="512" height="160" colors="2"><ext>FNT</ext></format>
 		<format colors="16">
 			<ext>GL5</ext>
-			<ext>SH5</ext>
+			<ext skip="uwp">SH5</ext>
 			<companionExt optional="true">PL5</companionExt>
 		</format>
 		<format colors="4">
 			<ext>GL6</ext>
-			<ext>SH6</ext>
+			<ext skip="uwp">SH6</ext>
 			<companionExt optional="true">PL6</companionExt>
 		</format>
 		<format colors="16">
 			<ext>GL7</ext>
-			<ext>SH7</ext>
+			<ext skip="uwp">SH7</ext>
 			<companionExt optional="true">PL7</companionExt>
 		</format>
 		<format colors="256">
 			<ext>GL8</ext>
-			<ext>SH8</ext>
+			<ext skip="uwp">SH8</ext>
 		</format>
 		<format name="Maki-chan Graphics">
 			<ext>MAG</ext>
@@ -803,7 +803,7 @@
 	<platform name="MSX2+" href="https://en.wikipedia.org/wiki/MSX">
 		<format colors="12515">
 			<ext>GLA</ext>
-			<ext>SHA</ext>
+			<ext skip="uwp">SHA</ext>
 			<companionExt optional="true">PLA</companionExt>
 		</format>
 		<format colors="19268">
@@ -865,7 +865,7 @@
 		<format name="Handy Scanner 2000 POSTERING" width="840" colors="2"><ext>HS2</ext></format>
 		<format name="Turbo Rascal Syntax Error" width="320" height="200"><ext>FLF</ext></format>
 		<format name="Image 72 font" colors="2"><ext>FNT</ext></format>
-		<format name="Microsoft Paint version 1 or 2" colors="2"><ext>MSP</ext></format>
+		<format name="Microsoft Paint version 1 or 2" colors="2"><ext skip="uwp">MSP</ext></format>
 	</platform>
 	<platform name="PlayStation" href="https://en.wikipedia.org/wiki/PlayStation_(console)">
 		<format name="TIM" colors="32768"><ext>TIM</ext></format>
@@ -892,8 +892,8 @@
 	</platform>
 	<platform name="Timex 2048" href="https://en.wikipedia.org/wiki/Timex_Computer_2048">
 		<format name="Hi-res Gigascreen" width="512" height="192" colors="4" frames="2"><ext>HRG</ext></format>
-		<format name="Hi-color" width="256" height="192" colors="15"><ext>SCR</ext></format>
-		<format name="Hi-res" width="512" height="192" colors="2"><ext>SCR</ext></format>
+		<format name="Hi-color" width="256" height="192" colors="15"><ext skip="uwp">SCR</ext></format>
+		<format name="Hi-res" width="512" height="192" colors="2"><ext skip="uwp">SCR</ext></format>
 	</platform>
 	<platform name="TRS-80" href="https://en.wikipedia.org/wiki/TRS-80">
 		<format width="640" height="240" colors="2"><ext>HR</ext></format>
@@ -915,7 +915,7 @@
 	</platform>
 	<platform name="ZX Spectrum" href="https://en.wikipedia.org/wiki/ZX_Spectrum">
 		<format width="256" height="192" colors="8" frames="3"><ext>3</ext></format>
-		<format name="Attributes" width="32" height="24" unit="characters" colors="15"><ext>ATR</ext></format>
+		<format name="Attributes" width="32" height="24" unit="characters" colors="15"><ext skip="uwp">ATR</ext></format>
 		<format name="Border Screen Multicolor 8x4" width="384" height="304" colors="15"><ext>BMC4</ext></format>
 		<format name="Border Screen" width="384" height="304" colors="15"><ext>BSC</ext></format>
 		<format name="Border Screen by Trefi" maxWidth="384" maxHeight="304" maxFrames="2"><ext>BSP</ext></format>
@@ -935,7 +935,7 @@
 		<format name="MultiArtist 8x8" width="256" height="192" frames="2"><ext>MG8</ext></format>
 		<format width="256" height="192" colors="15"><ext>MLT</ext></format>
 		<format width="256" height="192" colors="8" frames="3"><ext>RGB</ext></format>
-		<format width="256" height="192" colors="15"><ext>SCR</ext></format>
+		<format width="256" height="192" colors="15"><ext skip="uwp">SCR</ext></format>
 		<format name="SevenuP" maxWidth="256" maxHeight="192" colors="15"><ext>SEV</ext></format>
 		<format name="Stellar" width="64" height="48" frames="2"><ext>STL</ext></format>
 		<format name="ZX-Paintbrush" colors="15"><ext>ZXP</ext></format>
@@ -945,7 +945,7 @@
 		<format name="Profi" width="512" height="240" colors="16"><ext>GRF</ext></format>
 	</platform>
 	<platform name="ZX Spectrum ULAplus" href="https://sites.google.com/site/ulaplus/">
-		<format name="ULAplus" width="256" height="192" colors="64"><ext>SCR</ext></format>
+		<format name="ULAplus" width="256" height="192" colors="64"><ext skip="uwp">SCR</ext></format>
 	</platform>
 	<platform name="ZX Evolution" href="http://nedopc.com/zxevo/zxevo_eng.php">
 		<format name="Speccy eXtended Graphics" colors="256"><ext>SXG</ext></format>

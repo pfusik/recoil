@@ -55,7 +55,7 @@
 									<!-- RPM is likely RPM Package Manager. -->
 									<!-- DDP, MPIC, MWIN, PNTG, SH5, SH6, SH7, SH8, SHA, TN5, TN6 arbitrarily removed to workaround store submission error:
 									"Package acceptance validation error: The package RECOIL_6.3.0.0_x86.appx declares support for 501 file type extensions. Packages can't have more than 500." -->
-									<xsl:for-each select="platform/format/ext[not(. = following::ext) and . != 'MSP' and . != 'SCR' and . != 'ATR' and . != 'CPT' and . != 'CS' and . != 'OBJ' and . != 'ODF' and . != 'RPM' and . != 'DDP' and . != 'MPIC' and . != 'MWIN' and . != 'PNTG' and . != 'SH5' and . != 'SH6' and . != 'SH7' and . != 'SH8' and . != 'SHA' and . != 'TN5' and . != 'TN6']">
+									<xsl:for-each select="platform/format/ext[not(. = following::ext or contains(@skip, 'uwp'))]">
 										<xsl:sort />
 										<uap:FileType>.<xsl:value-of select="translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')" /></uap:FileType>
 									</xsl:for-each>
