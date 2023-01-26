@@ -3,11 +3,7 @@
 	<script>
 	function fullScreen()
 	{
-		const canvas = document.getElementById("canvas");
-		if (canvas.webkitRequestFullScreen)
-			canvas.webkitRequestFullScreen();
-		else if (canvas.mozRequestFullScreen)
-			canvas.mozRequestFullScreen();
+		document.getElementById("canvas").requestFullscreen();
 	}
 	</script>
 
