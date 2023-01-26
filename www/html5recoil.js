@@ -115,10 +115,12 @@ function openFiles()
 	}
 }
 
-function selectFile()
-{
-	recoil2canvas(this.value);
-}
-
 document.getElementById("fileInput").addEventListener("change", openFiles);
-document.getElementById("fileSelect").addEventListener("change", selectFile);
+
+document.getElementById("fileSelect").addEventListener("change", function() {
+		recoil2canvas(this.value);
+	});
+
+document.getElementById("fullScreenButton").addEventListener("click", function() {
+		document.getElementById("canvas").requestFullscreen();
+	});

@@ -1,12 +1,5 @@
 ﻿<page title="Web">
 	<script type="module" src="html5recoil.js"> </script>
-	<script>
-	function fullScreen()
-	{
-		document.getElementById("canvas").requestFullscreen();
-	}
-	</script>
-
 	<p>This page displays pictures in file formats native to retro computers.
 	Decoding takes place in your browser, nothing is sent over the network.</p>
 	<p>
@@ -17,7 +10,7 @@
 	<canvas id="canvas" width="1" height="1"> </canvas>
 	<div id="status"> </div>
 	<p>
-		<input type="button" id="fullScreenButton" value="Fullscreen" onclick="fullScreen()" style="display: none" />
+		<input type="button" id="fullScreenButton" value="Fullscreen" style="display: none" />
 		<a id="pngLink" href="#" target="_blank" style="display: none">Save as PNG</a>
 	</p>
 </page>
