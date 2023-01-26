@@ -2,6 +2,9 @@ TARGETS = index.html formats.html android.html windows.html macos.html linux.htm
 
 all: $(TARGETS)
 
+test: web.html recoil.js
+	$(LOCALAPPDATA)/Programs/Opera/launcher --allow-file-access-from-files file:///$(patsubst /c%,C:%,$(abspath $<))
+
 %.html: %.xml www.xsl ../formats.xml
 	xsltproc -o $@ www.xsl $< && java -jar C:/bin/vnu.jar $@
 

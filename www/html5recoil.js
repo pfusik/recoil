@@ -1,7 +1,7 @@
 /*
  * html5recoil.js - HTML 5 viewer
  *
- * Copyright (C) 2013-2021  Piotr Fusik
+ * Copyright (C) 2013-2023  Piotr Fusik
  *
  * This file is part of RECOIL (Retro Computer Image Library),
  * see http://recoil.sourceforge.net
@@ -20,6 +20,8 @@
  * along with RECOIL; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
+import { RECOIL } from "./recoil.js";
 
 let recoilFiles;
 
@@ -94,8 +96,9 @@ function populateFiles(contents, mainFilenames)
 	recoil2canvas(mainFilenames[0]);
 }
 
-function openFiles(files)
+function openFiles()
 {
+	const files = this.files;
 	const mainFilenames = [];
 	const contents = {};
 	let count = files.length;
@@ -111,3 +114,11 @@ function openFiles(files)
 		reader.readAsArrayBuffer(file);
 	}
 }
+
+function selectFile()
+{
+	recoil2canvas(this.value);
+}
+
+document.getElementById("fileInput").addEventListener("change", openFiles);
+document.getElementById("fileSelect").addEventListener("change", selectFile);
