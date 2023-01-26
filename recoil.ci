@@ -12849,9 +12849,9 @@ public class RECOIL
 				stream.ContentOffset = packedEnd;
 				if (!stream.UnpackV2(unpacked, unpackedLength))
 					return false;
-				if (unpackedLength == 155552)
-					return DecodeSpuVariable(unpacked, 597, 160, 0x17fc0, false);
 				paletteOffset = Get32BigEndian(content, contentOffset + 4);
+				if (paletteOffset == 0x18020 && unpackedLength == 0x25fa0)
+					return DecodeSpuVariable(unpacked, 597, 160, 0x17fc0, false);
 				return DecodeSpuVariable(unpacked, (unpackedLength - paletteOffset) / 96, 320, paletteOffset, false);
 			default:
 				return false;
