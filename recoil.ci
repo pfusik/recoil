@@ -12839,9 +12839,9 @@ public class RECOIL
 				if (unpackedLength <= 0)
 					return false;
 				byte[]# unpacked = new byte[unpackedLength];
-				int packedLength = Get32BigEndian(content, stream.ContentStart + 4);
-				int packedEnd = stream.ContentStart + 8 + packedLength;
-				if (Get32BigEndian(content, stream.ContentStart - 8) != 8 + packedLength
+				int packedLength = Get32BigEndian(content, contentOffset + 12);
+				int packedEnd = contentOffset + 16 + packedLength;
+				if (bitmapLength != 8 + packedLength
 				 || packedEnd > contentLength
 				 || packedEnd < 0)
 					return false;
