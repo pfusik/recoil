@@ -12673,9 +12673,8 @@ public class RECOIL
 		return ApplyBlend();
 	}
 
-	bool DecodeSpuScreen!(byte[] content, int bitmapOffset, int height, bool enhanced)
+	bool DecodeSpuVariable!(byte[] content, int height, int bitmapOffset, int paletteOffset, bool enhanced)
 	{
-		int paletteOffset = bitmapOffset + height * 160;
 		if (!SetSize(320, height, enhanced || IsStePalette(content, paletteOffset, height * 48) ? RECOILResolution.Ste1x1 : RECOILResolution.St1x1))
 			return false;
 		if (enhanced)
@@ -12699,8 +12698,10 @@ public class RECOIL
 		return true;
 	}
 
+	bool DecodeSpuScreen!(byte[] content, bool enhanced) => DecodeSpuVariable(content, 199, 160, 32000, enhanced);
+
 	bool DecodeSpu!(byte[] content, int contentLength)
-		=> contentLength == 51104 && DecodeSpuScreen(content, 160, 199, IsStringAt(content, 0, "5BIT"));
+		=> contentLength == 51104 && DecodeSpuScreen(content, IsStringAt(content, 0, "5BIT"));
 
 	static bool UnpackSpc(RleStream! rle, byte[]! unpacked)
 	{
@@ -12748,7 +12749,7 @@ public class RECOIL
 			}
 		}
 
-		return DecodeSpuScreen(unpacked, 160, 199, false);
+		return DecodeSpuScreen(unpacked, false);
 	}
 
 	bool DecodeSps!(byte[] content, int contentLength)
@@ -12797,7 +12798,7 @@ public class RECOIL
 			}
 		}
 
-		return DecodeSpuScreen(unpacked, 160, 199, false);
+		return DecodeSpuScreen(unpacked, false);
 	}
 
 	bool DecodeSpx!(byte[] content, int contentLength)
@@ -12824,18 +12825,34 @@ public class RECOIL
 		SpxStream() stream = { Content = content, ContentStart = contentOffset + 8, ContentOffset = paletteOffset };
 		switch (content[4]) {
 		case 0:
-			bitmapLength -= 160;
 			break;
 		case 1:
 			switch (content[3]) {
 			case 1:
-				bitmapLength = stream.GetUnpackedLength() - 160;
+				bitmapLength = stream.GetUnpackedLength();
 				break;
 			case 2:
 				if (content[5] != 1)
 					return false;
-				bitmapLength = Get32BigEndian(content, contentOffset + 4) - 320;
-				break;
+				// v2: bitmap&palette
+				int unpackedLength = Get32BigEndian(content, contentOffset + 8);
+				if (unpackedLength <= 0)
+					return false;
+				byte[]# unpacked = new byte[unpackedLength];
+				int packedLength = Get32BigEndian(content, stream.ContentStart + 4);
+				int packedEnd = stream.ContentStart + 8 + packedLength;
+				if (Get32BigEndian(content, stream.ContentStart - 8) != 8 + packedLength
+				 || packedEnd > contentLength
+				 || packedEnd < 0)
+					return false;
+				stream.ContentStart += 8;
+				stream.ContentOffset = packedEnd;
+				if (!stream.UnpackV2(unpacked, unpackedLength))
+					return false;
+				if (unpackedLength == 155552)
+					return DecodeSpuVariable(unpacked, 597, 160, 0x17fc0, false);
+				paletteOffset = Get32BigEndian(content, contentOffset + 4);
+				return DecodeSpuVariable(unpacked, (unpackedLength - paletteOffset) / 96, 320, paletteOffset, false);
 			default:
 				return false;
 			}
@@ -12843,6 +12860,7 @@ public class RECOIL
 		default:
 			return false;
 		}
+		bitmapLength -= 160;
 		if (bitmapLength <= 0 || bitmapLength % 160 != 0)
 			return false;
 		int height = bitmapLength / 160;
@@ -12856,19 +12874,6 @@ public class RECOIL
 			if (!stream.Unpack(unpacked, 0, bitmapLength))
 				return false;
 		}
-		else {
-			// v2: bitmap&palette
-			int packedLength = Get32BigEndian(content, stream.ContentStart + 4);
-			int packedEnd = stream.ContentStart +8 + packedLength;
-			if (Get32BigEndian(content, stream.ContentStart - 8) != 8 + packedLength
-			 || packedEnd > contentLength
-			 || packedEnd < 0)
-				return false;
-			stream.ContentStart += 8;
-			stream.ContentOffset = packedEnd;
-			if (!stream.UnpackV2(unpacked, height << 8))
-				return false;
-		}
 
 		// unpack palette
 		if (content[5] == 0) {
@@ -12876,7 +12881,7 @@ public class RECOIL
 				return false;
 			content.CopyTo(paletteOffset, unpacked, bitmapLength, paletteLength);
 		}
-		else if (content[3] == 1) {
+		else {
 			stream.ContentStart = paletteOffset;
 			stream.ContentOffset = paletteOffset + paletteLength;
 			if (stream.ContentOffset > contentLength
@@ -12885,7 +12890,7 @@ public class RECOIL
 				return false;
 		}
 
-		return DecodeSpuScreen(unpacked, 0, height, false);
+		return DecodeSpuVariable(unpacked, height, 0, height * 160, false);
 	}
 
 	static int GetStLowSeparateBitplanes(byte[] content, int contentOffset, int bitplaneLength, int x)
