@@ -12801,6 +12801,31 @@ public class RECOIL
 		return DecodeSpuScreen(unpacked, false);
 	}
 
+	bool DecodeSpxV2!(byte[] content, int contentLength, SpxStream! stream)
+	{
+		if (content[5] != 1)
+			return false;
+		int unpackedLength = Get32BigEndian(content, stream.ContentStart);
+		if (unpackedLength <= 0)
+			return false;
+		int bitmapLength = Get32BigEndian(content, stream.ContentStart - 8);
+		int paletteOffset = Get32BigEndian(content, stream.ContentStart - 4);
+		int packedLength = Get32BigEndian(content, stream.ContentStart + 4);
+		stream.ContentStart += 8;
+		int packedEnd = stream.ContentStart + packedLength;
+		if (bitmapLength != 8 + packedLength
+		 || packedEnd > contentLength
+		 || packedEnd < 0)
+			return false;
+		stream.ContentOffset = packedEnd;
+		byte[]# unpacked = new byte[unpackedLength];
+		if (!stream.UnpackV2(unpacked, unpackedLength))
+			return false;
+		if (paletteOffset == 0x18020 && unpackedLength == 0x25fa0)
+			return DecodeSpuVariable(unpacked, 597, 160, 0x17fc0, false);
+		return DecodeSpuVariable(unpacked, (unpackedLength - paletteOffset) / 96, 320, paletteOffset, false);
+	}
+
 	bool DecodeSpx!(byte[] content, int contentLength)
 	{
 		if (contentLength < 12 || content[0] != 'S' || content[1] != 'P' || content[2] != 'X')
@@ -12832,27 +12857,7 @@ public class RECOIL
 				bitmapLength = stream.GetUnpackedLength();
 				break;
 			case 2:
-				if (content[5] != 1)
-					return false;
-				// v2: bitmap&palette
-				int unpackedLength = Get32BigEndian(content, contentOffset + 8);
-				if (unpackedLength <= 0)
-					return false;
-				byte[]# unpacked = new byte[unpackedLength];
-				int packedLength = Get32BigEndian(content, contentOffset + 12);
-				int packedEnd = contentOffset + 16 + packedLength;
-				if (bitmapLength != 8 + packedLength
-				 || packedEnd > contentLength
-				 || packedEnd < 0)
-					return false;
-				stream.ContentStart += 8;
-				stream.ContentOffset = packedEnd;
-				if (!stream.UnpackV2(unpacked, unpackedLength))
-					return false;
-				paletteOffset = Get32BigEndian(content, contentOffset + 4);
-				if (paletteOffset == 0x18020 && unpackedLength == 0x25fa0)
-					return DecodeSpuVariable(unpacked, 597, 160, 0x17fc0, false);
-				return DecodeSpuVariable(unpacked, (unpackedLength - paletteOffset) / 96, 320, paletteOffset, false);
+				return DecodeSpxV2(content, contentLength, stream);
 			default:
 				return false;
 			}
