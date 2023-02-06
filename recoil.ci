@@ -6962,10 +6962,10 @@ public class RECOIL
 
 		switch (content[7]) {
 		case 1:
-			if ((width & 1) != 0
-			 || contentLength != bitmapOffset + (width >> 1) * height)
+			width = width + 1 >> 1;
+			if (contentLength != bitmapOffset + width * height)
 				return false;
-			DecodeNibbles(content, bitmapOffset, width >> 1);
+			DecodeNibbles(content, bitmapOffset, width);
 			return true;
 		case 2:
 			if (contentLength != bitmapOffset + width * height)
