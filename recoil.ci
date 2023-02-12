@@ -10445,8 +10445,9 @@ public class RECOIL
 		case 10018:
 			return DecodeOcp(content, contentLength);
 		case 10241:
-		case 10242:
 			return DecodeDol(content, contentLength);
+		case 10242:
+			return DecodeBpl(content, contentLength);
 		case 17218:
 		case 17409:
 			return DecodeFli(content, contentLength);
