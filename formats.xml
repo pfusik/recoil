@@ -711,8 +711,6 @@
 		</format>
 	</platform>
 	<platform name="MSX" href="https://en.wikipedia.org/wiki/MSX">
-		<format name="MSX Interchange Format" maxWidth="512" maxHeight="424" maxFrames="2"><ext>MIF</ext></format>
-		<format name="MIG" maxWidth="512" maxHeight="424" maxFrames="2"><ext>MIG</ext></format>
 		<format name="Screen 2" width="256" height="192" colors="15">
 			<ext>SC2</ext>
 			<ext>GRP</ext>
@@ -748,6 +746,8 @@
 			<ext>MAG</ext>
 			<ext>MAX</ext>
 		</format>
+		<format name="MSX Interchange Format" maxWidth="512" maxHeight="424" maxFrames="2"><ext>MIF</ext></format>
+		<format name="MIG" maxWidth="512" maxHeight="424" maxFrames="2"><ext>MIG</ext></format>
 		<format name="Dynamic Publisher screen" width="512" height="704" colors="2"><ext>PCT</ext></format>
 		<format><ext>PI</ext></format>
 		<format name="YPIC" maxWidth="256" maxHeight="212"><ext>PIC</ext></format>
