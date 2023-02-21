@@ -7831,12 +7831,11 @@ public class RECOIL
 			if (codes >> codeBits != 0)
 				codeBits++;
 			switch (s.ReadBit()) {
-			case 0:
-				// LZW
+			case 0: // LZW
 				int code = s.ReadBits(codeBits);
-				if (code >= codes - 1) {
-					if (code >= codes)
-						return false;
+				if (code < 0 || code >= codes)
+					return false;
+				if (code == codes - 1) {
 					// reset codes
 					codes = 0;
 					codeBits = 2;
@@ -7850,8 +7849,7 @@ public class RECOIL
 					unpacked[unpackedOffset++] = unpacked[sourceOffset++];
 				while (sourceOffset <= endOffset);
 				break;
-			case 1:
-				// literal
+			case 1: // literal
 				int b = s.ReadBits(8);
 				if (b < 0)
 					return false;
