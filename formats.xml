@@ -428,7 +428,7 @@
 	</platform>
 	<platform name="Atari Falcon" href="https://en.wikipedia.org/wiki/Atari_Falcon">
 		<format name="ImageLab" grayscale="256">
-			<ext>B&amp;W</ext>
+			<ext skip="uwp">B&amp;W</ext>
 			<ext>B_W</ext>
 		</format>
 		<format name="DuneGraph (compressed)" width="320" height="200" colors="256"><ext>DC1</ext></format>
@@ -711,6 +711,7 @@
 		</format>
 	</platform>
 	<platform name="MSX" href="https://en.wikipedia.org/wiki/MSX">
+		<format name="MSX Interchange Format" maxWidth="512" maxHeight="424" maxFrames="2"><ext>MIF</ext></format>
 		<format name="MIG" maxWidth="512" maxHeight="424" maxFrames="2"><ext>MIG</ext></format>
 		<format name="Screen 2" width="256" height="192" colors="15">
 			<ext>SC2</ext>

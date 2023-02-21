@@ -7818,6 +7818,157 @@ public class RECOIL
 		}
 	}
 
+	bool UnpackMif!(byte[] content, int contentLength, byte[]! unpacked, int unpackedLength, bool palette)
+	{
+		BitStream() s = { Content = content, ContentOffset = palette ? 34 : 2, ContentLength = contentLength };
+		int[16384 / 3] offsets;
+		int codes = 0;
+		int codeBits = 2;
+		for (int unpackedOffset = 0; unpackedOffset < unpackedLength; ) {
+			if (codes >= offsets.Length)
+				return false;
+			offsets[codes++] = unpackedOffset;
+			if (codes >> codeBits != 0)
+				codeBits++;
+			switch (s.ReadBit()) {
+			case 0:
+				// LZW
+				int code = s.ReadBits(codeBits);
+				if (code >= codes - 1) {
+					if (code >= codes)
+						return false;
+					// reset codes
+					codes = 0;
+					codeBits = 2;
+					break;
+				}
+				int sourceOffset = offsets[code];
+				int endOffset = offsets[code + 1];
+				if (unpackedOffset + endOffset - sourceOffset >= unpackedLength)
+					return false;
+				do
+					unpacked[unpackedOffset++] = unpacked[sourceOffset++];
+				while (sourceOffset <= endOffset);
+				break;
+			case 1:
+				// literal
+				int b = s.ReadBits(8);
+				if (b < 0)
+					return false;
+				unpacked[unpackedOffset++] = b;
+				break;
+			default:
+				return false;
+			}
+		}
+		if (s.ReadBit() != 0 || s.ReadBits(codeBits) <= codes || s.ContentOffset != contentLength)
+			return false;
+		if (palette)
+			SetMsxPalette(content, 2, 16);
+		return true;
+	}
+
+	bool DecodeMif!(byte[] content, int contentLength)
+	{
+		if (contentLength < 35)
+			return false;
+		byte[108544] unpacked;
+		switch (content[0]) {
+		case 0: // screen 5
+			if (!UnpackMif(content, contentLength, unpacked, 27136, true))
+				return false;
+			SetSize(256, 212, RECOILResolution.Msx21x1);
+			DecodeNibbles(unpacked, 0, 128);
+			return true;
+		case 1: // screen 6
+			if (!UnpackMif(content, contentLength, unpacked, 27136, true))
+				return false;
+			SetSize(512, 424, RECOILResolution.Msx21x2);
+			DecodeMsx6(unpacked, 0);
+			return true;
+		case 2: // screen 7
+			if (!UnpackMif(content, contentLength, unpacked, 54272, true))
+				return false;
+			SetSize(512, 424, RECOILResolution.Msx21x2);
+			DecodeNibbles(unpacked, 0, 256);
+			return true;
+		case 3: // screen 8
+			if (!UnpackMif(content, contentLength, unpacked, 54272, false))
+				return false;
+			SetSc8Palette();
+			SetSize(256, 212, RECOILResolution.Msx21x1);
+			DecodeBytes(unpacked, 0);
+			return true;
+		case 4: // screen 10
+			if (!UnpackMif(content, contentLength, unpacked, 54272, true))
+				return false;
+			SetSize(256, 212, RECOILResolution.Msx2Plus1x1);
+			DecodeMsxYjkScreen(unpacked, 0, true);
+			return true;
+		case 5: // screen 12
+			if (!UnpackMif(content, contentLength, unpacked, 54272, false))
+				return false;
+			SetSize(256, 212, RECOILResolution.Msx2Plus1x1);
+			DecodeMsxYjkScreen(unpacked, 0, false);
+			return true;
+		case 8: // screen 2
+			if (!UnpackMif(content, contentLength, unpacked, 14336, true))
+				return false;
+			DecodeSc2Sc4(unpacked, 0, RECOILResolution.Msx21x1);
+			return true;
+		case 9: // screen 3
+			if (!UnpackMif(content, contentLength, unpacked, 1536, true))
+				return false;
+			DecodeSc3Screen(unpacked, 0, false);
+			return true;
+		case 0x10: // screen 5 interlaced
+			if (!UnpackMif(content, contentLength, unpacked, 2 * 27136, true))
+				return false;
+			SetSize(512, 424, RECOILResolution.Msx22x1i);
+			Frames = 2;
+			DecodeNibbles(unpacked, 0, 128);
+			return true;
+		case 0x11: // screen 6 interlaced
+			if (!UnpackMif(content, contentLength, unpacked, 2 * 27136, true))
+				return false;
+			SetSize(512, 424, RECOILResolution.Msx21x1i);
+			Frames = 2;
+			DecodeMsx6(unpacked, 0);
+			return true;
+		case 0x12: // screen 7 interalced
+			if (!UnpackMif(content, contentLength, unpacked, 2 * 54272, true))
+				return false;
+			SetSize(512, 424, RECOILResolution.Msx21x1i);
+			Frames = 2;
+			DecodeNibbles(unpacked, 0, 256);
+			return true;
+		case 0x13: // screen 8 interlaced
+			if (!UnpackMif(content, contentLength, unpacked, 2 * 54272, false))
+				return false;
+			SetSc8Palette();
+			SetSize(512, 424, RECOILResolution.Msx22x1i);
+			Frames = 2;
+			DecodeBytes(unpacked, 0);
+			return true;
+		case 0x14: // screen 10 interlaced
+			if (!UnpackMif(content, contentLength, unpacked, 2 * 54272, true))
+				return false;
+			SetSize(512, 424, RECOILResolution.Msx2Plus2x1i);
+			Frames = 2;
+			DecodeMsxYjkScreen(unpacked, 0, true);
+			return true;
+		case 0x15: // screen 12 interlaced
+			if (!UnpackMif(content, contentLength, unpacked, 2 * 54272, false))
+				return false;
+			SetSize(512, 424, RECOILResolution.Msx2Plus2x1i);
+			Frames = 2;
+			DecodeMsxYjkScreen(unpacked, 0, false);
+			return true;
+		default:
+			return false;
+		}
+	}
+
 	static int GetMigMode(int reg0, int reg1, int reg19, int length)
 		=> (reg0 & 0x0e) | (reg1 & 0x18) << 1 | (reg19 & 0x18) << 3 | length << 8;
 
@@ -19949,6 +20100,7 @@ public class RECOIL
 		case PackExt("MGA"):
 		case PackExt("MGP"):
 		case PackExt("MIC"):
+		case PackExt("MIF"):
 		case PackExt("MIG"):
 		case PackExt("MIL"):
 		case PackExt("MIS"):
@@ -20762,6 +20914,8 @@ public class RECOIL
 			return DecodeMgp(content, contentLength);
 		case PackExt("MIC"):
 			return DecodeMic(filename, content, contentLength);
+		case PackExt("MIF"):
+			return DecodeMif(content, contentLength);
 		case PackExt("MIG"):
 			return DecodeMig(content, contentLength);
 		case PackExt("MIL"):
