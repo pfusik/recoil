@@ -1109,7 +1109,7 @@ class DrpStream : RleStream
 		return b >= 0;
 	}
 
-	internal static byte[] UnpackFile(byte[] content, int contentLength, string signature, byte[]! unpacked, int unpackedLength)
+	internal static byte[]? UnpackFile(byte[] content, int contentLength, string signature, byte[]! unpacked, int unpackedLength)
 	{
 		if (contentLength > 16 && RECOIL.IsStringAt(content, 2, signature)) {
 			DrpStream() rle = { Content = content, ContentOffset = 16, ContentLength = contentLength, Escape = content[15] };
@@ -2201,7 +2201,7 @@ class DeepStream : PackBitsStream
 	internal int Components = 0;
 	int[6] ComponentShift;
 	int CurrentByte; // delta compression only
-	internal int[]# Line = null; // delta compression only
+	internal int[]#? Line = null; // delta compression only
 
 	internal bool SetDpel!(int chunkOffset, int chunkLength)
 	{
@@ -4671,7 +4671,7 @@ public class RECOIL
 	int Height;
 
 	/// Decoded image pixels as 0xRRGGBB.
-	int[]# Pixels;
+	int[]#? Pixels;
 
 	/// Length of the currently allocated `Pixels`.
 	int PixelsLength = 0;
@@ -5141,7 +5141,7 @@ public class RECOIL
 		}
 	}
 
-	void DecodeScaledBitplanes!(byte[] content, int contentOffset, int width, int height, int bitplanes, bool ehb, MultiPalette! multiPalette)
+	void DecodeScaledBitplanes!(byte[] content, int contentOffset, int width, int height, int bitplanes, bool ehb, MultiPalette!? multiPalette)
 	{
 		int contentStride = (width + 15 >> 4 << 1) * bitplanes;
 		for (int y = 0; y < height; y++) {
@@ -7206,7 +7206,7 @@ public class RECOIL
 		return height < 212 ? height : 212;
 	}
 
-	void DecodeMsxScreen!(byte[] content, int contentOffset, byte[] interlace, int height, int mode, int interlaceMask)
+	void DecodeMsxScreen!(byte[] content, int contentOffset, byte[]? interlace, int height, int mode, int interlaceMask)
 	{
 		if (interlaceMask != 0) {
 			SetSize(512, height << 1, mode >= 10 ? RECOILResolution.Msx2Plus2x1i :
@@ -7251,7 +7251,7 @@ public class RECOIL
 		}
 	}
 
-	bool DecodeMsxSc!(string filename, byte[] content, int contentOffset, string upperExt, string lowerExt, int height, int mode)
+	bool DecodeMsxSc!(string? filename, byte[] content, int contentOffset, string upperExt, string lowerExt, int height, int mode)
 	{
 		if (filename != null) {
 			byte[54279] interlace;
@@ -7352,7 +7352,7 @@ public class RECOIL
 		return DecodeMsx6(content, 7);
 	}
 
-	bool DecodeGl6!(string filename, byte[] content, int contentLength)
+	bool DecodeGl6!(string? filename, byte[] content, int contentLength)
 	{
 		if (contentLength < 5)
 			return false;
@@ -7372,7 +7372,7 @@ public class RECOIL
 		return DecodeMsx6(content, 4);
 	}
 
-	static byte[] UnpackSr(byte[] content, int contentLength, byte[]! unpacked)
+	static byte[]? UnpackSr(byte[] content, int contentLength, byte[]! unpacked)
 	{
 		if (contentLength < 7)
 			return null;
@@ -7417,12 +7417,12 @@ public class RECOIL
 	bool DecodeSr7!(string filename, byte[] content, int contentLength)
 	{
 		byte[54279] unpacked = 0;
-		content = UnpackSr(content, contentLength, unpacked);
-		if (content == null)
+		byte[]? source = UnpackSr(content, contentLength, unpacked);
+		if (source == null)
 			return false;
 		SetMsxCompanionPalette(filename, "PL7", "pl7");
 		SetSize(512, 212 * 2, RECOILResolution.Msx21x2);
-		DecodeNibbles(content, 7, 256);
+		DecodeNibbles(source, 7, 256);
 		return true;
 	}
 
@@ -7460,14 +7460,14 @@ public class RECOIL
 		}
 	}
 
-	bool DecodeSc8!(string filename, byte[] content, int contentLength)
+	bool DecodeSc8!(string? filename, byte[] content, int contentLength)
 	{
 		byte[54279] unpacked = 0;
-		content = UnpackSr(content, contentLength, unpacked);
-		if (content == null)
+		byte[]? source = UnpackSr(content, contentLength, unpacked);
+		if (source == null)
 			return false;
 		SetSc8Palette();
-		if (!DecodeMsxSc(filename, content, 7, "S18", "s18", 212, 8)
+		if (!DecodeMsxSc(filename, source, 7, "S18", "s18", 212, 8)
 		 && contentLength == 64167) {
 			const byte[32] spritePalette = {
 				0x00, 0,
@@ -7649,9 +7649,10 @@ public class RECOIL
 			height = 192;
 		else {
 			byte[54279] unpacked = 0;
-			content = UnpackSr(content, contentLength, unpacked);
-			if (content == null)
+			byte[]? source = UnpackSr(content, contentLength, unpacked);
+			if (source == null)
 				return false;
+			content = source;
 			height = 212;
 		}
 		DecodeSccSca(filename, content, contentLength, height, false);
@@ -7667,7 +7668,7 @@ public class RECOIL
 		return true;
 	}
 
-	bool DecodeGlYjk!(string filename, byte[] content, int contentLength)
+	bool DecodeGlYjk!(string? filename, byte[] content, int contentLength)
 	{
 		if (contentLength < 8)
 			return false;
@@ -10250,19 +10251,19 @@ public class RECOIL
 	bool DecodeDrz!(byte[] content, int contentLength)
 	{
 		byte[10051] unpacked;
-		content = DrpStream.UnpackFile(content, contentLength, "DRAZPAINT 1.4", unpacked, 10051);
-		return content != null
-			&& DecodeC64Multicolor(content, 0x802, 0x402, 2, 0x2742);
+		byte[]? source = DrpStream.UnpackFile(content, contentLength, "DRAZPAINT 1.4", unpacked, 10051);
+		return source != null
+			&& DecodeC64Multicolor(source, 0x802, 0x402, 2, 0x2742);
 	}
 
 	bool DecodeDrl!(byte[] content, int contentLength)
 	{
 		byte[18242] unpacked;
-		content = DrpStream.UnpackFile(content, contentLength, "DRAZLACE! 1.0", unpacked, 18242);
-		if (content == null)
+		byte[]? source = DrpStream.UnpackFile(content, contentLength, "DRAZLACE! 1.0", unpacked, 18242);
+		if (source == null)
 			return false;
-		int shift = content[0x2744];
-		return shift <= 1 && DecodeMciLike(content, 0x802, 0x402, 0x2802, 0x402, 2, 0x2742, shift);
+		int shift = source[0x2744];
+		return shift <= 1 && DecodeMciLike(source, 0x802, 0x402, 0x2802, 0x402, 2, 0x2742, shift);
 	}
 
 	void DecodeMleFrame!(byte[] content, int contentOffset, int pixelsOffset)
@@ -12429,7 +12430,7 @@ public class RECOIL
 		return DecodeSt(unpacked, 0, content, contentOffset + 1, mode, 0);
 	}
 
-	bool DecodeCptFul!(byte[] content, int contentOffset, int contentLength, HblPalette! palette)
+	bool DecodeCptFul!(byte[] content, int contentOffset, int contentLength, HblPalette!? palette)
 	{
 		if (contentLength < contentOffset + 40 || content[contentOffset + 32] != 0)
 			return false;
@@ -13124,7 +13125,7 @@ public class RECOIL
 		return ApplyBlend();
 	}
 
-	byte[] UnpackPbx(byte[] content, int contentLength, byte[]! unpacked, int bitmapOffset, int bytesPer16Pixels, int unpackedLength)
+	byte[]? UnpackPbx(byte[] content, int contentLength, byte[]! unpacked, int bitmapOffset, int bytesPer16Pixels, int unpackedLength)
 	{
 		if (content[4] != 0x80 || content[5] != 1)
 			return contentLength == unpackedLength ? content : null;
@@ -13143,18 +13144,18 @@ public class RECOIL
 	bool DecodePbx01!(byte[] content, int contentLength, int bitplanes, int lineHeight)
 	{
 		byte[32512] unpacked;
-		content = UnpackPbx(content, contentLength, unpacked, 512, bitplanes << 1, 32512);
-		if (content == null || content[128 + 33] != 0)
+		byte[]? source = UnpackPbx(content, contentLength, unpacked, 512, bitplanes << 1, 32512);
+		if (source == null || source[128 + 33] != 0)
 			return false;
 		int paletteOffset = 128;
 		for (int y = 0; y < 200; y++) {
-			if (paletteOffset < 512 && y == content[paletteOffset + 33]) {
-				SetStPalette(content, paletteOffset, 16);
+			if (paletteOffset < 512 && y == source[paletteOffset + 33]) {
+				SetStPalette(source, paletteOffset, 16);
 				do
 					paletteOffset += 48;
-				while (paletteOffset < 512 && content[paletteOffset + 34] == 0 && content[paletteOffset + 35] == 0);
+				while (paletteOffset < 512 && source[paletteOffset + 34] == 0 && source[paletteOffset + 35] == 0);
 			}
-			DecodeBitplanes(content, 512 + y * 160, 0, bitplanes, y * lineHeight * Width, Width, lineHeight);
+			DecodeBitplanes(source, 512 + y * 160, 0, bitplanes, y * lineHeight * Width, Width, lineHeight);
 		}
 		return true;
 	}
@@ -13185,21 +13186,21 @@ public class RECOIL
 			return DecodePbx01(content, contentLength, 2, 2);
 		case 0x80: {
 				byte[44928] unpacked;
-				content = UnpackPbx(content, contentLength, unpacked, 0x3280, 8, 44928);
-				if (content == null)
+				byte[]? source = UnpackPbx(content, contentLength, unpacked, 0x3280, 8, 44928);
+				if (source == null)
 					return false;
 				SetSize(320, 200, RECOILResolution.St1x1);
-				DecodePbx8(content, 128, 0x3280, 0);
+				DecodePbx8(source, 128, 0x3280, 0);
 				return true;
 			}
 		case 0x81: {
 				byte[57728] unpacked;
-				content = UnpackPbx(content, contentLength, unpacked, 0x6480, 8, 57728);
-				if (content == null)
+				byte[]? source = UnpackPbx(content, contentLength, unpacked, 0x6480, 8, 57728);
+				if (source == null)
 					return false;
 				SetSize(320, 200, RECOILResolution.St1x1, 2);
-				DecodePbx8(content, 128, 0x6480, 0);
-				DecodePbx8(content, 0x3280, 0x6480, 320 * 200);
+				DecodePbx8(source, 128, 0x6480, 0);
+				DecodePbx8(source, 0x3280, 0x6480, 320 * 200);
 				return ApplyBlend();
 			}
 		default:
@@ -14383,7 +14384,7 @@ public class RECOIL
 		return true;
 	}
 
-	void DecodeHam!(byte[] unpacked, int width, int height, int bitplanes, MultiPalette! multiPalette)
+	void DecodeHam!(byte[] unpacked, int width, int height, int bitplanes, MultiPalette!? multiPalette)
 	{
 		int bytesPerLine = (width + 15 >> 4 << 1) * bitplanes;
 		int holdBits = bitplanes > 6 ? 6 : 4;
@@ -14599,7 +14600,7 @@ public class RECOIL
 		return true;
 	}
 
-	bool DecodeIffUnpacked!(byte[] unpacked, int width, int height, RECOILResolution resolution, int bitplanes, int colors, int camg, MultiPalette! multiPalette)
+	bool DecodeIffUnpacked!(byte[] unpacked, int width, int height, RECOILResolution resolution, int bitplanes, int colors, int camg, MultiPalette!? multiPalette)
 	{
 		if (!SetScaledSize(width, height, resolution))
 			return false;
@@ -14688,7 +14689,7 @@ public class RECOIL
 		CtblPalette() ctbl;
 		ShamLacePalette() sham;
 		PchgPalette() pchg;
-		MultiPalette! multiPalette = null;
+		MultiPalette!? multiPalette = null;
 		while (contentOffset < contentLength - 7) {
 			int chunkLength = Get32BigEndian(content, contentOffset + 4);
 			int chunkEndOffset = contentOffset + 8 + chunkLength;
@@ -15127,7 +15128,7 @@ public class RECOIL
 		}
 	}
 
-	void DecodeAtari8Gr0Line(byte[] characters, int charactersOffset, byte[] font, int fontOffset, byte[]! frame, int frameOffset, int lines)
+	void DecodeAtari8Gr0Line(byte[]? characters, int charactersOffset, byte[] font, int fontOffset, byte[]! frame, int frameOffset, int lines)
 	{
 		byte[2] colors;
 		colors[0] = GtiaColors[6];
@@ -15159,7 +15160,7 @@ public class RECOIL
 		}
 	}
 
-	void DecodeAtari8Gr0!(byte[] characters, int charactersOffset, int charactersStride, byte[] font, int fontOffset, byte[]! frame)
+	void DecodeAtari8Gr0!(byte[]? characters, int charactersOffset, int charactersStride, byte[] font, int fontOffset, byte[]! frame)
 	{
 		GtiaColors[6] = 0x00;
 		GtiaColors[5] = 0x0e;
@@ -15179,7 +15180,7 @@ public class RECOIL
 		}
 	}
 
-	void DecodeAtari8Gr12Line(byte[] characters, int charactersOffset, byte[] font, int fontOffset, byte[]! frame, int frameOffset, int doubleLine)
+	void DecodeAtari8Gr12Line(byte[]? characters, int charactersOffset, byte[] font, int fontOffset, byte[]! frame, int frameOffset, int doubleLine)
 	{
 		for (int y = 0; y < 8 << doubleLine; y++) {
 			for (int x = 0; x < Width; x++) {
@@ -15594,7 +15595,7 @@ public class RECOIL
 		return ApplyAtari8Palette(frame);
 	}
 
-	bool DecodeMic!(string filename, byte[] content, int contentLength)
+	bool DecodeMic!(string? filename, byte[] content, int contentLength)
 	{
 		if (contentLength == 15872) {
 			// AtariGraphics file format.
@@ -17100,7 +17101,7 @@ public class RECOIL
 		return ApplyAtari8Palette(frame);
 	}
 
-	bool DecodeAtari8Font!(byte[] characters, byte[] font, int fontOffset)
+	bool DecodeAtari8Font!(byte[]? characters, byte[] font, int fontOffset)
 	{
 		SetSize(256, 32, RECOILResolution.Xe1x1);
 		byte[256 * 32] frame;
@@ -17503,7 +17504,7 @@ public class RECOIL
 		return true;
 	}
 
-	bool DecodeEnvisionCommon!(byte[] content, int mode, int columns, int rows, int charactersOffset, int[] fontId2Offset)
+	bool DecodeEnvisionCommon!(byte[] content, int mode, int columns, int rows, int charactersOffset, int[]? fontId2Offset)
 	{
 		int charWidth;
 		int charHeight;
@@ -21710,7 +21711,7 @@ public class RECOIL
 	public int GetFrames() => Frames;
 
 	// One bit for each RGB value.
-	byte[]# ColorInUse = null;
+	byte[]#? ColorInUse = null;
 
 	// Number of unique colors in `pixels`.
 	int Colors;
@@ -21720,7 +21721,7 @@ public class RECOIL
 	// Values are in ascending order for the sake of binary search.
 	int[256] Palette;
 
-	byte[]# Indexes = null;
+	byte[]#? Indexes = null;
 	int IndexesLength = 0;
 
 	/// Calculates palette for the decoded picture.
@@ -21777,7 +21778,7 @@ public class RECOIL
 	/// Call `GetColors()` for the actual number of colors.
 	/// Returns `null` if conversion fails,
 	/// because there are more than 256 colors.
-	public int[] ToPalette!()
+	public int[]? ToPalette!()
 	{
 		if (Colors == UnknownColors)
 			CalculatePalette();
