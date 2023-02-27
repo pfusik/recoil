@@ -23,7 +23,7 @@ IMAGEMAGICK_i686_DIR = C:/Program Files (x86)/ImageMagick-7.1.0-Q16-HDRI
 IMAGEMAGICK_x86_64_DIR = C:/Program Files/ImageMagick-7.1.0-Q16-HDRI
 XNVIEWMP_DIR = C:/Program Files/XnViewMP
 PAINT_NET_DIR = C:/Program Files/paint.net
-DOTNET_REF_DIR = `echo C:/Program\ Files/dotnet/packs/Microsoft.NETCore.App.Ref/6.0.*/ref/net6.0`
+DOTNET_REF_DIR = `echo C:/Program\ Files/dotnet/packs/Microsoft.NETCore.App.Ref/7.0.*/ref/net7.0`
 ifdef V
 DO = mkdir -p $(@D) && 
 else
@@ -62,7 +62,7 @@ i686/RECOIL.plg x86_64/RECOIL.plg64: imagine/recoilimagine.c ../formats.h recoil
 	$(DO)$(DO_CC) -static
 
 paint.net/RecoilPaintDotNet.dll: paint.net/RecoilPaintDotNet.cs paint.net/RecoilFileTypeFactory.cs paint.net/RECOIL.cs
-	$(DO)$(CSC) -t:library $^ -nostdlib -r:"$(PAINT_NET_DIR)/PaintDotNet.Base.dll" -r:"$(PAINT_NET_DIR)/PaintDotNet.Core.dll" -r:"$(PAINT_NET_DIR)/PaintDotNet.Data.dll" -r:"$(PAINT_NET_DIR)/System.dll" -r:"$(DOTNET_REF_DIR)/System.Runtime.dll"
+	$(DO)$(CSC) -t:library $^ -nostdlib -r:"$(PAINT_NET_DIR)/PaintDotNet.ComponentModel.dll" -r:"$(PAINT_NET_DIR)/PaintDotNet.Core.dll" -r:"$(PAINT_NET_DIR)/PaintDotNet.Data.dll" -r:"$(PAINT_NET_DIR)/PaintDotNet.Primitives.dll" -r:"$(PAINT_NET_DIR)/System.dll" -r:"$(DOTNET_REF_DIR)/System.Runtime.dll"
 
 paint.net/RecoilFileTypeFactory.cs: paint.net/RecoilFileTypeFactory.cs.xsl ../formats.xml
 	$(DO)$(XSLTPROC)
