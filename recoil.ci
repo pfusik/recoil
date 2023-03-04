@@ -16805,8 +16805,9 @@ public class RECOIL
 		if (contentLength != 16000)
 			return false;
 		SetSize(320, 200, RECOILResolution.Xe2x1);
-		byte[320 * 200] frame1;
+		GtiaColors[8] = 0;
 		LeftSkip = -1;
+		byte[320 * 200] frame1;
 		DecodeAtari8Gr9(content, 0, 40, frame1, 0, 320, 320, 200);
 		LeftSkip = 1;
 		byte[320 * 200] frame2;
