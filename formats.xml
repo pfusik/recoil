@@ -31,7 +31,7 @@
 	<platform name="Amiga DCTV" href="http://amiga.resource.cx/exp/dctv">
 		<format name="DCTV">
 			<ext>DCT</ext>
-			<ext>DCTV</ext>
+			<ext skip="uwp">DCTV</ext>
 		</format>
 	</platform>
 	<platform name="Amiga HAM-E" href="http://amiga.resource.cx/exp/hame">
@@ -340,6 +340,7 @@
 		<format name="Imagic" width="640" height="400" colors="2"><ext>IC3</ext></format>
 		<format name="DEGAS Elite icon" colors="2"><ext>ICN</ext></format>
 		<format name="Interchange File Format"><ext>IFF</ext></format>
+		<format name="Atari Image Manager" maxWidth="256" maxHeight="256" grayscale="256"><ext>IM</ext></format>
 		<format name="GEM Bit Image"><ext>IMG</ext></format>
 		<format name="Fullscreen Construction Kit" width="448" height="272" colors="16"><ext>KID</ext></format>
 		<format name="Dali (compressed)" width="320" height="200" colors="16"><ext>LPK</ext></format>

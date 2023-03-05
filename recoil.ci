@@ -13386,6 +13386,23 @@ public class RECOIL
 		return DecodeBlackAndWhite(bitmap, 0, size << 1, true, 0xffffff);
 	}
 
+	bool DecodeIm!(byte[] content, int contentLength)
+	{
+		switch (contentLength) {
+		case 16384:
+			SetSize(128, 128, RECOILResolution.St1x1);
+			break;
+		case 65536:
+			SetSize(256, 256, RECOILResolution.St1x1);
+			break;
+		default:
+			return false;
+		}
+		SetGrayscalePalette(0);
+		DecodeBytes(content, 0);
+		return true;
+	}
+
 	bool DecodeCe!(byte[] content, int contentLength)
 	{
 		if (contentLength < 192022 || !IsStringAt(content, 0, "EYES") || content[4] != 0)
@@ -20051,6 +20068,7 @@ public class RECOIL
 		case PackExt("ILD"):
 		case PackExt("ILE"):
 		case PackExt("ILS"):
+		case PackExt("IM"):
 		case PackExt("IMG"):
 		case PackExt("TIMG"):
 		case PackExt("XIMG"):
@@ -20814,6 +20832,8 @@ public class RECOIL
 			return DecodeIle(content, contentLength);
 		case PackExt("ILS"):
 			return DecodeIls(content, contentLength);
+		case PackExt("IM"):
+			return DecodeIm(content, contentLength);
 		case PackExt("IMG"):
 			return DecodeStImg(content, contentLength)
 				|| DecodeZxImg(content, contentLength)
