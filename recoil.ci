@@ -13403,6 +13403,26 @@ public class RECOIL
 		return true;
 	}
 
+	bool DecodeCol!(byte[] content, int contentLength)
+	{
+		int width;
+		switch (contentLength) {
+		case 65536:
+			width = 128;
+			break;
+		case 262144:
+			width = 256;
+			break;
+		default:
+			return false;
+		}
+		SetSize(width, width, RECOILResolution.St1x1);
+		int pixelsLength = contentLength >> 2;
+		for (int i = 0; i < pixelsLength; i++)
+			Pixels[i] = content[pixelsLength + i] << 16 | content[pixelsLength * 2 + i] << 8 | content[pixelsLength * 3 + i];
+		return true;
+	}
+
 	bool DecodeCe!(byte[] content, int contentLength)
 	{
 		if (contentLength < 192022 || !IsStringAt(content, 0, "EYES") || content[4] != 0)
@@ -19896,6 +19916,7 @@ public class RECOIL
 		case PackExt("CLP"):
 		case PackExt("CM5"):
 		case PackExt("CMP"):
+		case PackExt("COL"):
 		case PackExt("CP3"):
 		case PackExt("CPI"):
 		case PackExt("CPR"):
@@ -20521,6 +20542,8 @@ public class RECOIL
 		case PackExt("CMP"):
 			return DecodeDdGraph(filename, content, contentLength)
 				|| DecodeStCmp(content, contentLength);
+		case PackExt("COL"):
+			return DecodeCol(content, contentLength);
 		case PackExt("CP3"):
 			return DecodeCp3(content, contentLength);
 		case PackExt("CPI"):

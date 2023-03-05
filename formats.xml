@@ -250,7 +250,7 @@
 		<format name="PMG Designer by Henryk Karpowicz"><ext>PMD</ext></format>
 		<format name="Print Shop" width="88" height="52" colors="2"><ext>PSF</ext></format>
 		<format name="Vidig Paint" width="80" height="192" colors="16"><ext>RAP</ext></format>
-		<format name="XL-Paint MAX" width="160" height="192" colors="16" frames="2"><ext>RAW</ext></format>
+		<format name="XL-Paint MAX" width="160" height="192" colors="16" frames="2"><ext skip="uwp">RAW</ext></format>
 		<format name="ColorViewSquash" maxWidth="160" maxHeight="192" frames="3"><ext>RGB</ext></format>
 		<format name="Rocky Interlace Picture" maxWidth="320" maxHeight="239" maxFrames="2"><ext>RIP</ext></format>
 		<format name="Rambrandt" width="160" height="96" colors="99"><!-- 99 = 4 colors + 95 DLI changes --><ext>RM0</ext></format>
@@ -310,6 +310,7 @@
 		<format name="ComputerEyes" width="640" height="400" grayscale="192"><ext>CE3</ext></format>
 		<format name="Cyber Paint Cell" maxWidth="320" maxHeight="200" colors="16"><ext>CEL</ext></format>
 		<format name="Public Painter" width="640" maxHeight="800" colors="2"><ext>CMP</ext></format>
+		<format name="Atari Image Manager" maxWidth="256" maxHeight="256" colors="16777216"><ext>COL</ext></format>
 		<format name="Picworks" width="640" height="400" colors="2"><ext>CP3</ext></format>
 		<format name="Canvas (compressed)"><ext skip="uwp">CPT</ext></format>
 		<format name="Canvas (raster)" maxWidth="640" height="200">
@@ -456,7 +457,7 @@
 		</format>
 		<format name="RAG-D"><ext>RAG</ext></format>
 		<format name="IMG Scan" maxWidth="640" maxHeight="400" grayscale="256">
-			<ext>RAW</ext>
+			<ext skip="uwp">RAW</ext>
 			<ext>RWH</ext>
 			<ext>RWL</ext>
 		</format>
@@ -917,7 +918,7 @@
 	</platform>
 	<platform name="ZX81" href="https://en.wikipedia.org/wiki/ZX81">
 		<format name="Sinclair BASIC" width="32" height="24" unit="characters" colors="2"><ext>P</ext></format>
-		<format name="ZXPaintyONE v2.0" width="32" height="24" unit="characters" colors="2"><ext>RAW</ext></format>
+		<format name="ZXPaintyONE v2.0" width="32" height="24" unit="characters" colors="2"><ext skip="uwp">RAW</ext></format>
 		<format name="ZXpaintyONE" width="32" height="24" unit="characters" colors="2"><ext fake="true">ZP1</ext></format>
 	</platform>
 	<platform name="ZX Spectrum" href="https://en.wikipedia.org/wiki/ZX_Spectrum">
