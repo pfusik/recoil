@@ -5031,6 +5031,12 @@ public class RECOIL
 	/// RGB palette decoded from the image file.
 	internal int[256] ContentPalette;
 
+	void SetGrayscalePalette!(int inverse)
+	{
+		for (int c = 0; c < 256; c++)
+			ContentPalette[c] = (c ^ inverse) * 0x010101;
+	}
+
 	void DecodeBytes!(byte[] content, int contentOffset)
 	{
 		int width = GetOriginalWidth();
@@ -13448,24 +13454,18 @@ public class RECOIL
 		return true;
 	}
 
-	bool DecodeFalconGrayscale!(byte[] content, int contentOffset, int contentLength, int width, int height, int inverse)
-	{
-		int pixelsLength = width * height;
-		if (contentLength != contentOffset + pixelsLength
-		 || !SetSize(width, height, RECOILResolution.Falcon1x1))
-			return false;
-		for (int i = 0; i < pixelsLength; i++)
-			Pixels[i] = (content[contentOffset + i] ^ inverse) * 0x010101;
-		return true;
-	}
-
 	bool DecodeBw!(byte[] content, int contentLength)
 	{
 		if (contentLength < 11 || !IsStringAt(content, 0, "B&W256"))
 			return false;
 		int width = content[6] << 8 | content[7];
 		int height = content[8] << 8 | content[9];
-		return DecodeFalconGrayscale(content, 10, contentLength, width, height, 0);
+		if (contentLength != 10 + width * height
+		 || !SetSize(width, height, RECOILResolution.Falcon1x1))
+			return false;
+		SetGrayscalePalette(0);
+		DecodeBytes(content, 10);
+		return true;
 	}
 
 	bool DecodeFalconHir!(byte[] content, int contentLength)
@@ -13492,14 +13492,20 @@ public class RECOIL
 	{
 		switch (contentLength) {
 		case 64000: // RWL
-			return DecodeFalconGrayscale(content, 0, contentLength, 320, 200, 0xff);
+			SetSize(320, 200, RECOILResolution.Falcon1x1);
+			break;
 		case 128000: // RAW
-			return DecodeFalconGrayscale(content, 0, contentLength, 640, 200, 0xff);
+			SetSize(640, 200, RECOILResolution.Falcon1x1);
+			break;
 		case 256000: // RWH
-			return DecodeFalconGrayscale(content, 0, contentLength, 640, 400, 0xff);
+			SetSize(640, 400, RECOILResolution.Falcon1x1);
+			break;
 		default:
 			return false;
 		}
+		SetGrayscalePalette(0xff);
+		DecodeBytes(content, 0);
+		return true;
 	}
 
 	void DecodeR8G8G8X8Colors!(byte[] content, int contentOffset, int count)
@@ -13520,7 +13526,12 @@ public class RECOIL
 			return SetSize(width, height, RECOILResolution.Falcon1x1)
 				&& DecodeBlackAndWhite(content, 16, contentLength, false, 0xffffff);
 		case 1:
-			return DecodeFalconGrayscale(content, 16, contentLength, width, height, 0xff);
+			if (contentLength != 16 + pixelsLength
+			 || !SetSize(width, height, RECOILResolution.Falcon1x1))
+				return false;
+			SetGrayscalePalette(0xff);
+			DecodeBytes(content, 16);
+			return true;
 		case 4:
 			if (contentLength != 16 + pixelsLength * 3
 			 || !SetSize(width, height, RECOILResolution.Falcon1x1))
