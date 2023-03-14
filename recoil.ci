@@ -7712,7 +7712,8 @@ public class RECOIL
 		return true;
 	}
 
-	const int G9bYuv = 0;
+	const int G9bYjk = 0;
+	const int G9bYuv = 1;
 
 	void DecodeG9bUnpacked!(byte[] content, int depth, int headerLength)
 	{
@@ -7726,6 +7727,9 @@ public class RECOIL
 			break;
 		case 8:
 			DecodeBytes(content, headerLength);
+			break;
+		case G9bYjk:
+			DecodeMsxYjkScreen(content, 16, false);
 			break;
 		case G9bYuv:
 			pixelsLength = Width * Height;
@@ -7798,7 +7802,6 @@ public class RECOIL
 				return false;
 			break;
 		case 8:
-			// TODO: YJK
 			switch (content[7]) {
 			case 0:
 				if ((width & 3) != 0)
@@ -7806,6 +7809,9 @@ public class RECOIL
 				switch (content[6]) {
 				case 0x40:
 					SetSc8Palette();
+					break;
+				case 0x80:
+					depth = G9bYjk;
 					break;
 				case 0xc0:
 					depth = G9bYuv;
