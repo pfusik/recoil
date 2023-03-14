@@ -5483,17 +5483,28 @@ public class RECOIL
 	{
 		if (contentLength < 20 || Get32LittleEndian(content, 0) != 16)
 			return false;
+		int width;
+		int height;
 		int pixelsLength;
 		int bitmapOffset;
 		switch (content[4] & 0xf) {
 		case 2: // 16bpp
-			int width = content[16] | content[17] << 8;
-			int height = content[18] | content[19] << 8;
+			width = content[16] | content[17] << 8;
+			height = content[18] | content[19] << 8;
 			pixelsLength = width * height;
 			if (contentLength < 20 + (pixelsLength << 1)
 			 || !SetSize(width, height, RECOILResolution.PlayStation1x1))
 				return false;
 			DecodePlayStation(content, 20, Pixels, pixelsLength);
+			return true;
+		case 3: // 24bpp
+			width = (content[16] | content[17] << 8) * 2 / 3;
+			height = content[18] | content[19] << 8;
+			pixelsLength = width * height;
+			if (contentLength != 20 + pixelsLength * 3
+			 || !SetSize(width, height, RECOILResolution.PlayStation1x1))
+				return false;
+			DecodeR8G8B8Colors(content, 20, pixelsLength, Pixels, 0);
 			return true;
 		case 8: // 4bpp
 			bitmapOffset = DecodeTimPalette(content, contentLength, 16);
