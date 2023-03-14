@@ -7714,7 +7714,7 @@ public class RECOIL
 
 	const int G9bYuv = 0;
 
-	void DecodeG9bUnpacked!(byte[] content, int depth)
+	void DecodeG9bUnpacked!(byte[] content, int depth, int headerLength)
 	{
 		int pixelsLength;
 		switch (depth) {
@@ -7725,7 +7725,7 @@ public class RECOIL
 			DecodeNibbles(content, 16 + 16 * 3, Width + 1 >> 1);
 			break;
 		case 8:
-			DecodeBytes(content, 16 + 64 * 3);
+			DecodeBytes(content, headerLength);
 			break;
 		case G9bYuv:
 			pixelsLength = Width * Height;
@@ -7798,13 +7798,21 @@ public class RECOIL
 				return false;
 			break;
 		case 8:
-			// TODO: fixed palette, YJK
+			// TODO: YJK
 			switch (content[7]) {
 			case 0:
-				if (content[6] != 0xc0
-				 || (width & 3) != 0)
+				if ((width & 3) != 0)
 					return false;
-				depth = G9bYuv;
+				switch (content[6]) {
+				case 0x40:
+					SetSc8Palette();
+					break;
+				case 0xc0:
+					depth = G9bYuv;
+					break;
+				default:
+					return false;
+				}
 				break;
 			case 64:
 				if (!SetG9bPalette(content, 64))
@@ -7825,14 +7833,14 @@ public class RECOIL
 		case 0:
 			if (contentLength != unpackedLength)
 				return false;
-			DecodeG9bUnpacked(content, depth);
+			DecodeG9bUnpacked(content, depth, headerLength);
 			return true;
 		case 1:
 			byte[]# unpacked = new byte[unpackedLength];
 			G9bStream() s = { Content = content, ContentLength = contentLength };
 			bool ok = s.Unpack(unpacked, headerLength, unpackedLength);
 			if (ok)
-				DecodeG9bUnpacked(unpacked, depth);
+				DecodeG9bUnpacked(unpacked, depth, headerLength);
 			return ok;
 		default:
 			return false;
