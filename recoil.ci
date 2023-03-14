@@ -8424,19 +8424,25 @@ public class RECOIL
 			ContentPalette[i] = GetSamCoupeColor(content[0x6000 + i]);
 	}
 
-	void DecodeSamCoupeMode4!(byte[] content)
-	{
-		SetSamCoupePalette(content, 16);
-		SetSize(256, 192, RECOILResolution.SamCoupe1x1);
-		DecodeNibbles(content, 0, 128);
-	}
-
 	bool DecodeScs4!(byte[] content, int contentLength)
 	{
-		if (contentLength != 24617 || content[24616] != 0xff)
+		if (contentLength < 24617 || content[contentLength - 1] != 0xff)
 			return false;
-		DecodeSamCoupeMode4(content);
-		return true;
+		SetSamCoupePalette(content, 16);
+		SetSize(256, 192, RECOILResolution.SamCoupe1x1);
+		int interruptOffset = 0x6028;
+		for (int y = 0; y < 192; y++) {
+			if (interruptOffset + 3 < contentLength && y == content[interruptOffset] + 1) {
+				int c = content[interruptOffset + 1];
+				if (c > 15)
+					return false;
+				ContentPalette[c] = GetSamCoupeColor(content[interruptOffset + 2]);
+				interruptOffset += 4;
+			}
+			for (int x = 0; x < 256; x++)
+				Pixels[(y << 8) + x] = ContentPalette[GetNibble(content, y << 7, x)];
+		}
+		return interruptOffset == contentLength - 1;
 	}
 
 	void SetSamCoupeAttrPalette!(byte[] content, int contentOffset)
@@ -8469,7 +8475,9 @@ public class RECOIL
 			}
 			return true;
 		case 24592:
-			DecodeSamCoupeMode4(content);
+			SetSamCoupePalette(content, 16);
+			SetSize(256, 192, RECOILResolution.SamCoupe1x1);
+			DecodeNibbles(content, 0, 128);
 			return true;
 		case 98304:
 			for (int c = 0; c < 128; c++)
