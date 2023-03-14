@@ -7718,14 +7718,15 @@ public class RECOIL
 	{
 		int pixelsLength;
 		switch (depth) {
+		case 2:
+			DecodeMsx6(content, 16 + 4 * 3);
+			break;
 		case 4:
 			DecodeNibbles(content, 16 + 16 * 3, Width + 1 >> 1);
 			break;
-
 		case 8:
 			DecodeBytes(content, 16 + 64 * 3);
 			break;
-
 		case G9bYuv:
 			pixelsLength = Width * Height;
 			for (int i = 0; i < pixelsLength; i++) {
@@ -7757,7 +7758,6 @@ public class RECOIL
 				Pixels[i] = rgb << 3 | (rgb >> 2 & 0x070707);
 			}
 			break;
-
 		case 16:
 			pixelsLength = Width * Height;
 			for (int i = 0; i < pixelsLength; i++) {
@@ -7767,7 +7767,6 @@ public class RECOIL
 				Pixels[i] = rgb | (rgb >> 5 & 0x070707);
 			}
 			break;
-
 		default:
 			assert false;
 		}
@@ -7788,7 +7787,11 @@ public class RECOIL
 			return false;
 		int unpackedLength = headerLength + (width * depth + 7 >> 3) * height;
 		switch (depth) {
-		// TODO: case 2:
+		case 2:
+			if (content[7] != 4
+			 || !SetG9bPalette(content, 4))
+				return false;
+			break;
 		case 4:
 			if (content[7] != 16
 			 || !SetG9bPalette(content, 16))
