@@ -125,6 +125,7 @@ enum RECOILResolution
 	Psion31x1,
 	SamCoupe1x1,
 	SamCoupe1x2,
+	SamCoupe2x1i,
 	X68K1x1,
 	Tandy1x1,
 	Vector1x1,
@@ -4880,6 +4881,7 @@ public class RECOIL
 		case RECOILResolution.Bbc2x1:
 		case RECOILResolution.Msx22x1i:
 		case RECOILResolution.Msx2Plus2x1i:
+		case RECOILResolution.SamCoupe2x1i:
 			offset += x << 1;
 			Pixels[offset + 1] = Pixels[offset] = rgb;
 			break;
@@ -8418,31 +8420,52 @@ public class RECOIL
 		return rgb;
 	}
 
-	void SetSamCoupePalette!(byte[] content, int colors)
+	void SetSamCoupePalette!(byte[] content, int contentOffset, int colors)
 	{
 		for (int i = 0; i < colors; i++)
-			ContentPalette[i] = GetSamCoupeColor(content[0x6000 + i]);
+			ContentPalette[i] = GetSamCoupeColor(content[contentOffset + i]);
 	}
 
-	bool DecodeScs4!(byte[] content, int contentLength)
+	int DecodeSamCoupeScreen4!(byte[] content, int contentOffset, int contentLength)
 	{
-		if (contentLength < 24617 || content[contentLength - 1] != 0xff)
-			return false;
-		SetSamCoupePalette(content, 16);
-		SetSize(256, 192, RECOILResolution.SamCoupe1x1);
-		int interruptOffset = 0x6028;
+		int interruptOffset = contentOffset + 0x6028;
+		if (interruptOffset >= contentLength)
+			return -1;
+		SetSamCoupePalette(content, contentOffset + 0x6000, 16);
 		for (int y = 0; y < 192; y++) {
 			if (interruptOffset + 3 < contentLength && y == content[interruptOffset] + 1) {
 				int c = content[interruptOffset + 1];
 				if (c > 15)
-					return false;
+					return -1;
 				ContentPalette[c] = GetSamCoupeColor(content[interruptOffset + 2]);
 				interruptOffset += 4;
 			}
-			for (int x = 0; x < 256; x++)
-				Pixels[(y << 8) + x] = ContentPalette[GetNibble(content, y << 7, x)];
+			for (int x = 0; x < 256; x++) {
+				int row = y << (Frames - 1);
+				if (contentOffset != 0)
+					row++;
+				SetScaledPixel(x, row, ContentPalette[GetNibble(content, contentOffset + (y << 7), x)]);
+			}
 		}
-		return interruptOffset == contentLength - 1;
+		if (interruptOffset >= contentLength || content[interruptOffset] != 0xff)
+			return -1;
+		return interruptOffset + 1;
+	}
+
+	bool DecodeScs4!(byte[] content, int contentLength)
+	{
+		SetSize(256, 192, RECOILResolution.SamCoupe1x1);
+		return DecodeSamCoupeScreen4(content, 0, contentLength) == contentLength;
+	}
+
+	bool DecodeLce!(byte[] content, int contentLength)
+	{
+		SetSize(512, 384, RECOILResolution.SamCoupe2x1i);
+		Frames = 2;
+		int contentOffset = DecodeSamCoupeScreen4(content, 0, contentLength);
+		if (contentOffset < 0)
+			return false;
+		return DecodeSamCoupeScreen4(content, contentOffset, contentLength) == contentLength;
 	}
 
 	void SetSamCoupeAttrPalette!(byte[] content, int contentOffset)
@@ -8465,7 +8488,7 @@ public class RECOIL
 			DecodeZx(content, ZxBitmapLinear, 0x1800, ZxAttributes8x1, 0);
 			return true;
 		case 24580:
-			SetSamCoupePalette(content, 4);
+			SetSamCoupePalette(content, 0x6000, 4);
 			SetSize(512, 384, RECOILResolution.SamCoupe1x2);
 			for (int y = 0; y < 192; y++) {
 				for (int x = 0; x < 512; x++) {
@@ -8475,7 +8498,7 @@ public class RECOIL
 			}
 			return true;
 		case 24592:
-			SetSamCoupePalette(content, 16);
+			SetSamCoupePalette(content, 0x6000, 16);
 			SetSize(256, 192, RECOILResolution.SamCoupe1x1);
 			DecodeNibbles(content, 0, 128);
 			return true;
@@ -20153,6 +20176,7 @@ public class RECOIL
 		case PackExt("RPM"):
 		case PackExt("KPR"):
 		case PackExt("KSS"):
+		case PackExt("LCE"):
 		case PackExt("LDM"):
 		case PackExt("LEO"):
 		case PackExt("LP3"):
@@ -20946,6 +20970,8 @@ public class RECOIL
 			return DecodeKpr(content, contentLength);
 		case PackExt("KSS"):
 			return DecodeKss(content, contentLength);
+		case PackExt("LCE"):
+			return DecodeLce(content, contentLength);
 		case PackExt("LDM"):
 			return DecodeLdm(content, contentLength);
 		case PackExt("LEO"):
@@ -21517,6 +21543,7 @@ public class RECOIL
 			return "Psion Series 3";
 		case RECOILResolution.SamCoupe1x1:
 		case RECOILResolution.SamCoupe1x2:
+		case RECOILResolution.SamCoupe2x1i:
 			return "SAM Coupe";
 		case RECOILResolution.X68K1x1:
 			return "Sharp X68000";
@@ -21570,6 +21597,7 @@ public class RECOIL
 		case RECOILResolution.Coco2x2:
 		case RECOILResolution.Msx22x1i:
 		case RECOILResolution.Msx2Plus2x1i:
+		case RECOILResolution.SamCoupe2x1i:
 			return Width >> 1;
 		case RECOILResolution.Amiga4x1:
 		case RECOILResolution.Msx14x4:

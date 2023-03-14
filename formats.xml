@@ -276,7 +276,7 @@
 		<format name="Texture Editor by Mikey" width="80" height="96" grayscale="16"><ext>TXE</ext></format>
 		<format width="16" height="16" grayscale="16"><ext>TXS</ext></format>
 		<format name="Graph2Font vertical scroll" width="336" colors="256">
-			<ext>VSC</ext>
+			<ext skip="uwp">VSC</ext>
 			<companionExt anyName="true">G2F</companionExt>
 		</format>
 		<format name="VertiZontal Interlacing" width="160" height="200" grayscale="31" frames="2"><ext>VZI</ext></format>
@@ -885,6 +885,7 @@
 		</format>
 	</platform>
 	<platform name="SAM Coupe" href="https://en.wikipedia.org/wiki/SAM_Coupé">
+		<format width="256" height="384" frames="2"><ext>LCE</ext></format>
 		<format name="Mode 4" width="256" height="192" colors="128">
 			<ext>SCS4</ext>
 			<ext>SS4</ext>
