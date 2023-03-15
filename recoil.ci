@@ -7254,7 +7254,7 @@ public class RECOIL
 				g = 0;
 			else if (g > 31)
 				g = 31;
-			int b = (((5 * y - k) >> 1) - j) >> 1;
+			int b = 5 * y - 2 * j - k + 2 >> 2;
 			if (b < 0)
 				b = 0;
 			else if (b > 31)
