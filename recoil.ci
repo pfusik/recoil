@@ -8426,6 +8426,12 @@ public class RECOIL
 			ContentPalette[i] = GetSamCoupeColor(content[contentOffset + i]);
 	}
 
+	static int GetSamCoupeMode12Color(byte[] content, int bitmapOffset, int attributeOffset, int x)
+	{
+		int a = content[attributeOffset + (x >> 3)];
+		return (a >> 3 & 8) | (((content[bitmapOffset + (x >> 3)] >> (~x & 7) & 1) == 0 ? a >> 3 : a) & 7);
+	}
+
 	int DecodeSamCoupeScreen!(byte[] content, int contentOffset, int contentLength, int mode, int interruptOffset)
 	{
 		if (interruptOffset >= contentLength)
@@ -8446,10 +8452,11 @@ public class RECOIL
 			for (int x = 0; x < width; x++) {
 				int c;
 				switch (mode) {
+				case 1:
+					c = GetSamCoupeMode12Color(content, GetZxLineOffset(y), 0x1800 + (y >> 3 << 5), x);
+					break;
 				case 2:
-					int offset = y << 5 | x >> 3;
-					c = content[0x2000 + offset];
-					c = (c >> 3 & 8) | (((content[offset] >> (~x & 7) & 1) == 0 ? c >> 3 : c) & 7);
+					c = GetSamCoupeMode12Color(content, y << 5, 0x2000 + (y << 5), x);
 					break;
 				case 3:
 					c = content[y << 7 | x >> 2] >> ((~x & 3) << 1);
@@ -8467,6 +8474,12 @@ public class RECOIL
 		if (interruptOffset >= contentLength || content[interruptOffset] != 0xff)
 			return -1;
 		return interruptOffset + 1;
+	}
+
+	bool DecodeSs1!(byte[] content, int contentLength)
+	{
+		SetSize(256, 192, RECOILResolution.SamCoupe1x1);
+		return DecodeSamCoupeScreen(content, 0, contentLength, 1, 0x1b28) == contentLength;
 	}
 
 	bool DecodeSs2!(byte[] content, int contentLength)
@@ -20385,6 +20398,7 @@ public class RECOIL
 		case PackExt("SR7"):
 		case PackExt("SRI"):
 		case PackExt("SRT"):
+		case PackExt("SS1"):
 		case PackExt("SS2"):
 		case PackExt("SS3"):
 		case PackExt("SS4"):
@@ -21363,6 +21377,8 @@ public class RECOIL
 			return DecodeSri(filename, content, contentLength);
 		case PackExt("SRT"):
 			return DecodeSrt(content, contentLength);
+		case PackExt("SS1"):
+			return DecodeSs1(content, contentLength);
 		case PackExt("SS2"):
 			return DecodeSs2(content, contentLength);
 		case PackExt("SS3"):

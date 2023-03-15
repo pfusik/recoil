@@ -58,7 +58,7 @@
 		</format>
 		<format name="SymbOS graphic" colors="16"><ext>SGX</ext></format>
 		<format name="Advanced OCP Art Studio">
-			<ext>WIN</ext>
+			<ext skip="uwp">WIN</ext>
 			<companionExt>PAL</companionExt>
 		</format>
 	</platform>
@@ -886,6 +886,7 @@
 	</platform>
 	<platform name="SAM Coupe" href="https://en.wikipedia.org/wiki/SAM_Coupé">
 		<format width="256" height="384" frames="2"><ext>LCE</ext></format>
+		<format name="Mode 1" width="256" height="192" colors="128"><ext>SS1</ext></format>
 		<format name="Mode 2" width="256" height="192" colors="128"><ext>SS2</ext></format>
 		<format name="Mode 3" width="512" height="192" colors="128"><ext>SS3</ext></format>
 		<format name="Mode 4" width="256" height="192" colors="128">
