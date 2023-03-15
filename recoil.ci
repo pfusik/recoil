@@ -20664,7 +20664,7 @@ public class RECOIL
 		case PackExt("CUT"):
 			return DecodeGr8Raw(content, contentLength, 96, 99);
 		case PackExt("CWG"):
-			return contentLength == 10007 && DecodeC64Multicolor(content, 2, 0x1f42, 0x232a, 0x2713);
+			return contentLength == 10007 && DecodeC64Multicolor(content, 2, 0x1f42, 0x232a, 0x2712);
 		case PackExt("DA4"):
 			return DecodeDa4(content, contentLength);
 		case PackExt("DAP"):
