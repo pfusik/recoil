@@ -41,7 +41,7 @@
 	</platform>
 	<platform name="Amstrad CPC" href="https://en.wikipedia.org/wiki/Amstrad_CPC">
 		<format name="Mode 5" width="288" height="256" colors="27">
-			<ext>CM5</ext>
+			<ext skip="uwp">CM5</ext>
 			<companionExt>GFX</companionExt>
 		</format>
 		<format name="Turbo Rascal Syntax Error" maxWidth="160" maxHeight="200" colors="16"><ext>FLF</ext></format>
@@ -886,9 +886,10 @@
 	</platform>
 	<platform name="SAM Coupe" href="https://en.wikipedia.org/wiki/SAM_Coupé">
 		<format width="256" height="384" frames="2"><ext>LCE</ext></format>
+		<format name="Mode 3" width="512" height="192" colors="128"><ext>SS3</ext></format>
 		<format name="Mode 4" width="256" height="192" colors="128">
-			<ext>SCS4</ext>
 			<ext>SS4</ext>
+			<ext>SCS4</ext>
 		</format>
 		<format maxWidth="512" height="192"><ext>SSX</ext></format>
 	</platform>
