@@ -7225,6 +7225,46 @@ public class RECOIL
 		return height < 212 ? height : 212;
 	}
 
+	int DecodeMsxYjk(byte[] content, int contentOffset, int x, bool usePalette)
+	{
+		int y = content[contentOffset + x] >> 3;
+		if (usePalette && (y & 1) != 0)
+			return ContentPalette[y >> 1];
+		int rgb;
+		if ((x | 3) >= Width) {
+			// missing color information
+			// not sure if correct, but at least avoids buffer overflow
+			rgb = y * 0x010101;
+		}
+		else {
+			x = contentOffset + (x & ~3);
+			int k = (content[x] & 7) | (content[x + 1] & 7) << 3;
+			int j = (content[x + 2] & 7) | (content[x + 3] & 7) << 3;
+			// to 6-bit signed
+			k -= (k & 0x20) << 1;
+			j -= (j & 0x20) << 1;
+			// YJK to RGB
+			int r = y + j;
+			if (r < 0)
+				r = 0;
+			else if (r > 31)
+				r = 31;
+			int g = y + k;
+			if (g < 0)
+				g = 0;
+			else if (g > 31)
+				g = 31;
+			int b = (((5 * y - k) >> 1) - j) >> 1;
+			if (b < 0)
+				b = 0;
+			else if (b > 31)
+				b = 31;
+			rgb = r << 16 | g << 8 | b;
+		}
+		// 5-bit RGB to 8-bit RGB
+		return rgb << 3 | (rgb >> 2 & 0x070707);
+	}
+
 	void DecodeMsxScreen!(byte[] content, int contentOffset, byte[]? interlace, int height, int mode, int interlaceMask)
 	{
 		if (interlaceMask != 0) {
@@ -7601,46 +7641,6 @@ public class RECOIL
 		SetSize(width << 1, height, RECOILResolution.Msx21x1);
 		DecodeNibbles(unpacked, 0, width);
 		return true;
-	}
-
-	int DecodeMsxYjk(byte[] content, int contentOffset, int x, bool usePalette)
-	{
-		int y = content[contentOffset + x] >> 3;
-		if (usePalette && (y & 1) != 0)
-			return ContentPalette[y >> 1];
-		int rgb;
-		if ((x | 3) >= Width) {
-			// missing color information
-			// not sure if correct, but at least avoids buffer overflow
-			rgb = y * 0x010101;
-		}
-		else {
-			x = contentOffset + (x & ~3);
-			int k = (content[x] & 7) | (content[x + 1] & 7) << 3;
-			int j = (content[x + 2] & 7) | (content[x + 3] & 7) << 3;
-			// to 6-bit signed
-			k -= (k & 0x20) << 1;
-			j -= (j & 0x20) << 1;
-			// YJK to RGB
-			int r = y + j;
-			if (r < 0)
-				r = 0;
-			else if (r > 31)
-				r = 31;
-			int g = y + k;
-			if (g < 0)
-				g = 0;
-			else if (g > 31)
-				g = 31;
-			int b = (((5 * y - k) >> 1) - j) >> 1;
-			if (b < 0)
-				b = 0;
-			else if (b > 31)
-				b = 31;
-			rgb = r << 16 | g << 8 | b;
-		}
-		// 5-bit RGB to 8-bit RGB
-		return rgb << 3 | (rgb >> 2 & 0x070707);
 	}
 
 	void DecodeMsxYjkScreen!(byte[] content, int contentOffset, bool usePalette)
