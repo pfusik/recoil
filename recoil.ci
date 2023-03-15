@@ -8426,15 +8426,14 @@ public class RECOIL
 			ContentPalette[i] = GetSamCoupeColor(content[contentOffset + i]);
 	}
 
-	int DecodeSamCoupeScreen!(byte[] content, int contentOffset, int contentLength, int mode)
+	int DecodeSamCoupeScreen!(byte[] content, int contentOffset, int contentLength, int mode, int interruptOffset)
 	{
-		int interruptOffset = contentOffset + 0x6028;
 		if (interruptOffset >= contentLength)
 			return -1;
-		SetSamCoupePalette(content, contentOffset + 0x6000, 16);
+		SetSamCoupePalette(content, interruptOffset - 0x28, 16);
 		int width = GetOriginalWidth();
 		for (int y = 0; y < 192; y++) {
-			if (interruptOffset + 3 < contentLength && y == content[interruptOffset] + 1) {
+			while (interruptOffset + 3 < contentLength && y == content[interruptOffset] + 1) {
 				int c = content[interruptOffset + 1];
 				if (c > 15)
 					return -1;
@@ -8447,6 +8446,11 @@ public class RECOIL
 			for (int x = 0; x < width; x++) {
 				int c;
 				switch (mode) {
+				case 2:
+					int offset = y << 5 | x >> 3;
+					c = content[0x2000 + offset];
+					c = (c >> 3 & 8) | (((content[offset] >> (~x & 7) & 1) == 0 ? c >> 3 : c) & 7);
+					break;
 				case 3:
 					c = content[y << 7 | x >> 2] >> ((~x & 3) << 1);
 					c = (c & 1) << 1 | (c >> 1 & 1);
@@ -8465,26 +8469,32 @@ public class RECOIL
 		return interruptOffset + 1;
 	}
 
+	bool DecodeSs2!(byte[] content, int contentLength)
+	{
+		SetSize(256, 192, RECOILResolution.SamCoupe1x1);
+		return DecodeSamCoupeScreen(content, 0, contentLength, 2, 0x3828) == contentLength;
+	}
+
 	bool DecodeSs3!(byte[] content, int contentLength)
 	{
 		SetSize(512, 384, RECOILResolution.SamCoupe1x2);
-		return DecodeSamCoupeScreen(content, 0, contentLength, 3) == contentLength;
+		return DecodeSamCoupeScreen(content, 0, contentLength, 3, 0x6028) == contentLength;
 	}
 
 	bool DecodeSs4!(byte[] content, int contentLength)
 	{
 		SetSize(256, 192, RECOILResolution.SamCoupe1x1);
-		return DecodeSamCoupeScreen(content, 0, contentLength, 4) == contentLength;
+		return DecodeSamCoupeScreen(content, 0, contentLength, 4, 0x6028) == contentLength;
 	}
 
 	bool DecodeLce!(byte[] content, int contentLength)
 	{
 		SetSize(512, 384, RECOILResolution.SamCoupe2x1i);
 		Frames = 2;
-		int contentOffset = DecodeSamCoupeScreen(content, 0, contentLength, 4);
+		int contentOffset = DecodeSamCoupeScreen(content, 0, contentLength, 4, 0x6028);
 		if (contentOffset < 0)
 			return false;
-		return DecodeSamCoupeScreen(content, contentOffset, contentLength, 4) == contentLength;
+		return DecodeSamCoupeScreen(content, contentOffset, contentLength, 4, contentOffset + 0x6028) == contentLength;
 	}
 
 	void SetSamCoupeAttrPalette!(byte[] content, int contentOffset)
@@ -20375,6 +20385,7 @@ public class RECOIL
 		case PackExt("SR7"):
 		case PackExt("SRI"):
 		case PackExt("SRT"):
+		case PackExt("SS2"):
 		case PackExt("SS3"):
 		case PackExt("SS4"):
 		case PackExt("SCS4"):
@@ -21352,6 +21363,8 @@ public class RECOIL
 			return DecodeSri(filename, content, contentLength);
 		case PackExt("SRT"):
 			return DecodeSrt(content, contentLength);
+		case PackExt("SS2"):
+			return DecodeSs2(content, contentLength);
 		case PackExt("SS3"):
 			return DecodeSs3(content, contentLength);
 		case PackExt("SS4"):

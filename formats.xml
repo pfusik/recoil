@@ -48,7 +48,7 @@
 		<format name="8x8 font" colors="2"><ext>FNT</ext></format>
 		<format name="HinterGrundBild" width="512" height="256" colors="2"><ext>HGB</ext></format>
 		<format name="Perfect Pix" maxWidth="384" maxHeight="272" frames="2">
-			<ext>PPH</ext>
+			<ext skip="uwp">PPH</ext>
 			<companionExt>ODD</companionExt>
 			<companionExt>EVE</companionExt>
 		</format>
@@ -886,6 +886,7 @@
 	</platform>
 	<platform name="SAM Coupe" href="https://en.wikipedia.org/wiki/SAM_Coupé">
 		<format width="256" height="384" frames="2"><ext>LCE</ext></format>
+		<format name="Mode 2" width="256" height="192" colors="128"><ext>SS2</ext></format>
 		<format name="Mode 3" width="512" height="192" colors="128"><ext>SS3</ext></format>
 		<format name="Mode 4" width="256" height="192" colors="128">
 			<ext>SS4</ext>
