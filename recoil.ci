@@ -10065,6 +10065,8 @@ public class RECOIL
 		return true;
 	}
 
+	bool DecodeIpt!(byte[] content) => DecodeC64Multicolor(content, 2, 0x1f42, 0x232a, 0x2712);
+
 	bool DecodeOcp!(byte[] content, int contentLength) => contentLength == 10018 && DecodeC64Multicolor(content, 2, 0x1f42, 0x233a, 0x232b);
 
 	bool DecodeBpl!(byte[] content, int contentLength) => contentLength == 10242 && DecodeC64Multicolor(content, 2, 0x2002, 0x2402, 0x1f82);
@@ -10123,7 +10125,7 @@ public class RECOIL
 			return DecodeC64Multicolor(content, 0, 0x1f40, 0x2328, 0x2710);
 		case 10003: // GIG, KLA, KOA
 		case 10006: // RPM
-			return DecodeC64Multicolor(content, 2, 0x1f42, 0x232a, 0x2712);
+			return DecodeIpt(content);
 		default:
 			return DecodeGg(content, contentLength);
 		}
@@ -20664,7 +20666,7 @@ public class RECOIL
 		case PackExt("CUT"):
 			return DecodeGr8Raw(content, contentLength, 96, 99);
 		case PackExt("CWG"):
-			return contentLength == 10007 && DecodeC64Multicolor(content, 2, 0x1f42, 0x232a, 0x2712);
+			return contentLength == 10007 && DecodeIpt(content);
 		case PackExt("DA4"):
 			return DecodeDa4(content, contentLength);
 		case PackExt("DAP"):
@@ -20734,7 +20736,7 @@ public class RECOIL
 			return DecodeFbi(content, contentLength);
 		case PackExt("FCP"):
 		case PackExt("FPT"):
-			return contentLength == 10004 && DecodeC64Multicolor(content, 2, 0x1f42, 0x232a, 0x2712);
+			return contentLength == 10004 && DecodeIpt(content);
 		case PackExt("FD2"):
 			return DecodeFli(content, contentLength);
 		case PackExt("FED"):
@@ -20988,7 +20990,7 @@ public class RECOIL
 			return DecodeAtari8Ice(content, contentLength, false, 19);
 		case PackExt("IPT"):
 		case PackExt("LRE"):
-			return contentLength == 10003 && DecodeC64Multicolor(content, 2, 0x1f42, 0x232a, 0x2712);
+			return contentLength == 10003 && DecodeIpt(content);
 		case PackExt("IR2"):
 			return DecodeAtari8Ice(content, contentLength, false, 2);
 		case PackExt("IRG"):
