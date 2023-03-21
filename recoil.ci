@@ -12539,6 +12539,41 @@ public class RECOIL
 		return DecodeSt(unpacked, 0, content, contentOffset + 1, mode, 0);
 	}
 
+	bool DecodeGrx!(byte[] content, int contentLength)
+	{
+		if (contentLength < 1588 || !IsStringAt(content, 0, "GRXP") || content[4] != 1 || content[5] != 1
+		 || content[0x1c] != 0 || content[0x1d] != 0) // TODO: compressed
+			return false;
+		int width = content[0x1e] << 8 | content[0x1f];
+		int height = content[0x20] << 8 | content[0x21];
+		int bitplanes;
+		switch (content[0x22] << 8 | content[0x23]) {
+		case 2:
+			bitplanes = 1;
+			break;
+		case 4:
+			bitplanes = 2;
+			break;
+		case 16:
+			bitplanes = 4;
+			break;
+		case 256:
+			bitplanes = 8;
+			break;
+		default:
+			return false;
+		}
+		int contentStride = (width + 15 >> 4) * bitplanes << 1;
+		int bitmapLength = Get32BigEndian(content, 0x626);
+		if (bitmapLength != contentStride * height
+		 || contentLength != 0x632 + bitmapLength
+		 || !SetSizeStOrFalcon(width, height, bitplanes, false))
+			return false;
+		SetStVdiPalette(content, 0x24, 1 << bitplanes, bitplanes);
+		DecodeBitplanes(content, 0x632, contentStride, bitplanes, 0, width, height);
+		return true;
+	}
+
 	bool DecodeCptFul!(byte[] content, int contentOffset, int contentLength, HblPalette!? palette)
 	{
 		if (contentLength < contentOffset + 40 || content[contentOffset + 32] != 0)
@@ -20129,6 +20164,7 @@ public class RECOIL
 		case PackExt("GRO"):
 		case PackExt("GRF"):
 		case PackExt("GRP"):
+		case PackExt("GRX"):
 		case PackExt("GS"):
 		case PackExt("IIGS"):
 		case PackExt("32K"):
@@ -20855,6 +20891,8 @@ public class RECOIL
 				|| DecodeProfiGrf(content, contentLength);
 		case PackExt("GRP"):
 			return DecodeSc2(content, contentLength);
+		case PackExt("GRX"):
+			return DecodeGrx(content, contentLength);
 		case PackExt("GS"):
 		case PackExt("IIGS"):
 		case PackExt("32K"):

@@ -334,6 +334,7 @@
 		<format name="GDOS font" colors="2"><ext>FNT</ext></format>
 		<format name="Canvas (raster)" maxWidth="640" height="200"><ext>FUL</ext></format>
 		<format name="DeskPic"><ext>GFB</ext></format>
+		<format name="Grafix"><ext>GRX</ext></format>
 		<format name="Dali (compressed)" width="640" height="400" colors="2"><ext>HPK</ext></format>
 		<format name="HighresMedium" width="640" height="200" frames="2"><ext>HRM</ext></format>
 		<format name="Imagic" width="320" height="200" colors="16"><ext>IC1</ext></format>
@@ -348,7 +349,7 @@
 		<format name="Dali (compressed)" width="640" height="200" colors="4"><ext>MPK</ext></format>
 		<format name="Multi Palette Picture" maxWidth="416" maxHeight="273" maxFrames="2"><ext>MPP</ext></format>
 		<format name="C.O.L.R. Object Editor" width="320" height="200" colors="16">
-			<ext>MUR</ext>
+			<ext skip="uwp">MUR</ext>
 			<companionExt>PAL</companionExt>
 		</format>
 		<format name="NEOchrome"><ext>NEO</ext></format>
@@ -483,7 +484,7 @@
 		<format name="Best Paint" width="160" height="192" colors="9"><ext fake="true">BP</ext></format>
 		<format name="Turbo Rascal Syntax Error" colors="8"><ext>FLF</ext></format>
 		<format name="Picasso" width="88" height="176" colors="10">
-			<ext fake="true">PIC0</ext>
+			<ext fake="true" skip="uwp">PIC0</ext>
 			<companionExt fake="true">PIC1</companionExt>
 		</format>
 	</platform>
