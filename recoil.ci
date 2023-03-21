@@ -12539,10 +12539,66 @@ public class RECOIL
 		return DecodeSt(unpacked, 0, content, contentOffset + 1, mode, 0);
 	}
 
+	static bool UnpackGrx(byte[] packed, int packedOffset, int packedLength, byte[]! unpacked, int unpackedOffset, int unpackedLength)
+	{
+		int bits = 0;
+		int bitsCount = 0;
+		int[1024] offsets;
+		int codes = 258;
+		int codeBits = 9;
+		while (unpackedOffset < unpackedLength) {
+			while (bitsCount < codeBits) {
+				if (packedOffset >= packedLength)
+					return false;
+				bits |= packed[packedOffset++] << bitsCount;
+				bitsCount += 8;
+			}
+			int code = bits & (1 << codeBits) - 1;
+			bits >>= codeBits;
+			bitsCount -= codeBits;
+
+			switch (code) {
+			case 256:
+				if (codeBits == 10)
+					return false;
+				codeBits = 10;
+				break;
+			case 257:
+				codes = 258;
+				codeBits = 9;
+				break;
+			default:
+				// LZW
+				if (codes >= offsets.Length)
+					return false;
+				offsets[codes] = unpackedOffset;
+				if (code < 256) {
+					// literal
+					unpacked[unpackedOffset++] = code;
+				}
+				else if (code >= codes)
+					return false;
+				else {
+					// dictionary entry
+					int sourceOffset = offsets[code];
+					int endOffset = offsets[code + 1];
+					if (unpackedOffset + endOffset - sourceOffset >= unpackedLength)
+						return false;
+					do
+						unpacked[unpackedOffset++] = unpacked[sourceOffset++];
+					while (sourceOffset <= endOffset);
+				}
+				codes++;
+				break;
+			}
+		}
+		return true;
+	}
+
 	bool DecodeGrx!(byte[] content, int contentLength)
 	{
 		if (contentLength < 1588 || !IsStringAt(content, 0, "GRXP") || content[4] != 1 || content[5] != 1
-		 || content[0x1c] != 0 || content[0x1d] != 0) // TODO: compressed
+		 || content[0x1c] != 0)
 			return false;
 		int width = content[0x1e] << 8 | content[0x1f];
 		int height = content[0x20] << 8 | content[0x21];
@@ -12566,12 +12622,31 @@ public class RECOIL
 		int contentStride = (width + 15 >> 4) * bitplanes << 1;
 		int bitmapLength = Get32BigEndian(content, 0x626);
 		if (bitmapLength != contentStride * height
-		 || contentLength != 0x632 + bitmapLength
-		 || !SetSizeStOrFalcon(width, height, bitplanes, false))
+		 || !SetSizeStOrFalcon(width, height, bitplanes, true))
 			return false;
 		SetStVdiPalette(content, 0x24, 1 << bitplanes, bitplanes);
-		DecodeBitplanes(content, 0x632, contentStride, bitplanes, 0, width, height);
-		return true;
+		switch (content[0x1d]) {
+		case 0:
+			if (contentLength != 0x632 + bitmapLength)
+				return false;
+			DecodeBitplanes(content, 0x632, contentStride, bitplanes, 0, width, height);
+			return true;
+		case 1:
+			int packed1Length = Get32BigEndian(content, 0x62a);
+			if (packed1Length <= 0)
+				return false;
+			int packed2Offset = 0x632 + packed1Length;
+			if (contentLength != packed2Offset + Get32BigEndian(content, 0x62e))
+				return false;
+			byte[]# unpacked = new byte[bitmapLength];
+			if (!UnpackGrx(content, 0x632, packed2Offset, unpacked, 0, bitmapLength >> 1)
+			 || !UnpackGrx(content, packed2Offset, contentLength, unpacked, bitmapLength >> 1, bitmapLength))
+				return false;
+			DecodeBitplanes(unpacked, 0, contentStride, bitplanes, 0, width, height);
+			return true;
+		default:
+			return false;
+		}
 	}
 
 	bool DecodeCptFul!(byte[] content, int contentOffset, int contentLength, HblPalette!? palette)
