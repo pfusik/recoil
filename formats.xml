@@ -305,16 +305,9 @@
 			<ext skip="uwp">BP1</ext>
 			<ext skip="uwp">BP2</ext>
 			<ext skip="uwp">BP4</ext>
-			<ext skip="uwp">BP6</ext>
-			<ext skip="uwp">BP8</ext>
 			<ext skip="uwp">C01</ext>
 			<ext skip="uwp">C02</ext>
 			<ext skip="uwp">C04</ext>
-			<ext skip="uwp">C06</ext>
-			<ext skip="uwp">C08</ext>
-			<ext skip="uwp">C16</ext>
-			<ext skip="uwp">C24</ext>
-			<ext skip="uwp">C32</ext>
 		</format>
 		<format name="DEGAS Elite brush" width="8" height="8" colors="2"><ext>BRU</ext></format>
 		<format name="CrackArt" width="320" height="200" colors="16"><ext>CA1</ext></format>
@@ -448,6 +441,15 @@
 		<format name="ImageLab" grayscale="256">
 			<ext skip="uwp">B&amp;W</ext>
 			<ext>B_W</ext>
+		</format>
+		<format name="UIMG">
+			<ext skip="uwp">BP6</ext>
+			<ext skip="uwp">BP8</ext>
+			<ext skip="uwp">C06</ext>
+			<ext skip="uwp">C08</ext>
+			<ext skip="uwp">C16</ext>
+			<ext skip="uwp">C24</ext>
+			<ext skip="uwp">C32</ext>
 		</format>
 		<format name="DuneGraph (compressed)" width="320" height="200" colors="256"><ext>DC1</ext></format>
 		<format name="DelmPaint" width="320" height="240" colors="256"><ext>DEL</ext></format>
