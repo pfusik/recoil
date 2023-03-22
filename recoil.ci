@@ -13799,9 +13799,9 @@ public class RECOIL
 		}
 	}
 
-	void SetFalconPalette!(byte[] content, int contentOffset)
+	void SetFalconPalette!(byte[] content, int contentOffset, int colors)
 	{
-		for (int i = 0; i < 256; i++) {
+		for (int i = 0; i < colors; i++) {
 			int offset = contentOffset + (i << 2);
 			ContentPalette[i] = content[offset] << 16 | content[offset + 1] << 8 | content[offset + 3];
 		}
@@ -13809,7 +13809,7 @@ public class RECOIL
 
 	void DecodeFalconPalette!(byte[] content, int bitplanesOffset, int paletteOffset, int width, int height)
 	{
-		SetFalconPalette(content, paletteOffset);
+		SetFalconPalette(content, paletteOffset, 256);
 		SetSize(width, height, RECOILResolution.Falcon1x1);
 		DecodeBitplanes(content, bitplanesOffset, width, 8, 0, width, height);
 	}
@@ -13890,7 +13890,7 @@ public class RECOIL
 			}
 		}
 
-		SetFalconPalette(content, 10);
+		SetFalconPalette(content, 10, 256);
 		SetSize(320, 200, RECOILResolution.Falcon1x1);
 		DecodeBitplanes(unpacked, 0, 320, 8, 0, 320, 200);
 		return true;
@@ -13908,7 +13908,7 @@ public class RECOIL
 		byte[]# unpacked = new byte[320000];
 		if (!CaStream.UnpackDel(content, contentLength, unpacked, 10))
 			return false;
-		SetFalconPalette(unpacked, 0);
+		SetFalconPalette(unpacked, 0, 256);
 		SetSize(640, 480, RECOILResolution.Falcon1x1);
 		// Combine four 320x240 quarters:
 		// 1 2
@@ -14040,7 +14040,7 @@ public class RECOIL
 			if (paletteLength == 32)
 				SetStPalette(content, 30, 16);
 			else
-				SetFalconPalette(content, 30);
+				SetFalconPalette(content, 30, 256);
 			if (bitplanes == 8 && content[22] == 0xff) {
 				// variant used by "Music Compile 2", https://sourceforge.net/p/recoil/bugs/74/
 				DecodeBytes(content, 30 + paletteLength);
@@ -14247,6 +14247,118 @@ public class RECOIL
 				&& DecodePntUnpacked(content, unpacked, 0, width, height);
 		default:
 			return false;
+		}
+	}
+
+	bool DecodeUimg!(byte[] content, int contentLength)
+	{
+		if (contentLength < 15 || !IsStringAt(content, 0, "UIMG") || content[6] != 0)
+			return false;
+		//  Filename Palette Depth Chunk Format
+		//     *.bp1   1-3     1     0   Bit per pixel
+		//     *.bp2   1-3     2     0   ST 2 bitplanes
+		//     *.bp4   1-3     4     0   ST 4 bitplanes
+		//     *.bp6   2-3     6     0   Falcon 6 bitplanes
+		//     *.bp8   2-3     8     0   Falcon 8 bitplanes
+		//     *.c01   1-3     1     1   Byte per pixel
+		//     *.c02   1-3     2     1   Byte per pixel
+		//     *.c04   1-3     4     1   Byte per pixel
+		//     *.c06   2-3     6     1   Byte per pixel
+		//     *.c08   2-3     8     1   Byte per pixel
+		//     *.c16    0     16     2   Falcon True Color
+		//     *.c24    0     24     3   RGB
+		//     *.c32    0     32     4   XRGB
+		// *-nib.c01   1-3     1    FF   Bit per pixel = BP1
+		// *-nib.c02   1-3     2    FF   4 pixels per byte
+		// *-nib.c04   1-3     4    FF   2 pixels per byte
+		int palette = content[7];
+		if (palette > 3)
+			return false;
+		int depth = content[8];
+		int chunk = content[9];
+		int width = content[10] << 8 | content[11];
+		int height = content[12] << 8 | content[13];
+		int pixelsLength = width * height;
+		const byte[4] paletteUnit = { 0, 2, 2, 4 };
+		int bitmapOffset = 14 + (paletteUnit[palette] << depth);
+		switch (chunk) {
+		case 0xff: // NIB.C0?
+		case 0: // BP?
+			if (palette == 0
+			 || depth > 8
+			 || (width & 15) != 0
+			 || contentLength != bitmapOffset + (pixelsLength >> 3) * depth)
+				return false;
+			break;
+		case 1: // C0?
+			if (palette == 0
+			 || depth > 8
+			 || contentLength != bitmapOffset + pixelsLength)
+				return false;
+			break;
+		case 2: // C16
+		case 3: // C24
+		case 4: // C32
+			if (palette != 0
+			 || depth != chunk << 3
+			 || contentLength != 14 + pixelsLength * chunk)
+				return false;
+			break;
+		default:
+			return false;
+		}
+		if (!SetSizeStOrFalcon(width, height, depth, true))
+			return false;
+
+		switch (palette) {
+		case 0:
+			break;
+		case 1:
+			ContentPalette.Fill(0);
+			SetStPalette(content, 14, 1 << depth);
+			break;
+		// TODO: 2
+		case 3:
+			ContentPalette.Fill(0);
+			SetFalconPalette(content, 14, 1 << depth);
+			break;
+		default:
+			return false;
+		}
+
+		switch (chunk) {
+		case 0: // BP1, BP2, BP4, BP6, BP8
+			DecodeBitplanes(content, bitmapOffset, (width >> 3) * depth, depth, 0, width, height);
+			return true;
+		case 1: // C01, C02, C04, C06, C08
+			DecodeBytes(content, bitmapOffset);
+			return true;
+		case 2: // C16
+			for (int i = 0; i < pixelsLength; i++)
+				Pixels[i] = GetFalconTrueColor(content, 14 + (i << 1));
+			return true;
+		case 3: // C24
+			DecodeR8G8B8Colors(content, 14, pixelsLength, Pixels, 0);
+			return true;
+		case 4: // C32
+			DecodeR8G8G8X8Colors(content, 15, pixelsLength);
+			return true;
+		case 0xff:
+			switch (depth) {
+			case 1: // NIB.C01
+				DecodeBitplanes(content, bitmapOffset, width >> 3, 1, 0, width, height);
+				return true;
+			case 2: // NIB.C02
+				DecodeMsx6(content, bitmapOffset);
+				return true;
+			case 4: // NIB.C04
+				DecodeNibbles(content, bitmapOffset, width >> 1);
+				return true;
+			default:
+				return false;
+			}
+		default:
+			assert false;
 		}
 	}
 
@@ -20098,6 +20210,19 @@ public class RECOIL
 		case PackExt("BML"):
 		case PackExt("FLG"):
 		case PackExt("BP"):
+		case PackExt("BP1"):
+		case PackExt("BP2"):
+		case PackExt("BP4"):
+		case PackExt("BP6"):
+		case PackExt("BP8"):
+		case PackExt("C01"):
+		case PackExt("C02"):
+		case PackExt("C04"):
+		case PackExt("C06"):
+		case PackExt("C08"):
+		case PackExt("C16"):
+		case PackExt("C24"):
+		case PackExt("C32"):
 		case PackExt("BPL"):
 		case PackExt("BRU"):
 		case PackExt("BS"):
@@ -20705,6 +20830,20 @@ public class RECOIL
 			return DecodeBml(content, contentLength);
 		case PackExt("BP"):
 			return DecodeBp(content, contentLength);
+		case PackExt("BP1"):
+		case PackExt("BP2"):
+		case PackExt("BP4"):
+		case PackExt("BP6"):
+		case PackExt("BP8"):
+		case PackExt("C01"):
+		case PackExt("C02"):
+		case PackExt("C04"):
+		case PackExt("C06"):
+		case PackExt("C08"):
+		case PackExt("C16"):
+		case PackExt("C24"):
+		case PackExt("C32"):
+			return DecodeUimg(content, contentLength);
 		case PackExt("BPL"):
 			return DecodeBpl(content, contentLength);
 		case PackExt("BRU"):
