@@ -12003,6 +12003,12 @@ public class RECOIL
 				| (gb & 0x70) << 4
 				| (gb & 7);
 			return rgb << 5 | rgb << 2 | (rgb >> 1 & 0x030303);
+		case RECOILResolution.Tt1x1:
+		case RECOILResolution.Tt2x1:
+			// TT 4096 colors
+			// xxxxRRRR GGGGBBBB -> 0000RRRR0000GGGG0000BBBB
+			rgb = (r & 0xf) << 16 | (gb & 0xf0) << 4 | (gb & 0xf);
+			return rgb << 4 | rgb;
 		default:
 			// STE 4096 colors
 			// xxxxrRRR gGGGbBBB -> 0000RRRr0000GGGg0000BBBb
@@ -12217,8 +12223,8 @@ public class RECOIL
 		case 32032:
 			return DecodeStLow(content, 32, content, 0, 320, 200);
 		case 34360:
-			GfaArtistPalette() palette = { Content = content };
 			SetSize(320, 200, RECOILResolution.St1x1);
+			GfaArtistPalette() palette = { Content = content };
 			DecodeScaledBitplanes(content, 4, 320, 200, 4, false, palette);
 			return true;
 		default:
