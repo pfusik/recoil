@@ -14284,9 +14284,9 @@ public class RECOIL
 		int chunk = content[9];
 		int width = content[10] << 8 | content[11];
 		int height = content[12] << 8 | content[13];
-		int pixelsLength = width * height;
 		const byte[4] paletteUnit = { 0, 2, 2, 4 };
 		int bitmapOffset = 14 + (paletteUnit[palette] << depth);
+		int pixelsLength = width * height;
 		switch (chunk) {
 		case 0xff: // NIB.C0?
 		case 0: // BP?
@@ -14313,18 +14313,27 @@ public class RECOIL
 		default:
 			return false;
 		}
-		if (!SetSizeStOrFalcon(width, height, depth, true))
-			return false;
 
 		switch (palette) {
 		case 0:
+			if (!SetSize(width, height, RECOILResolution.Falcon1x1))
+				return false;
 			break;
 		case 1:
+			if (!SetSize(width, height, depth > 4 ? RECOILResolution.Falcon1x1 : IsStePalette(content, 14, 1 << depth) ? RECOILResolution.Ste1x1 : RECOILResolution.St1x1))
+				return false;
 			ContentPalette.Fill(0);
 			SetStPalette(content, 14, 1 << depth);
 			break;
-		// TODO: 2
+		case 2:
+			if (!SetSize(width, height, RECOILResolution.Tt1x1))
+				return false;
+			ContentPalette.Fill(0);
+			SetStPalette(content, 14, 1 << depth);
+			break;
 		case 3:
+			if (!SetSize(width, height, RECOILResolution.Falcon1x1))
+				return false;
 			ContentPalette.Fill(0);
 			SetFalconPalette(content, 14, 1 << depth);
 			break;
