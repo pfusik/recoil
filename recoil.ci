@@ -14436,19 +14436,45 @@ public class RECOIL
 
 	bool DecodeAbkSprite!(byte[] content, int contentLength)
 	{
-		if (content[10] != 0)
+		int sprites = content[4] << 8 | content[5];
+		int contentOffset = 6;
+		int width = 0;
+		int height = 0;
+		for (int sprite = 0; sprite < sprites; sprite++) {
+			if (contentOffset + 10 >= contentLength || content[contentOffset + 4] != 0)
+				return false;
+			int spriteWidth = (content[contentOffset] << 8 | content[contentOffset + 1]) << 4;
+			int spriteHeight = content[contentOffset + 2] << 8 | content[contentOffset + 3];
+			int bitplanes = content[contentOffset + 5];
+			if (bitplanes == 0 || bitplanes > 5)
+				return false;
+			width += spriteWidth;
+			if (height < spriteHeight)
+				height = spriteHeight;
+			contentOffset += 10 + (spriteWidth >> 3) * spriteHeight * bitplanes;
+		}
+		if (contentOffset + 64 != contentLength
+		 || !SetSize(width, height, RECOILResolution.Amiga1x1))
 			return false;
-		int bitplanes = content[11];
-		if (bitplanes == 0 || bitplanes > 5)
-			return false;
-		int width = content[6] << 8 | content[7];
-		int height = content[8] << 8 | content[9];
-		int bitplaneLength = width * height << 1;
-		int paletteOffset = 16 + (bitplanes * bitplaneLength);
-		if (paletteOffset + 64 > contentLength)
-			return false;
-		SetOcsPalette(content, paletteOffset, 32);
-		return DecodeAmigaPlanar(content, 16, width << 4, height, RECOILResolution.Amiga1x1, bitplanes, ContentPalette);
+		SetOcsPalette(content, contentOffset, 32);
+		contentOffset = 6;
+		int left = 0;
+		for (int sprite = 0; sprite < sprites; sprite++) {
+			int spriteWidth = (content[contentOffset] << 8 | content[contentOffset + 1]) << 4;
+			int spriteHeight = content[contentOffset + 2] << 8 | content[contentOffset + 3];
+			int bitplanes = content[contentOffset + 5];
+			int bytesPerLine = spriteWidth >> 3;
+			int bitplaneLength = height * bytesPerLine;
+			for (int y = 0; y < spriteHeight; y++) {
+				for (int x = 0; x < spriteWidth; x++)
+					Pixels[y * width + left + x] = ContentPalette[GetBitplanePixel(content, contentOffset + 10 + y * bytesPerLine + (x >> 3), x, bitplanes, bitplaneLength)];
+			}
+			for (int y = spriteHeight; y < height; y++)
+				Pixels.Fill(0, y * width + left, spriteWidth);
+			contentOffset += 10 + bitplanes * bitplaneLength;
+			left += spriteWidth;
+		}
+		return true;
 	}
 
 	bool DecodeAbk!(byte[] content, int contentLength)
