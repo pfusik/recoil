@@ -1,4 +1,13 @@
 ﻿<page title="News">
+	<release project="RECOIL" version="6.3.4" date="2023-03-26">
+		<ul>
+			<li>New Atari ST/TT/Falcon formats: Grafix (GRX), UIMG (BP1/BP2/BP4/BP6/BP8/C01/C02/C04/C06/C08/C16/C24/C32)</li>
+			<li>New Sam Coupe formats: SS1, SS2, SS3, LCE</li>
+			<li>More variants of formats: ABK, G9B, SS4, TIM</li>
+			<li>Fixed colors in: CWG, PI4, PI5, MSX2+ YJK mode</li>
+		</ul>
+	</release>
+
 	<release project="RECOIL" version="6.3.3" date="2023-03-08">
 		<ul>
 			<li>New formats: Atari Image Manager (COL, IM), MSX Interchange Format (MIF)</li>
