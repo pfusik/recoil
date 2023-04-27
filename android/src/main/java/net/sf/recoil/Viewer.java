@@ -44,10 +44,11 @@ import android.widget.BaseAdapter;
 import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import java.io.DataInputStream;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.zip.ZipEntry;
@@ -68,7 +69,7 @@ class ZipRECOIL extends RECOIL
 	{
 		return new ZipInputStream(context.getContentResolver().openInputStream(uri));
 	}
-	
+
 	static long seekTo(ZipInputStream zis, String filename) throws IOException
 	{
 		ZipEntry entry;
