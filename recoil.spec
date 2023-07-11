@@ -3,11 +3,9 @@ Version: 6.3.4
 Release: 1
 Summary: Viewer of retro computer image files
 License: GPLv2+
-Group: Applications/Multimedia
 Source: https://downloads.sourceforge.net/recoil/recoil-%{version}.tar.gz
 URL: https://recoil.sourceforge.net/
 BuildRequires: gcc, libxslt
-BuildRoot: %{_tmppath}/%{name}-root
 
 %description
 Decoder of pictures in native formats of
@@ -61,26 +59,19 @@ and ZX Spectrum computers.
 %setup -q
 
 %build
-make recoil2png file-recoil recoil-mime.xml
+make CFLAGS="%{build_cflags}" recoil2png file-recoil recoil-mime.xml
 
 %install
-rm -rf $RPM_BUILD_ROOT
-make PREFIX=$RPM_BUILD_ROOT/%{_prefix} libdir=$RPM_BUILD_ROOT%{_libdir} BUILDING_PACKAGE=1 install-gimp install-thumbnailer
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+make PREFIX=%{buildroot}%{_prefix} libdir=%{buildroot}{_libdir} BUILDING_PACKAGE=1 install-gimp install-thumbnailer
 
 %files 2png
-%defattr(-,root,root)
 %{_bindir}/recoil2png
 %{_mandir}/man1/recoil2png.1*
 
 %files gimp
-%defattr(-,root,root)
 %{_libdir}/gimp/2.0/plug-ins/file-recoil/file-recoil
 
 %files thumbnailer
-%defattr(-,root,root)
 %{_datadir}/mime/packages/recoil-mime.xml
 %{_datadir}/thumbnailers/recoil.thumbnailer
 
