@@ -1,6 +1,6 @@
 ﻿<page title="Contact">
 	<authors>
-		<author name="Piotr Fusik" email="fox@scene.pl" href="http://fusik.info/piotr/">Idea, programming.</author>
+		<author name="Piotr Fusik" email="piotr@fusion-lang.org" href="http://fusik.info/piotr/">Idea, programming.</author>
 		<author name="Lonny Pursell" href="http://gfabasic.net">Atari ST/Falcon formats research.</author>
 		<author name="FRS" href="http://frs.badcoffee.info">MSX expertise.</author>
 		<author name="Mariusz Rozwadowski" rip="true">Formats research, testing.</author>
@@ -25,7 +25,7 @@
 	or <a href="https://sourceforge.net/p/recoil/code/ci/master/tree/">browse Git repository</a>.</p>
 	<p>RECOIL is based on a development library, which you can easily embed in your program.
 	It's not only a fully portable C library - it's better than that.
-	Since RECOIL is written in <a href="https://github.com/pfusik/cito">Ć</a>,
+	Since RECOIL is written in <a href="https://fusion-lang.org">Fusion</a>,
 	it is also available as pure C++, Java, C# and JavaScript.</p>
 	<p>There are also <a href="https://github.com/gasman/pyrecoil">Python bindings</a>.</p>
 	<img src="recoil-internals.png" alt="Architecture diagram" />

@@ -38,20 +38,20 @@ task generateStoreGfx(type:Exec) {
     commandLine 'magick', inputs.files.asPath, '-crop', '334x163+89+140', '-sample', '1024x500', '-quality', '95', '-strip', outputs.files.asPath
 }
 
-final CITO_RESOURCES = [ 'altirrantsc.pal', 'altirrapal.pal', 'atari8.fnt', 'c16.pal', 'c64.fnt', 'zx81.fnt' ]
-final CITO_JAVA_DIR = file 'build/generated/source/cito/net/sf/recoil'
-task cito(type:Exec) {
-    inputs.files '../recoil.ci', CITO_RESOURCES.collect { '../' + it }
-    outputs.file new File(CITO_JAVA_DIR, 'RECOIL.java')
-    commandLine 'cito', '-n', 'net.sf.recoil', '-o', outputs.files.asPath, '-I', '..', '../recoil.ci'
-    doFirst { CITO_JAVA_DIR.mkdirs() }
+final FUT_RESOURCES = [ 'altirrantsc.pal', 'altirrapal.pal', 'atari8.fnt', 'c16.pal', 'c64.fnt', 'zx81.fnt' ]
+final FUT_JAVA_DIR = file 'build/generated/source/fut/net/sf/recoil'
+task fut(type:Exec) {
+    inputs.files '../recoil.fu', FUT_RESOURCES.collect { '../' + it }
+    outputs.file new File(FUT_JAVA_DIR, 'RECOIL.java')
+    commandLine 'fut', '-n', 'net.sf.recoil', '-o', outputs.files.asPath, '-I', '..', '../recoil.fu'
+    doFirst { FUT_JAVA_DIR.mkdirs() }
 }
 
 final JAVA_RESOURCES_DIR = file 'build/generated/resources'
 task copyJavaResources(type:Copy) {
     from '..'
     into new File(JAVA_RESOURCES_DIR, 'net/sf/recoil')
-    include CITO_RESOURCES
+    include FUT_RESOURCES
 }
 preBuild.dependsOn copyJavaResources
 
@@ -71,7 +71,7 @@ android {
     applicationVariants.all { variant ->
         variant.mergeResourcesProvider.get().dependsOn generateIcon, generateRoundIcon
         variant.registerGeneratedResFolders files(ICON_DIR)
-        variant.registerJavaGeneratingTask cito, CITO_JAVA_DIR
+        variant.registerJavaGeneratingTask fut, FUT_JAVA_DIR
         if (variant.name == 'release') {
             variant.outputs[0].outputFileName = "recoil-$versionName-android.apk"
         }

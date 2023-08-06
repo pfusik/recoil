@@ -8,8 +8,8 @@ test: web.html recoil.js
 %.html: %.xml www.xsl ../formats.xml
 	xsltproc -o $@ www.xsl $< && java -jar C:/bin/vnu.jar $@
 
-recoil.js: ../recoil.ci ../altirrantsc.pal ../altirrapal.pal ../atari8.fnt ../c16.pal ../c64.fnt ../zx81.fnt
-	cito -o $@ -I .. $<
+recoil.js: ../recoil.fu ../altirrantsc.pal ../altirrapal.pal ../atari8.fnt ../c16.pal ../c64.fnt ../zx81.fnt
+	fut -o $@ -I .. $<
 
 recoil-180x180.png: ../recoil-512x512.png
 	magick $< -resize 180x180 -quality 95 -strip $@

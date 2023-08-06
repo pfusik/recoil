@@ -1,6 +1,6 @@
 VERSION = 6.3.4
 
-CITO = cito
+FUT = fut
 XSLTPROC = xsltproc -o $@ $^
 CFLAGS = -Wall -O2 -s
 CSOURCES = $(patsubst %/,-I%,$(sort $(dir $(filter %.h,$^)))) $(^:%.h=)
@@ -67,8 +67,8 @@ paint.net/RecoilPaintDotNet.dll: paint.net/RecoilPaintDotNet.cs paint.net/Recoil
 paint.net/RecoilFileTypeFactory.cs: paint.net/RecoilFileTypeFactory.cs.xsl ../formats.xml
 	$(DO)$(XSLTPROC)
 
-paint.net/RECOIL.cs: ../recoil.ci ../altirrantsc.pal ../altirrapal.pal ../atari8.fnt ../c16.pal ../c64.fnt ../zx81.fnt
-	$(DO)$(CITO) -o $@ -I .. -n Recoil $<
+paint.net/RECOIL.cs: ../recoil.fu ../altirrantsc.pal ../altirrapal.pal ../atari8.fnt ../c16.pal ../c64.fnt ../zx81.fnt
+	$(DO)$(FUT) -o $@ -I .. -n Recoil $<
 
 %/by-platform.exe: by-platform.c recoil-win32.c recoil-win32.h ../recoil.c ../recoil.h
 	$(DO)$(DO_CC) -static
@@ -83,8 +83,8 @@ BoundsCheck.exe: BoundsCheck.cs paint.net/RECOIL.cs
 	$(DO)$(XSLTPROC)
 
 # http://www.cmcrossroads.com/article/rules-multiple-outputs-gnu-make
-%.c %.h: %.ci ../atari8.fnt ../altirrapal.pal ../c16.pal ../c64.fnt ../zx81.fnt
-	$(DO)$(CITO) -o $*.c -I .. $<
+%.c %.h: %.fu ../atari8.fnt ../altirrapal.pal ../c16.pal ../c64.fnt ../zx81.fnt
+	$(DO)$(FUT) -o $*.c -I .. $<
 
 recoil.ico: ../recoil-512x512.png
 	$(DO)$(MAGICK) $< -resize 48x48 $@

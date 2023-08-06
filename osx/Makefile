@@ -63,8 +63,8 @@ ifdef PORK_CODESIGNING_IDENTITY
 	$(CODESIGN) $@
 endif
 
-%.c %.h: %.ci ../altirrantsc.pal ../altirrapal.pal ../atari8.fnt ../c16.pal ../c64.fnt ../zx81.fnt
-	cito -o $*.c -I .. $<
+%.c %.h: %.fu ../altirrantsc.pal ../altirrapal.pal ../atari8.fnt ../c16.pal ../c64.fnt ../zx81.fnt
+	fut -o $*.c -I .. $<
 
 clean:
 	rm -rf recoil-$(VERSION)-macos.dmg bin  ../formats.h

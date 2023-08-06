@@ -1,15 +1,15 @@
-﻿Compilation instructions
+Compilation instructions
 ========================
 
 
 Required tools
 --------------
 
-RECOIL is written in the Ć programming language.
+RECOIL is written in the Fusion programming language.
 Official releases include translation of RECOIL to C,
 so you only need a C compiler and Make utility.
 In other cases (Git, Paint.NET, HTML 5, Android, UWP)
-you'll need cito (https://github.com/pfusik/cito).
+you'll need fut (https://fusion-lang.org).
 
 
 Getting officially released source code
@@ -120,7 +120,7 @@ Building Paint.NET plugin on Windows
 
 Install Paint.NET and GNU Make (e.g. from MSYS2, see above).
 
-Make sure cito is on your PATH.
+Make sure fut is on your PATH.
 
 From the command prompt navigate to the win32 directory and run:
 
@@ -130,7 +130,7 @@ From the command prompt navigate to the win32 directory and run:
 Building HTML 5 based viewer
 ----------------------------
 
-Make sure cito is on your PATH.
+Make sure fut is on your PATH.
 
 From the command prompt navigate to the www directory and run:
 
@@ -142,7 +142,7 @@ Building Android application
 
 Install Android Studio (https://developer.android.com/studio/).
 
-Make sure cito and ImageMagick 7 (https://imagemagick.org/) are on your PATH.
+Make sure fut and ImageMagick 7 (https://imagemagick.org/) are on your PATH.
 
 Build the project as any other Android project.
 
@@ -163,6 +163,6 @@ Building Windows 10 application
 
 Install Visual Studio 2022 and ImageMagick 7.
 
-Make sure cito and magick are on your PATH.
+Make sure fut and magick are on your PATH.
 
 Build uwp/RECOIL.sln in Visual Studio.

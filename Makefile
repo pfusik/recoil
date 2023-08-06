@@ -11,7 +11,7 @@ MAGICK_CONFIG_PATH := $(wildcard $(shell MagickCore-config --exec-prefix)/etc/Im
 CAN_INSTALL_MAGICK := $(and $(MAGICK_CODER_PATH),$(MAGICK_CONFIG_PATH))
 endif
 
-CITO = cito
+FUT = fut
 CC = gcc
 CFLAGS = -O2 -Wall
 INSTALL = install
@@ -42,8 +42,8 @@ formats.h: formats.h.xsl formats.xml
 	xsltproc -o $@ formats.h.xsl formats.xml
 
 # http://www.cmcrossroads.com/article/rules-multiple-outputs-gnu-make
-%.c %.h: %.ci altirrantsc.pal altirrapal.pal atari8.fnt c16.pal c64.fnt zx81.fnt
-	$(CITO) -o $*.c $<
+%.c %.h: %.fu altirrantsc.pal altirrapal.pal atari8.fnt c16.pal c64.fnt zx81.fnt
+	$(FUT) -o $*.c $<
 
 benchmark: benchmark.c recoil-stdio.c recoil-stdio.h recoil.c recoil.h
 	$(CC) $(CFLAGS) benchmark.c recoil-stdio.c recoil.c -o $@

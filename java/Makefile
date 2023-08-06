@@ -14,8 +14,8 @@ net/sf/recoil/RECOIL.class: java/RECOIL.java
 net/sf/recoil/atari8.fnt: $(RESOURCES)
 	mkdir -p $(@D) && cp $^ $(@D)
 
-java/RECOIL.java: ../recoil.ci $(RESOURCES)
-	mkdir -p $(@D) && cito -o $@ -n net.sf.recoil -I .. $<
+java/RECOIL.java: ../recoil.fu $(RESOURCES)
+	mkdir -p $(@D) && fut -o $@ -n net.sf.recoil -I .. $<
 
 recoil-$(VERSION)-javadoc.zip: recoil-$(VERSION)-javadoc/index.html
 	$(SEVENZIP) -tzip $@ $(<D)
