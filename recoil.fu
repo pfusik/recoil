@@ -10870,7 +10870,7 @@ public class RECOIL
 					offset = backgroundOffset;
 				else
 					offset += colorsOffset;
-				Pixels[y * width + x] = C64Palette[content[offset] & 0xf];
+				Pixels[y * width + x] = C64Palette[offset < 0 ? 0 : content[offset] & 0xf];
 			}
 		}
 		return true;
@@ -10886,6 +10886,18 @@ public class RECOIL
 	{
 		return contentLength == 2029
 			&& DecodePetScreen(content, 5, 0x405, 3, 40, 25);
+	}
+
+	bool DecodePbot!(byte[] content, int contentLength)
+	{
+		switch (contentLength) {
+		case 70:
+			return DecodePetScreen(content, 35, 0, -1, 5, 7);
+		case 384:
+			return DecodePetScreen(content, 192, 0, -1, 12, 16);
+		default:
+			return false;
+		}
 	}
 
 	bool DecodeScrCol!(string filename, byte[] content, int contentLength)
@@ -20563,6 +20575,7 @@ public class RECOIL
 		case PackExt("FLY"):
 		case PackExt("PA3"):
 		case PackExt("PAC"):
+		case PackExt("PBOT"):
 		case PackExt("PBX"):
 		case PackExt("PC1"):
 		case PackExt("PC2"):
@@ -21437,6 +21450,8 @@ public class RECOIL
 			return DecodeStPpp(content, contentLength);
 		case PackExt("PAC"):
 			return DecodePac(content, contentLength);
+		case PackExt("PBOT"):
+			return DecodePbot(content, contentLength);
 		case PackExt("PBX"):
 			return DecodePbx(content, contentLength);
 		case PackExt("PC1"):
