@@ -10856,7 +10856,9 @@ public class RECOIL
 		return true;
 	}
 
-	bool DecodePetScreen!(byte[] content, int screenOffset, int colorsOffset, int backgroundOffset, int columns, int rows)
+	static int GetAtari8Gr0Pixel(byte[] font, int fontOffset, int ch, int x, int y) => (font[fontOffset + ((ch & 0x7f) << 3) + (y & 7)] >> (~x & 7) ^ ch >> 7) & 1;
+
+	bool DecodePetScreenCustom!(byte[] content, int screenOffset, int fontOffset, byte[] colors, int colorsOffset, int background, int columns, int rows)
 	{
 		int width = columns << 3;
 		int height = rows << 3;
@@ -10866,35 +10868,47 @@ public class RECOIL
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
 				int offset = (y >> 3) * columns + (x >> 3);
-				if ((font[content[screenOffset + offset] << 3 | (y & 7)] >> (~x & 7) & 1) == 0)
-					offset = backgroundOffset;
+				int ch = content[screenOffset + offset];
+				int c;
+				if ((fontOffset == 0 ? GetAtari8Gr0Pixel(font, 0, ch, x, y) : content[fontOffset + (ch << 3) + (y & 7)] >> (~x & 7) & 1) == 0)
+					c = background;
 				else
-					offset += colorsOffset;
-				Pixels[y * width + x] = C64Palette[offset < 0 ? 0 : content[offset] & 0xf];
+					c = colors[colorsOffset + offset];
+				Pixels[y * width + x] = C64Palette[c & 0xf];
 			}
 		}
 		return true;
 	}
 
+	bool DecodePetScreen!(byte[] content, int screenOffset, int colorsOffset, int background, int columns, int rows)
+		=> DecodePetScreenCustom(content, screenOffset, 0, content, colorsOffset, background, columns, rows);
+
 	bool DecodePet!(byte[] content, int contentLength)
 	{
-		return contentLength == 2026
-			&& DecodePetScreen(content, 2, 0x402, 0x3eb, 40, 25);
+		switch (contentLength) {
+		case 2026:
+			return DecodePetScreen(content, 2, 0x402, content[0x3eb], 40, 25);
+		case 4105:
+			return content[0] == 0xd0 && content[1] == 0xc5 && content[2] == 0xd4 && content[3] == '2'
+				&& DecodePetScreenCustom(content, 0x37, 0x809, content, 0x41f, content[0x808], 40, 25);
+		default:
+			return false;
+		}
 	}
 
 	bool DecodePdr!(byte[] content, int contentLength)
 	{
 		return contentLength == 2029
-			&& DecodePetScreen(content, 5, 0x405, 3, 40, 25);
+			&& DecodePetScreen(content, 5, 0x405, content[3], 40, 25);
 	}
 
 	bool DecodePbot!(byte[] content, int contentLength)
 	{
 		switch (contentLength) {
 		case 70:
-			return DecodePetScreen(content, 35, 0, -1, 5, 7);
+			return DecodePetScreen(content, 35, 0, 0, 5, 7);
 		case 384:
-			return DecodePetScreen(content, 192, 0, -1, 12, 16);
+			return DecodePetScreen(content, 192, 0, 0, 12, 16);
 		default:
 			return false;
 		}
@@ -10905,22 +10919,8 @@ public class RECOIL
 		if (contentLength != 1002)
 			return false;
 		byte[1002 + 1] colors;
-		if (ReadCompanionFile(filename, "COL", "col", colors, colors.Length) != 1002)
-			return false;
-		SetSize(320, 200, RECOILResolution.C641x1);
-		byte[] font = resource<byte[]>("c64.fnt");
-		for (int y = 0; y < 200; y++) {
-			for (int x = 0; x < 320; x++) {
-				int offset = 2 + (y & ~7) * 5 + (x >> 3);
-				int c;
-				if ((font[content[offset] << 3 | (y & 7)] >> (~x & 7) & 1) == 0)
-					c = 0;
-				else
-					c = colors[offset] & 0xf;
-				Pixels[y * 320 + x] = C64Palette[c];
-			}
-		}
-		return true;
+		return ReadCompanionFile(filename, "COL", "col", colors, colors.Length) == 1002
+			&& DecodePetScreenCustom(content, 2, 0, colors, 2, 0, 40, 25);
 	}
 
 	bool DecodeFpr!(byte[] content, int contentLength)
@@ -15558,7 +15558,7 @@ public class RECOIL
 				int ch = charactersOffset + (x >> 3);
 				if (characters != null)
 					ch = characters[ch];
-				int b = font[fontOffset + ((ch & 0x7f) << 3) + (y & 7)];
+				int b = GetAtari8Gr0Pixel(font, fontOffset, ch, x, y);
 				if (lines == 10) {
 					// ANTIC 3 instead of ANTIC 2 / GR.0
 					switch ((ch & 0x60) + y >> 1) {
@@ -15566,15 +15566,13 @@ public class RECOIL
 					case 0x14:
 					case 0x24:
 					case 0x30:
-						b = 0;
+						b = ch >> 7;
 						break;
 					default:
 						break;
 					}
 				}
-				if (ch >= 0x80)
-					b ^= 0xff;
-				frame[frameOffset + x] = colors[b >> (~x & 7) & 1];
+				frame[frameOffset + x] = colors[b];
 			}
 			frameOffset += Width;
 		}
@@ -20100,7 +20098,7 @@ public class RECOIL
 			// TODO: animation int screens = content[0x11];
 			int length = columns * rows;
 			return contentLength >= 0x2d + (length << 1)
-				&& DecodePetScreen(content, 0x1d + length, 0x1d, 0xd, columns, rows);
+				&& DecodePetScreen(content, 0x1d + length, 0x1d, content[0xd], columns, rows);
 		case 9:
 			if (content[12] != 6)
 				return false;
