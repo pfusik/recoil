@@ -8880,21 +8880,24 @@ public class RECOIL
 			Pixels[pixelsOffset + x] = (tile >> (3 - x) & 0x010101) * 0xff;
 	}
 
-	void SetKtyTileOffset!(int pixelsOffset, int mode, int tile0, int tile1)
+	void SetKtyTileOffset!(int pixelsOffset, int mode, byte[] content, int tileOffset)
 	{
-		SetKtyFourPixels(pixelsOffset, tile0 >> 4);
-		SetKtyFourPixels(pixelsOffset + 640, tile0);
+		int tile = GetKtyTile(content, tileOffset);
+		SetKtyFourPixels(pixelsOffset, tile >> 4);
+		SetKtyFourPixels(pixelsOffset + 640, tile);
 		if (mode != 0) {
-			SetKtyFourPixels(pixelsOffset + 2 * 640, tile1 >> 4);
-			SetKtyFourPixels(pixelsOffset + 3 * 640, tile1);
+			if (mode >= 2)
+				tile = GetKtyTile(content, tileOffset + 3);
+			SetKtyFourPixels(pixelsOffset + 2 * 640, tile >> 4);
+			SetKtyFourPixels(pixelsOffset + 3 * 640, tile);
 		}
 	}
 
-	void SetKtyTile!(int x, int y, int mode, int tile0, int tile1)
+	void SetKtyTile!(int x, int y, int mode, byte[] content, int tileOffset)
 	{
 		if (mode != 0)
 			y <<= 1;
-		SetKtyTileOffset(y * 320 + x << 2, mode, tile0, tile1);
+		SetKtyTileOffset(y * 320 + x << 2, mode, content, tileOffset);
 	}
 
 	bool DecodeKty!(byte[] content, int contentLength)
@@ -8906,25 +8909,18 @@ public class RECOIL
 		int mode = 0;
 		for (int contentOffset = 0; contentOffset < contentLength; ) {
 			int b = content[contentOffset++];
-			int tile0;
-			int tile1;
 			if (b == 0xff) {
-				tile1 = 0;
+				if (mode != 0)
+					mode = 2;
 				for (int y = 0; y < 100; y++) {
 					for (int x = 0; x < 160; x++) {
 						int pixelsOffset = y * (mode == 0 ? 320 : 640) + x << 2;
 						if (Pixels[pixelsOffset] == blank) {
-							if (contentOffset + 3 > contentLength)
+							int nextOffset = contentOffset + (mode == 0 ? 3 : 6);
+							if (nextOffset > contentLength)
 								return false;
-							tile0 = GetKtyTile(content, contentOffset);
-							contentOffset += 3;
-							if (mode != 0) {
-								if (contentOffset + 3 > contentLength)
-									return false;
-								tile1 = GetKtyTile(content, contentOffset);
-								contentOffset += 3;
-							}
-							SetKtyTileOffset(pixelsOffset, mode, tile0, tile1);
+							SetKtyTileOffset(pixelsOffset, mode, content, contentOffset);
+							contentOffset = nextOffset;
 						}
 					}
 				}
@@ -8937,19 +8933,9 @@ public class RECOIL
 				}
 				return true;
 			}
-			if (contentOffset + 3 > contentLength)
-				return false;
 			mode = b;
-			tile0 = GetKtyTile(content, contentOffset);
-			contentOffset += 3;
-			if (mode >= 2) {
-				if (contentOffset + 3 > contentLength)
-					return false;
-				tile1 = GetKtyTile(content, contentOffset);
-				contentOffset += 3;
-			}
-			else
-				tile1 = tile0;
+			int tileOffset = contentOffset;
+			contentOffset += mode < 2 ? 3 : 6;
 			for (;;) {
 				if (contentOffset >= contentLength)
 					return false;
@@ -8985,7 +8971,7 @@ public class RECOIL
 				}
 				for (int y = top; y <= bottom; y++) {
 					for (int x = left; x <= right; x++)
-						SetKtyTile(x, y, mode, tile0, tile1);
+						SetKtyTile(x, y, mode, content, tileOffset);
 				}
 			}
 			for (;;) {
@@ -8999,7 +8985,7 @@ public class RECOIL
 				int y = content[contentOffset++];
 				if (y >= 100)
 					return false;
-				SetKtyTile(x, y, mode, tile0, tile1);
+				SetKtyTile(x, y, mode, content, tileOffset);
 			}
 		}
 		return false;
