@@ -8924,6 +8924,8 @@ public class RECOIL
 						}
 					}
 				}
+				if (contentOffset != contentLength)
+					return false;
 				if (mode == 0) {
 					for (int pixelsOffset = 199 * 640; pixelsOffset >= 0; pixelsOffset -= 640) {
 						Pixels.CopyTo(pixelsOffset, Pixels, (pixelsOffset << 1) + 640, 640);
