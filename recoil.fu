@@ -8872,6 +8872,139 @@ public class RECOIL
 		return true;
 	}
 
+	static int GetKtyTile(byte[] content, int contentOffset) => content[contentOffset + 1] << 16 | content[contentOffset + 2] << 8 | content[contentOffset];
+
+	void SetKtyFourPixels!(int pixelsOffset, int tile)
+	{
+		for (int x = 0; x < 4; x++)
+			Pixels[pixelsOffset + x] = (tile >> (3 - x) & 0x010101) * 0xff;
+	}
+
+	void SetKtyTileOffset!(int pixelsOffset, int mode, int tile0, int tile1)
+	{
+		SetKtyFourPixels(pixelsOffset, tile0 >> 4);
+		SetKtyFourPixels(pixelsOffset + 640, tile0);
+		if (mode != 0) {
+			SetKtyFourPixels(pixelsOffset + 2 * 640, tile1 >> 4);
+			SetKtyFourPixels(pixelsOffset + 3 * 640, tile1);
+		}
+	}
+
+	void SetKtyTile!(int x, int y, int mode, int tile0, int tile1)
+	{
+		if (mode != 0)
+			y <<= 1;
+		SetKtyTileOffset(y * 320 + x << 2, mode, tile0, tile1);
+	}
+
+	bool DecodeKty!(byte[] content, int contentLength)
+	{
+		SetSize(640, 400, RECOILResolution.Pc88Va1x1);
+		const int blank = 1;
+		for (int i = 0; i < 640 * 400; i += 4)
+			Pixels[i] = blank;
+		int mode = 0;
+		for (int contentOffset = 0; contentOffset < contentLength; ) {
+			int b = content[contentOffset++];
+			int tile0;
+			int tile1;
+			if (b == 0xff) {
+				tile1 = 0;
+				for (int y = 0; y < 100; y++) {
+					for (int x = 0; x < 160; x++) {
+						int pixelsOffset = y * (mode == 0 ? 320 : 640) + x << 2;
+						if (Pixels[pixelsOffset] == blank) {
+							if (contentOffset + 3 > contentLength)
+								return false;
+							tile0 = GetKtyTile(content, contentOffset);
+							contentOffset += 3;
+							if (mode != 0) {
+								if (contentOffset + 3 > contentLength)
+									return false;
+								tile1 = GetKtyTile(content, contentOffset);
+								contentOffset += 3;
+							}
+							SetKtyTileOffset(pixelsOffset, mode, tile0, tile1);
+						}
+					}
+				}
+				if (mode == 0) {
+					for (int pixelsOffset = 199 * 640; pixelsOffset >= 0; pixelsOffset -= 640) {
+						Pixels.CopyTo(pixelsOffset, Pixels, (pixelsOffset << 1) + 640, 640);
+						Pixels.CopyTo(pixelsOffset, Pixels, pixelsOffset << 1, 640);
+					}
+					Resolution = RECOILResolution.Pc881x2;
+				}
+				return true;
+			}
+			if (contentOffset + 3 > contentLength)
+				return false;
+			mode = b;
+			tile0 = GetKtyTile(content, contentOffset);
+			contentOffset += 3;
+			if (mode >= 2) {
+				if (contentOffset + 3 > contentLength)
+					return false;
+				tile1 = GetKtyTile(content, contentOffset);
+				contentOffset += 3;
+			}
+			else
+				tile1 = tile0;
+			for (;;) {
+				if (contentOffset >= contentLength)
+					return false;
+				int hi = content[contentOffset++];
+				if (hi == 0xff)
+					break;
+				if (contentOffset + 2 > contentLength)
+					return false;
+				int offset = (hi & 0x3f) << 8 | content[contentOffset++];
+				int left = offset % 160;
+				int right;
+				int top = offset / 160;
+				if (top >= 100)
+					return false;
+				int bottom;
+				if (hi >= 0x80) {
+					right = left;
+					bottom = content[contentOffset++];
+				}
+				else {
+					right = content[contentOffset++];
+					if (right < left || right >= 160)
+						return false;
+					if (hi >= 0x40)
+						bottom = top;
+					else if (contentOffset >= contentLength)
+						return false;
+					else {
+						bottom = content[contentOffset++];
+						if (bottom < top || bottom >= 100)
+							return false;
+					}
+				}
+				for (int y = top; y <= bottom; y++) {
+					for (int x = left; x <= right; x++)
+						SetKtyTile(x, y, mode, tile0, tile1);
+				}
+			}
+			for (;;) {
+				if (contentOffset >= contentLength)
+					return false;
+				int x = content[contentOffset++];
+				if (x == 0xff)
+					break;
+				if (x >= 160 || contentOffset >= contentLength)
+					return false;
+				int y = content[contentOffset++];
+				if (y >= 100)
+					return false;
+				SetKtyTile(x, y, mode, tile0, tile1);
+			}
+		}
+		return false;
+	}
+
 	// NEC PC-98 formats.
 
 	bool DecodeEbd!(byte[] content, int contentLength)
@@ -9136,7 +9269,7 @@ public class RECOIL
 			if (contentOffset + 66 > contentLength)
 				return false;
 			for (int c = 0; c < 16; c++) {
-				ContentPalette[c] = content[contentOffset + 1] << 16 | content[contentOffset + 2] << 8 | content[contentOffset];
+				ContentPalette[c] = GetKtyTile(content, contentOffset);
 				contentOffset += 4;
 			}
 		}
@@ -20507,6 +20640,8 @@ public class RECOIL
 		case PackExt("RPM"):
 		case PackExt("KPR"):
 		case PackExt("KSS"):
+		case PackExt("KT4"):
+		case PackExt("KTY"):
 		case PackExt("LCE"):
 		case PackExt("LDM"):
 		case PackExt("LEO"):
@@ -21321,6 +21456,9 @@ public class RECOIL
 			return DecodeKpr(content, contentLength);
 		case PackExt("KSS"):
 			return DecodeKss(content, contentLength);
+		case PackExt("KT4"):
+		case PackExt("KTY"):
+			return DecodeKty(content, contentLength);
 		case PackExt("LCE"):
 			return DecodeLce(content, contentLength);
 		case PackExt("LDM"):
