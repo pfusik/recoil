@@ -1741,14 +1741,15 @@ class XeKoalaStream : RleStream
 		if (ReadByte() != 0xff || ReadByte() != 0x80 || ReadByte() != 0xc9 || ReadByte() != 0xc7)
 			return false;
 		int offset = ReadByte();
-		if (offset < 26 || ReadByte() != 0 || ReadByte() != 1)
+		offset |= ReadByte() << 8;
+		if (offset < 26 || ReadByte() != 1)
 			return false;
 		int type = ReadByte();
-		if (ReadByte() != 0x0e || ReadByte() != 0 || ReadByte() != 40
-		 || ReadByte() != 0 || ReadByte() != 192)
+		ContentOffset++;
+		if (ReadByte() != 0 || ReadByte() != 40 || ReadByte() != 0)
 			return false;
-		ContentOffset += 7;
-		if (ReadByte() != 0 || ReadByte() != 0)
+		ContentOffset += 9;
+		if (ReadByte() != 0)
 			return false;
 		ContentOffset += offset - 21;
 		return UnpackRaw(type, unpackedLength);
@@ -8948,10 +8949,10 @@ public class RECOIL
 					return false;
 				int offset = (hi & 0x3f) << 8 | content[contentOffset++];
 				int left = offset % 160;
-				int right;
 				int top = offset / 160;
 				if (top >= 100)
 					return false;
+				int right;
 				int bottom;
 				if (hi >= 0x80) {
 					right = left;
@@ -16322,13 +16323,32 @@ public class RECOIL
 
 	bool DecodeAtari8Koala!(byte[] content, int contentOffset, int contentLength)
 	{
-		XeKoalaStream() rle = { Content = content, ContentOffset = contentOffset, ContentLength = contentLength };
-		if (!rle.UnpackWrapped(7680))
+		if (contentOffset + 22 >= contentLength)
 			return false;
-		SetSize(320, 192, RECOILResolution.Xe2x1);
+		int rows = content[contentOffset + 12];
+		XeKoalaStream() rle = { Content = content, ContentOffset = contentOffset, ContentLength = contentLength };
+		if (!rle.UnpackWrapped(rows * 40))
+			return false;
 		SetPF0123Bak(content, contentOffset + 13);
 		byte[320 * 192] frame;
-		DecodeAtari8Gr15(rle.Unpacked, 0, 40, frame, 0, 320, 192);
+		switch (content[contentOffset + 20] << 16 | content[contentOffset + 8] << 8 | rows) {
+		case 0x00218:
+			SetSize(320, 192, RECOILResolution.Xe1x1);
+			byte[] font = resource<byte[]>("atari8.fnt");
+			for (int row = 0; row < 24; row++)
+				DecodeAtari8Gr0Line(rle.Unpacked, row * 40, font, 0, frame, row * (320 * 8), 8);
+			break;
+		case 0x00ec0:
+			SetSize(320, 192, RECOILResolution.Xe2x1);
+			DecodeAtari8Gr15(rle.Unpacked, 0, 40, frame, 0, 320, 192);
+			break;
+		case 0x10fc0:
+			SetSize(320, 192, RECOILResolution.Xe4x1);
+			DecodeAtari8Gr9(rle.Unpacked, 0, 40, frame, 0, 320, 320, 192);
+			break;
+		default:
+			return false;
+		}
 		return ApplyAtari8Palette(frame);
 	}
 

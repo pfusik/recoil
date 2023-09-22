@@ -243,6 +243,7 @@
 		<format width="80"><ext>PI9</ext></format>
 		<format name="Graphic Arts Department" width="160" height="96" colors="128"><ext>PIC</ext></format>
 		<format name="Koala MicroIllustrator" width="160" height="192" colors="4"><ext>PIC</ext></format>
+		<format name="PIC v2" maxWidth="320" height="192"><ext>PIC</ext></format>
 		<format name="Visualizer" width="160" height="79" colors="4"><ext>PIC</ext></format>
 		<format width="160" height="192" colors="4"><ext>PIX</ext></format>
 		<format name="AtariTools-800 player" width="8" height="240" colors="2"><ext>PLA</ext></format>
