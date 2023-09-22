@@ -16326,6 +16326,8 @@ public class RECOIL
 		if (contentOffset + 22 >= contentLength)
 			return false;
 		int rows = content[contentOffset + 12];
+		if (rows > 192)
+			return false;
 		XeKoalaStream() rle = { Content = content, ContentOffset = contentOffset, ContentLength = contentLength };
 		if (!rle.UnpackWrapped(rows * 40))
 			return false;
