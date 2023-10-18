@@ -60,7 +60,7 @@ android {
         sourceCompatibility 11
         targetCompatibility 11
     }
-    compileSdk 33
+    compileSdk 34
     sourceSets {
         main {
             resources {
@@ -70,7 +70,7 @@ android {
     }
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 33
+        targetSdkVersion 34
     }
     applicationVariants.all { variant ->
         variant.mergeResourcesProvider.get().dependsOn generateIcon, generateRoundIcon
