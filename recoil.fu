@@ -10147,12 +10147,12 @@ public class RECOIL
 		}
 	}
 
-	int GetC64Multicolor(byte[] content, int bitmapOffset, int videoMatrixOffset, int colorOffset, int background, bool bottomBfli, int x, int y)
+	int GetC64Multicolor(byte[] content, int bitmapOffset, int videoMatrixOffset, int colorOffset, int background, bool bottomBfli, int x, int y, int strideColumns)
 	{
 		x += LeftSkip;
 		if (x < 0)
 			return background;
-		int charOffset = (y & ~7) * 5 + (x >> 3);
+		int charOffset = (y >> 3) * strideColumns + (x >> 3);
 		if (bottomBfli)
 			charOffset = charOffset - (24 - FliBugCharacters) & 0x3ff;
 		switch (content[bitmapOffset + (charOffset << 3) + (y & 7)] >> (~x & 6) & 3) {
@@ -10167,17 +10167,17 @@ public class RECOIL
 		}
 	}
 
-	void DecodeC64MulticolorLine!(byte[] content, int bitmapOffset, int videoMatrixOffset, int colorOffset, int background, bool bottomBfli, int y, int pixelsOffset)
+	void DecodeC64MulticolorLine!(byte[] content, int bitmapOffset, int videoMatrixOffset, int colorOffset, int background, bool bottomBfli, int y, int pixelsOffset, int width, int strideColumns)
 	{
-		for (int x = 0; x < Width; x++)
-			Pixels[pixelsOffset + x] = C64Palette[GetC64Multicolor(content, bitmapOffset, videoMatrixOffset, colorOffset, background, bottomBfli, x, y) & 0xf];
+		for (int x = 0; x < width; x++)
+			Pixels[pixelsOffset + x] = C64Palette[GetC64Multicolor(content, bitmapOffset, videoMatrixOffset, colorOffset, background, bottomBfli, x, y, strideColumns) & 0xf];
 	}
 
 	void DecodeC64MulticolorFrame!(byte[] content, int bitmapOffset, int videoMatrixOffset, int colorOffset, int backgroundOffset, int pixelsOffset)
 	{
 		int background = backgroundOffset < 0 ? 0 : content[backgroundOffset];
 		for (int y = 0; y < 200; y++)
-			DecodeC64MulticolorLine(content, bitmapOffset, videoMatrixOffset, colorOffset, background, false, y, pixelsOffset + y * 320);
+			DecodeC64MulticolorLine(content, bitmapOffset, videoMatrixOffset, colorOffset, background, false, y, pixelsOffset + y * 320, 320, 40);
 	}
 
 	bool DecodeC64Multicolor!(byte[] content, int bitmapOffset, int videoMatrixOffset, int colorOffset, int backgroundOffset)
@@ -10196,13 +10196,13 @@ public class RECOIL
 	void DecodeC64MulticolorFliFrame!(byte[] content, int bitmapOffset, int videoMatrixOffset, int colorOffset, int background, bool bottomBfli, int pixelsOffset)
 	{
 		for (int y = 0; y < 200; y++)
-			DecodeC64MulticolorLine(content, bitmapOffset, videoMatrixOffset + ((y & 7) << 10), colorOffset, background, bottomBfli, y, pixelsOffset + y * FliWidth);
+			DecodeC64MulticolorLine(content, bitmapOffset, videoMatrixOffset + ((y & 7) << 10), colorOffset, background, bottomBfli, y, pixelsOffset + y * FliWidth, FliWidth, 40);
 	}
 
 	void DecodeC64MulticolorFliBarsFrame!(byte[] content, int bitmapOffset, int videoMatrixOffset, int colorOffset, int backgroundOffset, int pixelsOffset)
 	{
 		for (int y = 0; y < 200; y++)
-			DecodeC64MulticolorLine(content, bitmapOffset, videoMatrixOffset + ((y & 7) << 10), colorOffset, content[backgroundOffset + y], false, y, pixelsOffset + y * FliWidth);
+			DecodeC64MulticolorLine(content, bitmapOffset, videoMatrixOffset + ((y & 7) << 10), colorOffset, content[backgroundOffset + y], false, y, pixelsOffset + y * FliWidth, FliWidth, 40);
 	}
 
 	bool DecodeC64MulticolorFli!(byte[] content, int bitmapOffset, int videoMatrixOffset, int colorOffset, int background)
@@ -10532,7 +10532,7 @@ public class RECOIL
 			return false;
 		SetSize(FliWidth, 200, RECOILResolution.C642x1);
 		for (int y = 0; y < 200; y++)
-			DecodeC64MulticolorLine(content, 0x1002 + FliBugCharacters * 8, 0x802 + FliBugCharacters + ((y & 4) << 8), 0x802 + FliBugCharacters + ((y & 4) << 8), content[0x2f42 + (y >> 2)], false, y, y * FliWidth);
+			DecodeC64MulticolorLine(content, 0x1002 + FliBugCharacters * 8, 0x802 + FliBugCharacters + ((y & 4) << 8), 0x802 + FliBugCharacters + ((y & 4) << 8), content[0x2f42 + (y >> 2)], false, y, y * FliWidth, FliWidth, 40);
 		return true;
 	}
 
@@ -10625,7 +10625,7 @@ public class RECOIL
 			return false;
 		SetSize(FliWidth, 192, RECOILResolution.C642x1);
 		for (int y = 0; y < 192; y++)
-			DecodeC64MulticolorLine(content, 0x2002 + FliBugCharacters * 8, 2 + FliBugCharacters + ((y + 4 & 7) << 10), 0x4002 + FliBugCharacters, content[0x4403], false, y + 4, y * FliWidth);
+			DecodeC64MulticolorLine(content, 0x2002 + FliBugCharacters * 8, 2 + FliBugCharacters + ((y + 4 & 7) << 10), 0x4002 + FliBugCharacters, content[0x4403], false, y + 4, y * FliWidth, FliWidth, 40);
 		return true;
 	}
 
@@ -10706,7 +10706,7 @@ public class RECOIL
 	{
 		for (int y = 0; y < 200; y++) {
 			int background = content[y < 177 ? 0x3f51 + y : y < 197 ? 0x47ea - 177 + y : 0x47fd];
-			DecodeC64MulticolorLine(content, bitmapOffset + FliBugCharacters * 8, videoMatrixOffset + FliBugCharacters + ((y & 7) << 10), 0x4002 + FliBugCharacters, background, false, y, pixelsOffset + y * FliWidth);
+			DecodeC64MulticolorLine(content, bitmapOffset + FliBugCharacters * 8, videoMatrixOffset + FliBugCharacters + ((y & 7) << 10), 0x4002 + FliBugCharacters, background, false, y, pixelsOffset + y * FliWidth, FliWidth, 40);
 		}
 	}
 
@@ -11043,6 +11043,60 @@ public class RECOIL
 		byte[1002 + 1] colors;
 		return ReadCompanionFile(filename, "COL", "col", colors, colors.Length) == 1002
 			&& DecodePetScreenCustom(content, 2, 0, colors, 2, 0, 40, 25);
+	}
+
+	bool DecodeCgx!(byte[] content, int contentLength)
+	{
+		if (contentLength < 40
+		 || !IsStringAt(content, 0, "RIFF")
+		 || Get32LittleEndian(content, 4) + 8 != contentLength
+		 || !IsStringAt(content, 8, "CGFX"))
+			return false;
+		int contentOffset = 12;
+		int matrixRows = 0;
+		int matrixColumns = 0;
+		int frameRows = 0;
+		int frameColumns = 0;
+		while (contentOffset + 8 <= contentLength) {
+			int chunkLength = Get32LittleEndian(content, contentOffset + 4);
+			int nextChunkOffset = contentOffset + 8 + chunkLength;
+			if (nextChunkOffset > contentLength)
+				return false;
+			if (IsStringAt(content, contentOffset, "FRMT") && chunkLength == 12) {
+				matrixRows = content[contentOffset + 8];
+				matrixColumns = content[contentOffset + 9];
+				frameRows = content[contentOffset + 16];
+				frameColumns = content[contentOffset + 17];
+				if (content[contentOffset + 12] != matrixRows * matrixColumns
+				 || content[contentOffset + 18] != 4 // TODO: other modes
+				 || content[contentOffset + 19] != 0) // TODO: FLI, interlace, per-line background
+					return false;
+			}
+			else if (IsStringAt(content, contentOffset, "DATA")) {
+				int frameChars = frameRows * frameColumns;
+				int frameLength = frameChars * 10 + 2;
+				int frames = matrixRows * matrixColumns;
+				int width = matrixColumns * frameColumns << 3;
+				int height = matrixRows * frameRows << 3;
+				if (chunkLength != frames * frameLength
+				 || !SetSize(width, height, RECOILResolution.C642x1))
+					return false;
+				for (int matrixRow = 0; matrixRow < matrixRows; matrixRow++) {
+					for (int matrixColumn = 0; matrixColumn < matrixColumns; matrixColumn++) {
+						int frameOffset = contentOffset + 8 + (matrixRow * matrixColumns + matrixColumn) * frameLength;
+						int background = content[frameOffset + frameLength - 1];
+						int pixelsOffset = (matrixRow * frameRows * width + matrixColumn * frameColumns) << 3;
+						for (int y = 0; y < frameRows << 3; y++)
+							DecodeC64MulticolorLine(content, frameOffset, frameOffset + (frameChars << 3), frameOffset + frameChars * 9, background, false, y, pixelsOffset + y * width, frameColumns << 3, frameColumns);
+					}
+				}
+				return true;
+			}
+			else if (!IsStringAt(content, contentOffset, "META"))
+				return false;
+			contentOffset = nextChunkOffset;
+		}
+		return false;
 	}
 
 	bool DecodeFpr!(byte[] content, int contentLength)
@@ -20435,6 +20489,7 @@ public class RECOIL
 		case PackExt("CE3"):
 		case PackExt("CEL"):
 		case PackExt("CFLI"):
+		case PackExt("CGX"):
 		case PackExt("CH$"):
 		case PackExt("CH4"):
 		case PackExt("CH6"):
@@ -21070,6 +21125,8 @@ public class RECOIL
 			return DecodeCel(content, contentLength);
 		case PackExt("CFLI"):
 			return DecodeCfli(content, contentLength);
+		case PackExt("CGX"):
+			return DecodeCgx(content, contentLength);
 		case PackExt("CH$"):
 			return DecodeChrd(content, contentLength);
 		case PackExt("CH4"):
