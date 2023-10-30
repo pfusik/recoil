@@ -1,4 +1,4 @@
-﻿<formats version="6.3.4">
+﻿<formats version="6.4.0">
 	<platform name="Amiga" href="https://en.wikipedia.org/wiki/Amiga">
 		<format name="AMOS"><ext>ABK</ext></format>
 		<format name="Amiga Continuous Bitmap"><ext>ACBM</ext></format>
@@ -126,7 +126,7 @@
 			<ext name="Plama 256">PLM</ext>
 		</format>
 		<format name="Atari Player Editor" colors="4"><ext>APL</ext></format>
-		<format name="Apac3 Linker-Viewer (SFDN compressed)" width="80" height="192" colors="256" frames="2"><ext>APP</ext></format>
+		<format name="Apac3 Linker-Viewer (SFDN compressed)" width="80" height="192" colors="256" frames="2"><ext skip="uwp">APP</ext></format>
 		<format name="Any Point, Any Color (SFDN compressed)" width="80" height="96" colors="256"><ext>APS</ext></format>
 		<format name="Ascii-Art Editor" maxWidth="64" maxHeight="24" unit="characters" colors="2">
 			<!-- I only see up to 40x21 in the editor, but the sample file SIANO.ART is bigger --><ext>ART</ext>
@@ -211,8 +211,8 @@
 			<companionExt optional="true">COL</companionExt>
 		</format>
 		<format width="56" height="60" colors="2"><ext>KFX</ext></format>
-		<format name="Envision"><ext>MAP</ext></format>
-		<format name="EnvisionPC"><ext>MAP</ext></format>
+		<format name="Envision"><ext skip="uwp">MAP</ext></format>
+		<format name="EnvisionPC"><ext skip="uwp">MAP</ext></format>
 		<format name="XL-Paint MAX" width="160" height="192" frames="2"><ext>MAX</ext></format>
 		<format name="Mad Designer" width="512" height="256" colors="2"><ext>MBG</ext></format>
 		<format name="Graph2Font" maxWidth="336" height="240" colors="256"><ext>MCH</ext></format>
@@ -252,7 +252,7 @@
 		<format name="Print Shop" width="88" height="52" colors="2"><ext>PSF</ext></format>
 		<format name="Vidig Paint" width="80" height="192" colors="16"><ext>RAP</ext></format>
 		<format name="XL-Paint MAX" width="160" height="192" colors="16" frames="2"><ext skip="uwp">RAW</ext></format>
-		<format name="ColorViewSquash" maxWidth="160" maxHeight="192" frames="3"><ext>RGB</ext></format>
+		<format name="ColorViewSquash" maxWidth="160" maxHeight="192" frames="3"><ext skip="uwp">RGB</ext></format>
 		<format name="Rocky Interlace Picture" maxWidth="320" maxHeight="239" maxFrames="2"><ext>RIP</ext></format>
 		<format name="Rambrandt" width="160" height="96" colors="99"><!-- 99 = 4 colors + 95 DLI changes --><ext>RM0</ext></format>
 		<format name="Rambrandt" width="80" height="192" colors="256"><ext>RM1</ext></format>
@@ -394,7 +394,7 @@
 		<format width="320" height="200" colors="256" frames="2"><ext>PL4</ext></format>
 		<format name="Pablo Paint 1.1" width="320" height="200" colors="16"><ext>PPP</ext></format>
 		<format name="PaintShop (compressed)" maxWidth="640" maxHeight="400" colors="2"><ext>PSC</ext></format>
-		<format name="RGB Intermediate" width="320" height="200" colors="4096" frames="3"><ext>RGB</ext></format>
+		<format name="RGB Intermediate" width="320" height="200" colors="4096" frames="3"><ext skip="uwp">RGB</ext></format>
 		<format name="ZZ_ROUGH" width="320" height="200" colors="16"><ext>RGH</ext></format>
 		<format name="Paintworks" width="320" height="200" colors="16">
 			<ext>CL0</ext>
@@ -970,7 +970,7 @@
 		<format name="MultiArtist 8x4" width="256" height="192" frames="2"><ext>MG4</ext></format>
 		<format name="MultiArtist 8x8" width="256" height="192" frames="2"><ext>MG8</ext></format>
 		<format width="256" height="192" colors="15"><ext>MLT</ext></format>
-		<format width="256" height="192" colors="8" frames="3"><ext>RGB</ext></format>
+		<format width="256" height="192" colors="8" frames="3"><ext skip="uwp">RGB</ext></format>
 		<format width="256" height="192" colors="15"><ext skip="uwp">SCR</ext></format>
 		<format name="SevenuP" maxWidth="256" maxHeight="192" colors="15"><ext>SEV</ext></format>
 		<format name="Stellar" width="64" height="48" frames="2"><ext>STL</ext></format>

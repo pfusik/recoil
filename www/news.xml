@@ -1,4 +1,12 @@
 ﻿<page title="News">
+	<release project="RECOIL" version="6.4.0" date="2023-10-30">
+		<ul title="New formats">
+			<li>Atari 8-bit: PIC v2</li>
+			<li>C64: PETSCII BOT (PBOT), C64 OS screenshot v2 (PET), Commodore Grafix (CGX)</li>
+			<li>PC-88: KTY, KT4</li>
+		</ul>
+	</release>
+
 	<release project="RECOIL" version="6.3.4" date="2023-03-26">
 		<ul>
 			<li>New Atari ST/TT/Falcon formats: Grafix (GRX), UIMG (BP1/BP2/BP4/BP6/BP8/C01/C02/C04/C06/C08/C16/C24/C32)</li>
