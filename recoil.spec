@@ -62,7 +62,7 @@ and ZX Spectrum computers.
 make CFLAGS="%{build_cflags}" recoil2png file-recoil recoil-mime.xml
 
 %install
-make PREFIX=%{buildroot}%{_prefix} libdir=%{buildroot}{_libdir} BUILDING_PACKAGE=1 install-gimp install-thumbnailer
+make PREFIX=%{buildroot}%{_prefix} libdir=%{buildroot}%{_libdir} BUILDING_PACKAGE=1 install-gimp install-thumbnailer
 
 %files 2png
 %{_bindir}/recoil2png
