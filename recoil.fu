@@ -9545,18 +9545,19 @@ public class RECOIL
 		if (headerOffset + (32 + 16 * 3) > contentLength
 		 || content[headerOffset] != 0)
 			return false;
-		int width = content[headerOffset + 8] - content[headerOffset + 4] + (content[headerOffset + 9] - content[headerOffset + 5] << 8) + 1;
-		int height = content[headerOffset + 10] - content[headerOffset + 6] + (content[headerOffset + 11] - content[headerOffset + 7] << 8) + 1;
+		int left = content[headerOffset + 4] + (content[headerOffset + 5] << 8);
+		int width = content[headerOffset + 8] + (content[headerOffset + 9] << 8) + 1;
 		int bytesPerLine;
 		int colors;
 		if (content[headerOffset + 3] < 0x80) {
+			width -= left & ~7; // TODO: crop (left & 7) leftmost columns of image
 			bytesPerLine = width + 1 >> 1;
 			colors = 16;
 		}
 		else {
 			if (headerOffset + (32 + 256 * 3) >= contentLength)
 				return false;
-			bytesPerLine = width;
+			bytesPerLine = width -= left & ~3; // TODO: crop (left & 3) leftmost columns of image
 			colors = 256;
 		}
 		RECOILResolution resolution;
@@ -9623,6 +9624,7 @@ public class RECOIL
 			resolution = (content[headerOffset + 3] & 1) == 0 ? RECOILResolution.Msx21x1 : RECOILResolution.Msx21x2; // arbitrary
 			break;
 		}
+		int height = content[headerOffset + 10] - content[headerOffset + 6] + (content[headerOffset + 11] - content[headerOffset + 7] << 8) + 1;
 		if (!SetScaledSize(width, height, resolution))
 			return false;
 
