@@ -28,13 +28,13 @@
 		<format name="Turbo Silver" colors="4096"><ext>RGBN</ext></format>
 		<format name="Sliced HAM" colors="4096"><ext>SHAM</ext></format>
 	</platform>
-	<platform name="Amiga DCTV" href="http://amiga.resource.cx/exp/dctv">
+	<platform name="Amiga DCTV" href="https://amiga.resource.cx/exp/dctv">
 		<format name="DCTV">
 			<ext>DCT</ext>
 			<ext skip="uwp">DCTV</ext>
 		</format>
 	</platform>
-	<platform name="Amiga HAM-E" href="http://amiga.resource.cx/exp/hame">
+	<platform name="Amiga HAM-E" href="https://amiga.resource.cx/exp/hame">
 		<format name="HAM-E" maxWidth="384" maxHeight="480" colors="184320"><!-- colors limited by resolution -->
 			<ext>IFF</ext>
 		</format>
@@ -285,7 +285,7 @@
 		<format name="XL-Paint" width="160" maxHeight="200" colors="7" frames="2"><ext>XLP</ext></format>
 		<format name="Zoom-4 graphics editor" width="64" height="64" grayscale="16"><ext>ZM4</ext></format>
 	</platform>
-	<platform name="Atari 8-bit VBXE" href="http://gury.atari8.info/vbxe.php">
+	<platform name="Atari 8-bit VBXE" href="https://gury.atari8.info/vbxe.php">
 		<format name="SlideShow for VBXE" width="320" height="240" colors="256"><ext>DAP</ext></format>
 		<format name="Graph2Font" maxWidth="336" height="240" colors="256"><ext>G2F</ext></format>
 	</platform>
