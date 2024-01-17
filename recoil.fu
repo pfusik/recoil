@@ -13021,7 +13021,11 @@ public class RECOIL
 		switch (bitplanes) {
 		case 1:
 		case 2:
+		case 3:
 		case 4:
+		case 5:
+		case 6:
+		case 7:
 		case 8:
 			if (headerLength == 22 + (6 << bitplanes) && IsXimg(content)) {
 				for (int i = 0; i < 1 << bitplanes; i++)
@@ -13042,6 +13046,8 @@ public class RECOIL
 					}
 				}
 			}
+			else if (bitplanes > 2 && bitplanes != 4)
+				return false;
 			else if (headerLength == 50 && content[16] == 0 && content[17] == 0x80)
 				SetStPalette(content, 18, 16); // HyperPaint
 			else
