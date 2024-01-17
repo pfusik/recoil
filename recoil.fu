@@ -8725,10 +8725,20 @@ public class RECOIL
 			if (!SetSize(width, height, resolution))
 				return false;
 			break;
+		case 2:
+			if (!SetSize(width, height, RECOILResolution.FmTowns1x1))
+				return false;
+			stream.ContentOffset += 6;
+			break;
 		case 0x11:
 			return depth == 16
 				&& SetSize(width, height, RECOILResolution.Pc88Va1x1)
 				&& DecodeX68KPicScreen(stream, pixelsLength, 0x11, 16);
+		case 0x1f:
+			if (!SetSize(width, height, RECOILResolution.X68K1x1))
+				return false;
+			stream.ContentOffset += 6;
+			break;
 		case 0x21:
 			if (depth != 16
 			 || !SetSize(width, height << 1, RECOILResolution.Pc88Va1x1)
@@ -8740,16 +8750,6 @@ public class RECOIL
 				Pixels[offset << 1] = GetG3R3B2Color(color & 0xff);
 			}
 			return true;
-		case 2:
-			if (!SetSize(width, height, RECOILResolution.FmTowns1x1))
-				return false;
-			stream.ContentOffset += 6;
-			break;
-		case 0x1f:
-			if (!SetSize(width, height, RECOILResolution.X68K1x1))
-				return false;
-			stream.ContentOffset += 6;
-			break;
 		case 0xc2:
 			if (!SetSize(width, height, RECOILResolution.FmTowns1x1))
 				return false;
