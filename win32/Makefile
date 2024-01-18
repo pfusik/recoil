@@ -14,13 +14,12 @@ RM = rm -f
 UNIX2DOS = unix2dos
 GIT = git
 TAR = /usr/bin/tar
-SEVENZIP = 7z a -mx=9 -bd -bso0
-CANDLE = candle -ext WixUtilExtension -nologo -o $@
-LIGHT = light -ext WixUtilExtension -nologo -o $@ -spdb
+SEVENZIP = 'C:/Program Files/7-Zip/7z' a -mx=9 -bd -bso0
+WIX = wix
 MAGICK = magick
 GIMP_PLUGIN_DIR = C:/Program Files/GIMP 2/lib/gimp/2.0/plug-ins
-IMAGEMAGICK_i686_DIR = C:/Program Files (x86)/ImageMagick-7.1.0-Q16-HDRI
-IMAGEMAGICK_x86_64_DIR = C:/Program Files/ImageMagick-7.1.0-Q16-HDRI
+IMAGEMAGICK_i686_DIR = C:/Program Files (x86)/ImageMagick-7.1.1-Q16-HDRI
+IMAGEMAGICK_x86_64_DIR = C:/Program Files/ImageMagick-7.1.1-Q16-HDRI
 XNVIEWMP_DIR = C:/Program Files/XnViewMP
 PAINT_NET_DIR = C:/Program Files/paint.net
 DOTNET_REF_DIR = `echo C:/Program\ Files/dotnet/packs/Microsoft.NETCore.App.Ref/7.0.*/ref/net7.0`
@@ -113,14 +112,11 @@ signed: $(WIN32_BIN) $(WIN64_BIN)
 ../../recoil-$(VERSION)-win64.zip: COPYING.txt $(WIN64_BIN) signed
 	$(DO)$(RM) $@ && $(SEVENZIP) -tzip $@ COPYING.txt $(WIN64_BIN:%=./%)
 
-../../recoil-$(VERSION)-win32.msi: i686/recoil.wixobj recoil.ico setup/dialog.jpg setup/banner.jpg setup/license.rtf $(WIN32_BIN) signed
-	$(DO)$(LIGHT) -ext WixUIExtension -sice:ICE69 $<
+../../recoil-$(VERSION)-win32.msi: setup/recoil.wxs setup/formats.wxi recoil.ico setup/dialog.jpg setup/banner.jpg setup/license.rtf $(WIN32_BIN) signed
+	$(DO)$(WIX) build -o $@ -ext WixToolset.UI.wixext $<
 
-../../recoil-$(VERSION)-win64.msi: x86_64/recoil.wixobj recoil.ico setup/dialog.jpg setup/banner.jpg setup/license.rtf $(WINBOTH_BIN) signed
-	$(DO)$(LIGHT) -ext WixUIExtension -sice:ICE69 -sice:ICE80 $<
-
-i686/recoil.wixobj x86_64/recoil.wixobj: setup/recoil.wxs setup/formats.wxi
-	$(DO)$(CANDLE) $(and $(@D:i686=), -arch x64) $<
+../../recoil-$(VERSION)-win64.msi: setup/recoil.wxs setup/formats.wxi recoil.ico setup/dialog.jpg setup/banner.jpg setup/license.rtf $(WINBOTH_BIN) signed
+	$(DO)$(WIX) build -o $@ -ext WixToolset.UI.wixext -arch x64 $<
 
 setup/formats.wxi: setup/formats.wxi.xsl ../formats.xml
 	$(DO)$(XSLTPROC)
