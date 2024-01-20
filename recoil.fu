@@ -12954,16 +12954,11 @@ public class RECOIL
 		ContentPalette[(1 << bitplanes) - 1] = 0x000000;
 	}
 
-	static bool IsTimg(byte[] content)
-	{
-		if (!IsStringAt(content, 16, "TIMG") || content[20] != 0 || content[21] != 3)
-			return false;
-		for (int i = 22; i < 28; i += 2) {
-			if (content[i] != 0 || content[i + 1] != 5)
-				return false;
-		}
-		return true;
-	}
+	static bool IsTimg(byte[] content, int gDepth)
+		=> IsStringAt(content, 16, "TIMG") && content[20] == 0 && content[21] == 3
+			&& content[22] == 0 && content[23] == 5
+			&& content[24] == 0 && content[25] == gDepth
+			&& content[26] == 0 && content[27] == 5;
 
 	static bool IsXimg(byte[] content)
 	{
@@ -13022,6 +13017,7 @@ public class RECOIL
 		else if (!SetSizeStOrFalcon(width, height, bitplanes, true))
 			return false;
 
+		bool timg16 = false;
 		switch (bitplanes) {
 		case 1:
 		case 2:
@@ -13058,10 +13054,12 @@ public class RECOIL
 				SetDefaultStPalette(bitplanes);
 			break;
 		case 15:
-			if (headerLength != 28 || !IsTimg(content))
+			if (headerLength != 28 || !IsTimg(content, 5))
 				return false;
 			break;
 		case 16:
+			timg16 = headerLength == 28 && IsTimg(content, 6);
+			break;
 		case 24:
 		case 32:
 			break;
@@ -13094,7 +13092,15 @@ public class RECOIL
 				int c;
 				switch (bitplanes) {
 				case 16:
-					c = GetFalconTrueColor(unpacked, x << 1);
+					if (timg16) {
+						c = GetBitplanePixel(unpacked, x >> 3, x, 16, bytesPerBitplane);
+						// BBBBBGGG GGGRRRRR
+						c = (c & 0x1f) << 19 | (c & 0x07e0) << 5 | (c >> 8 & 0xf8);
+						// RRRRR000 GGGGGG00 BBBBB000
+						c |= (c >> 5 & 0x070007) | (c >> 6 & 0x000300);
+					}
+					else
+						c = GetFalconTrueColor(unpacked, x << 1);
 					break;
 				case 24:
 					c = GetR8G8B8Color(unpacked, x * 3);
