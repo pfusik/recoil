@@ -12954,12 +12954,6 @@ public class RECOIL
 		ContentPalette[(1 << bitplanes) - 1] = 0x000000;
 	}
 
-	static bool IsTimg(byte[] content, int gDepth)
-		=> IsStringAt(content, 16, "TIMG") && content[20] == 0 && content[21] == 3
-			&& content[22] == 0 && content[23] == 5
-			&& content[24] == 0 && content[25] == gDepth
-			&& content[26] == 0 && content[27] == 5;
-
 	static bool IsXimg(byte[] content)
 	{
 		return IsStringAt(content, 16, "XIMG") && content[20] == 0 && content[21] == 0;
@@ -13017,59 +13011,67 @@ public class RECOIL
 		else if (!SetSizeStOrFalcon(width, height, bitplanes, true))
 			return false;
 
-		bool timg16 = false;
-		switch (bitplanes) {
-		case 1:
-		case 2:
-		case 3:
-		case 4:
-		case 5:
-		case 6:
-		case 7:
-		case 8:
-			if (headerLength == 22 + (6 << bitplanes) && IsXimg(content)) {
-				for (int i = 0; i < 1 << bitplanes; i++)
-					ContentPalette[i] = GetStVdiColor(content, 22 + i * 6);
+		bool chunky = false;
+		if (headerLength == 28 && IsStringAt(content, 16, "TIMG") && content[20] == 0 && content[21] == 3
+			&& content[22] == 0 && content[24] == 0 && content[26] == 0) {
+			switch (bitplanes << 24 | content[23] << 16 | content[25] << 8 | content[27]) {
+			case 0x0f050505:
+			case 0x10050605:
+			case 0x18080808:
+				break;
+			default:
+				return false;
 			}
-			else if (headerLength == 22 + (2 << bitplanes) && IsSttt(content, bitplanes))
-				SetStPalette(content, 22, 1 << bitplanes);
-			else if (bitplanes == 8) {
-				// grayscale, inverted bits in reverse order
-				int rgb = 0xffffff;
-				for (int c = 0; c < 256; c++) {
-					ContentPalette[c] = rgb;
-					// decrement in reverse bit order
-					for (int mask = 0x808080; ; mask >>= 1) {
-						rgb ^= mask;
-						if ((rgb & mask) == 0)
-							break;
+		}
+		else {
+			switch (bitplanes) {
+			case 1:
+			case 2:
+			case 3:
+			case 4:
+			case 5:
+			case 6:
+			case 7:
+			case 8:
+				if (headerLength == 22 + (6 << bitplanes) && IsXimg(content)) {
+					for (int i = 0; i < 1 << bitplanes; i++)
+						ContentPalette[i] = GetStVdiColor(content, 22 + i * 6);
+				}
+				else if (headerLength == 22 + (2 << bitplanes) && IsSttt(content, bitplanes))
+					SetStPalette(content, 22, 1 << bitplanes);
+				else if (bitplanes == 8) {
+					// grayscale, inverted bits in reverse order
+					int rgb = 0xffffff;
+					for (int c = 0; c < 256; c++) {
+						ContentPalette[c] = rgb;
+						// decrement in reverse bit order
+						for (int mask = 0x808080; ; mask >>= 1) {
+							rgb ^= mask;
+							if ((rgb & mask) == 0)
+								break;
+						}
 					}
 				}
+				else if (bitplanes > 2 && bitplanes != 4)
+					return false;
+				else if (headerLength == 50 && content[16] == 0 && content[17] == 0x80)
+					SetStPalette(content, 18, 16); // HyperPaint
+				else
+					SetDefaultStPalette(bitplanes);
+				break;
+			case 16:
+			case 24:
+			case 32:
+				chunky = true;
+				break;
+			default:
+				return false;
 			}
-			else if (bitplanes > 2 && bitplanes != 4)
-				return false;
-			else if (headerLength == 50 && content[16] == 0 && content[17] == 0x80)
-				SetStPalette(content, 18, 16); // HyperPaint
-			else
-				SetDefaultStPalette(bitplanes);
-			break;
-		case 15:
-			if (headerLength != 28 || !IsTimg(content, 5))
-				return false;
-			break;
-		case 16:
-			timg16 = headerLength == 28 && IsTimg(content, 6);
-			break;
-		case 24:
-		case 32:
-			break;
-		default:
-			return false;
 		}
 
 		ImgStream() rle = { Content = content, ContentOffset = headerLength, ContentLength = contentLength };
 		int bytesPerBitplane = width + 7 >> 3;
-		if (bitplanes == 24) // XXX: only 24?
+		if (chunky && bitplanes == 24) // XXX: only 24?
 			bytesPerBitplane = (bytesPerBitplane + 1) & ~1;
 		int bytesPerLine = bitplanes * bytesPerBitplane;
 		byte[]# unpacked = new byte[bytesPerLine];
@@ -13090,28 +13092,40 @@ public class RECOIL
 
 			for (int x = 0; x < width; x++) {
 				int c;
-				switch (bitplanes) {
-				case 16:
-					if (timg16) {
-						c = GetBitplanePixel(unpacked, x >> 3, x, 16, bytesPerBitplane);
+				if (chunky) {
+					switch (bitplanes) {
+					case 16:
+						c = GetFalconTrueColor(unpacked, x << 1);
+						break;
+					case 24:
+						c = GetR8G8B8Color(unpacked, x * 3);
+						break;
+					case 32:
+						c = GetR8G8B8Color(unpacked, (x << 2) + 1);
+						break;
+					default:
+						assert false;
+					}
+				}
+				else {
+					c = GetBitplanePixel(unpacked, x >> 3, x, bitplanes, bytesPerBitplane);
+					switch (bitplanes) {
+					case 15:
+						c = GetB5G5R5Color(c);
+						break;
+					case 16:
 						// BBBBBGGG GGGRRRRR
 						c = (c & 0x1f) << 19 | (c & 0x07e0) << 5 | (c >> 8 & 0xf8);
 						// RRRRR000 GGGGGG00 BBBBB000
 						c |= (c >> 5 & 0x070007) | (c >> 6 & 0x000300);
+						break;
+					case 24:
+						c = (c & 0xff) << 16 | (c & 0xff00) | c >> 16;
+						break;
+					default:
+						c = ContentPalette[c];
+						break;
 					}
-					else
-						c = GetFalconTrueColor(unpacked, x << 1);
-					break;
-				case 24:
-					c = GetR8G8B8Color(unpacked, x * 3);
-					break;
-				case 32:
-					c = GetR8G8B8Color(unpacked, (x << 2) + 1);
-					break;
-				default:
-					c = GetBitplanePixel(unpacked, x >> 3, x, bitplanes, bytesPerBitplane);
-					c = bitplanes == 15 ? GetB5G5R5Color(c) : ContentPalette[c];
-					break;
 				}
 				for (int i = 0; i < lineRepeatCount; i++)
 					SetScaledPixel(x, y + i, c);
