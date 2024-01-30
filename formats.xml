@@ -475,6 +475,7 @@
 			<ext>TPI</ext>
 		</format>
 		<format name="RAG-D"><ext>RAG</ext></format>
+		<format name="Music Compile 2" colors="256"><ext fake="true">RAGC</ext></format>
 		<format name="IMG Scan" maxWidth="640" maxHeight="400" grayscale="256">
 			<ext skip="uwp">RAW</ext>
 			<ext>RWH</ext>

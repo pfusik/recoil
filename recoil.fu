@@ -14233,10 +14233,13 @@ public class RECOIL
 		return true;
 	}
 
+	static bool IsRag(byte[] content, int contentLength)
+		=> contentLength >= 55 && IsStringAt(content, 0, "RAG-D!")
+			&& content[6] == 0 && content[7] == 0 && content[16] == 0;
+
 	bool DecodeRag!(byte[] content, int contentLength)
 	{
-		if (contentLength < 55 || !IsStringAt(content, 0, "RAG-D!")
-		 || content[6] != 0 || content[7] != 0 || content[16] != 0)
+		if (!IsRag(content, contentLength))
 			return false;
 		int width = content[12] << 8 | content[13];
 		if ((width & 15) != 0)
@@ -14267,12 +14270,7 @@ public class RECOIL
 				SetStPalette(content, 30, 16);
 			else
 				SetFalconPalette(content, 30, 256);
-			if (bitplanes == 8 && content[22] == 0xff) {
-				// variant used by "Music Compile 2", https://sourceforge.net/p/recoil/bugs/74/
-				DecodeBytes(content, 30 + paletteLength);
-			}
-			else
-				DecodeBitplanes(content, 30 + paletteLength, bytesPerLine, bitplanes, 0, width, height);
+			DecodeBitplanes(content, 30 + paletteLength, bytesPerLine, bitplanes, 0, width, height);
 			return true;
 		case 16:
 			return paletteLength == 1024
@@ -14281,6 +14279,21 @@ public class RECOIL
 		default:
 			return false;
 		}
+	}
+
+	bool DecodeRagc!(byte[] content, int contentLength)
+	{
+		if (!IsRag(content, contentLength) || content[17] != 8
+		 || Get32BigEndian(content, 18) != 1024)
+			return false;
+		int width = content[12] << 8 | content[13];
+		int height = (content[14] << 8) + content[15] + 1;
+		if (30 + 1024 + width * height > contentLength
+		 || !SetSize(width, height, RECOILResolution.Falcon1x1))
+			return false;
+		SetFalconPalette(content, 30, 256);
+		DecodeBytes(content, 30 + 1024);
+		return true;
 	}
 
 	bool DecodeFalconFun!(byte[] content, int contentLength)
@@ -20848,6 +20861,7 @@ public class RECOIL
 		case PackExt("PSF"):
 		case PackExt("Q4"):
 		case PackExt("RAG"):
+		case PackExt("RAGC"):
 		case PackExt("RAP"):
 		case PackExt("RAW"):
 		case PackExt("RGB"):
@@ -21774,6 +21788,8 @@ public class RECOIL
 			return DecodeQ4(content, contentLength);
 		case PackExt("RAG"):
 			return DecodeRag(content, contentLength);
+		case PackExt("RAGC"):
+			return DecodeRagc(content, contentLength);
 		case PackExt("RAP"):
 			return DecodeRap(content, contentLength);
 		case PackExt("RAW"):
