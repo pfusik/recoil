@@ -1759,7 +1759,7 @@ class XeKoalaStream : RleStream
 class ImgStream : RleStream
 {
 	int PatternRepeatCount = 0;
-	internal const int Keep = 0x100;
+	const int Keep = 0x100;
 
 	internal int GetLineRepeatCount!()
 	{
@@ -1815,6 +1815,20 @@ class ImgStream : RleStream
 			RepeatValue = b >= 0x80 ? 0xff : 0;
 			return true;
 		}
+	}
+
+	internal bool UnpackLine!(byte[]! unpacked, int unpackedLength, int y)
+	{
+		for (int x = 0; x < unpackedLength; x++) {
+			int b = ReadRle();
+			if (b < 0)
+				return false;
+			if (b != ImgStream.Keep)
+				unpacked[x] = b;
+			else if (y == 0)
+				unpacked[x] = 0;
+		}
+		return true;
 	}
 }
 
@@ -12959,10 +12973,40 @@ public class RECOIL
 		return IsStringAt(content, 16, "XIMG") && content[20] == 0 && content[21] == 0;
 	}
 
-	static bool IsSttt(byte[] content, int bitplanes)
+	bool DecodeSttt!(ImgStream! rle, int width, int bytesPerBitplane)
 	{
-		int colors = content[20] << 8 | content[21];
-		return IsStringAt(content, 16, "STTT") && colors == 1 << bitplanes;
+		int bitplanes = rle.Content[5];
+		SetStPalette(rle.Content, 22, 16);
+		ContentPalette.Fill(0, 16, 240);
+		byte[]# unpacked = new byte[bytesPerBitplane];
+		int doubleWidth = Resolution == RECOILResolution.Tt2x1 ? 1 : 0;
+		for (int bitplane = 0; bitplane < bitplanes; bitplane++) {
+			for (int y = 0; y < Height; ) {
+				int lineRepeatCount = rle.GetLineRepeatCount();
+				if (Resolution == RECOILResolution.St1x2 || Resolution == RECOILResolution.Ste1x2)
+					lineRepeatCount <<= 1;
+				if (lineRepeatCount > Height - y)
+					lineRepeatCount = Height - y;
+				if (!rle.UnpackLine(unpacked, bytesPerBitplane, y))
+					return false;
+				while (--lineRepeatCount >= 0) {
+					for (int x = 0; x < width; x++) {
+						int c = unpacked[x >> 3] >> (~x & 7) & 1;
+						int pixelsOffset = y * width + x << doubleWidth;
+						if (bitplane != 0)
+							c = c << bitplane | Pixels[pixelsOffset];
+						if (bitplane == bitplanes - 1) {
+							c = ContentPalette[c];
+							if (doubleWidth != 0)
+								Pixels[pixelsOffset + 1] = c;
+						}
+						Pixels[pixelsOffset] = c;
+					}
+					y++;
+				}
+			}
+		}
+		return true;
 	}
 
 	bool DecodeStImg!(byte[] content, int contentLength)
@@ -13011,6 +13055,8 @@ public class RECOIL
 		else if (!SetSizeStOrFalcon(width, height, bitplanes, true))
 			return false;
 
+		ImgStream() rle = { Content = content, ContentOffset = headerLength, ContentLength = contentLength };
+		int bytesPerBitplane = width + 7 >> 3;
 		bool chunky = false;
 		if (headerLength == 28 && IsStringAt(content, 16, "TIMG") && content[20] == 0 && content[21] == 3
 			&& content[22] == 0 && content[24] == 0 && content[26] == 0) {
@@ -13037,8 +13083,8 @@ public class RECOIL
 					for (int i = 0; i < 1 << bitplanes; i++)
 						ContentPalette[i] = GetStVdiColor(content, 22 + i * 6);
 				}
-				else if (headerLength == 22 + (2 << bitplanes) && IsSttt(content, bitplanes))
-					SetStPalette(content, 22, 1 << bitplanes);
+				else if (headerLength == 54 && IsStringAt(content, 16, "STTT") && content[20] == 0 && content[21] == 0x10)
+					return DecodeSttt(rle, width, bytesPerBitplane);
 				else if (bitplanes == 8) {
 					// grayscale, inverted bits in reverse order
 					int rgb = 0xffffff;
@@ -13069,8 +13115,6 @@ public class RECOIL
 			}
 		}
 
-		ImgStream() rle = { Content = content, ContentOffset = headerLength, ContentLength = contentLength };
-		int bytesPerBitplane = width + 7 >> 3;
 		if (chunky && bitplanes == 24) // XXX: only 24?
 			bytesPerBitplane = (bytesPerBitplane + 1) & ~1;
 		int bytesPerLine = bitplanes * bytesPerBitplane;
@@ -13080,15 +13124,8 @@ public class RECOIL
 			if (lineRepeatCount > height - y)
 				lineRepeatCount = height - y;
 
-			for (int x = 0; x < bytesPerLine; x++) {
-				int b = rle.ReadRle();
-				if (b < 0)
-					return false;
-				if (b != ImgStream.Keep)
-					unpacked[x] = b;
-				else if (y == 0)
-					unpacked[x] = 0;
-			}
+			if (!rle.UnpackLine(unpacked, bytesPerLine, y))
+				return false;
 
 			for (int x = 0; x < width; x++) {
 				int c;
