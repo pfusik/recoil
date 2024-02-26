@@ -1,7 +1,7 @@
 /*
  * Viewer.java - RECOIL for Android
  *
- * Copyright (C) 2013-2022  Piotr Fusik
+ * Copyright (C) 2013-2024  Piotr Fusik
  *
  * This file is part of RECOIL (Retro Computer Image Library),
  * see http://recoil.sourceforge.net
@@ -284,6 +284,7 @@ public class Viewer extends Activity implements AdapterView.OnItemSelectedListen
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+		getWindow().setBackgroundDrawableResource(android.R.color.black);
 
 		Uri uri = getIntent().getData();
 		if (uri != null)
