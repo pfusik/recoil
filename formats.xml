@@ -1,4 +1,4 @@
-﻿<formats version="6.4.0">
+﻿<formats version="6.4.1">
 	<platform name="Amiga" href="https://en.wikipedia.org/wiki/Amiga">
 		<format name="AMOS"><ext>ABK</ext></format>
 		<format name="Amiga Continuous Bitmap"><ext>ACBM</ext></format>
@@ -475,7 +475,7 @@
 			<ext>TPI</ext>
 		</format>
 		<format name="RAG-D"><ext>RAG</ext></format>
-		<format name="Music Compile 2" colors="256"><ext fake="true">RAGC</ext></format>
+		<format name="Music Compile 2" colors="256"><ext fake="true" skip="uwp">RAGC</ext></format>
 		<format name="IMG Scan" maxWidth="640" maxHeight="400" grayscale="256">
 			<ext skip="uwp">RAW</ext>
 			<ext>RWH</ext>
