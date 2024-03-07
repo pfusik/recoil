@@ -8407,8 +8407,10 @@ public class RECOIL
 					return false;
 				SetAppleIIGSPalette(content, 0xf + (palette << 5), 0);
 			}
+			int nextLineOffset = stream.ContentOffset + content[dirOffset + (y << 2)] + (content[dirOffset + (y << 2) + 1] << 8);
 			if (!DecodePackBytes(stream, y * width, bytesPerLine))
 				return false;
+			stream.ContentOffset = nextLineOffset;
 		}
 		return true;
 	}
