@@ -1,4 +1,4 @@
-VERSION = 6.4.1
+VERSION = 6.4.2
 
 FUT = fut
 XSLTPROC = xsltproc -o $@ $^
