@@ -8,19 +8,11 @@
 	<?if $(sys.BUILDARCH) = x86?>
 		<?define ARCH_DIR=i686?>
 		<?define UPGRADE_GUID=$(var.UPGRADE_GUID32)?>
-		<?define MUTEXCONDS=(($recoilwin.ext=3 OR ($recoilwin.ext=-1 AND ?recoilwin.ext=3)) AND ($xnview_recoil.ext=3 OR ($xnview_recoil.ext=-1 AND ?xnview_recoil.ext=3) OR $imagine.ext=3 OR ($imagine.ext=-1 AND ?imagine.ext=3)));
-(($xnview_recoil.ext=3 OR ($xnview_recoil.ext=-1 AND ?xnview_recoil.ext=3)) AND ($imagine.ext=3 OR ($imagine.ext=-1 AND ?imagine.ext=3)))?>
+		<?define MUTEXCONDS=(($recoilwin.ext=3 OR ($recoilwin.ext=-1 AND ?recoilwin.ext=3)) AND ($xnview_recoil.ext=3 OR ($xnview_recoil.ext=-1 AND ?xnview_recoil.ext=3) OR $imagine.ext=3 OR ($imagine.ext=-1 AND ?imagine.ext=3)));(($xnview_recoil.ext=3 OR ($xnview_recoil.ext=-1 AND ?xnview_recoil.ext=3)) AND ($imagine.ext=3 OR ($imagine.ext=-1 AND ?imagine.ext=3)))?>
 	<?elseif $(sys.BUILDARCH) = x64?>
 		<?define ARCH_DIR=x86_64?>
 		<?define UPGRADE_GUID=2FF8D81E-4C6A-4A2A-B5EF-2021E6620CDF?>
-		<?define MUTEXCONDS=(($recoilwin.ext=3 OR ($recoilwin.ext=-1 AND ?recoilwin.ext=3)) AND ($xnview_recoil.ext=3 OR ($xnview_recoil.ext=-1 AND ?xnview_recoil.ext=3)));
-(($recoilwin.ext=3 OR ($recoilwin.ext=-1 AND ?recoilwin.ext=3)) AND ($xnviewmp64.ext=3 OR ($xnviewmp64.ext=-1 AND ?xnviewmp64.ext=3) OR $imagine.ext=3 OR ($imagine.ext=-1 AND ?imagine.ext=3)));
-(($recoilwin.ext=3 OR ($recoilwin.ext=-1 AND ?recoilwin.ext=3)) AND ($imagine64.ext=3 OR ($imagine64.ext=-1 AND ?imagine64.ext=3)));
-(($xnview_recoil.ext=3 OR ($xnview_recoil.ext=-1 AND ?xnview_recoil.ext=3)) AND ($xnviewmp64.ext=3 OR ($xnviewmp64.ext=-1 AND ?xnviewmp64.ext=3)));
-(($xnview_recoil.ext=3 OR ($xnview_recoil.ext=-1 AND ?xnview_recoil.ext=3)) AND ($imagine.ext=3 OR ($imagine.ext=-1 AND ?imagine.ext=3)));
-(($xnview_recoil.ext=3 OR ($xnview_recoil.ext=-1 AND ?xnview_recoil.ext=3)) AND ($imagine64.ext=3 OR ($imagine64.ext=-1 AND ?imagine64.ext=3)));
-(($xnviewmp64.ext=3 OR ($xnviewmp64.ext=-1 AND ?xnviewmp64.ext=3)) AND ($imagine.ext=3 OR ($imagine.ext=-1 AND ?imagine.ext=3) OR $imagine64.ext=3 OR ($imagine64.ext=-1 AND ?imagine64.ext=3)));
-(($imagine.ext=3 OR ($imagine.ext=-1 AND ?imagine.ext=3)) AND ($imagine64.ext=3 OR ($imagine64.ext=-1 AND ?imagine64.ext=3)))?>
+		<?define MUTEXCONDS=(($recoilwin.ext=3 OR ($recoilwin.ext=-1 AND ?recoilwin.ext=3)) AND ($xnview_recoil.ext=3 OR ($xnview_recoil.ext=-1 AND ?xnview_recoil.ext=3)));(($recoilwin.ext=3 OR ($recoilwin.ext=-1 AND ?recoilwin.ext=3)) AND ($xnviewmp64.ext=3 OR ($xnviewmp64.ext=-1 AND ?xnviewmp64.ext=3) OR $imagine.ext=3 OR ($imagine.ext=-1 AND ?imagine.ext=3)));(($recoilwin.ext=3 OR ($recoilwin.ext=-1 AND ?recoilwin.ext=3)) AND ($imagine64.ext=3 OR ($imagine64.ext=-1 AND ?imagine64.ext=3)));(($xnview_recoil.ext=3 OR ($xnview_recoil.ext=-1 AND ?xnview_recoil.ext=3)) AND ($xnviewmp64.ext=3 OR ($xnviewmp64.ext=-1 AND ?xnviewmp64.ext=3)));(($xnview_recoil.ext=3 OR ($xnview_recoil.ext=-1 AND ?xnview_recoil.ext=3)) AND ($imagine.ext=3 OR ($imagine.ext=-1 AND ?imagine.ext=3)));(($xnview_recoil.ext=3 OR ($xnview_recoil.ext=-1 AND ?xnview_recoil.ext=3)) AND ($imagine64.ext=3 OR ($imagine64.ext=-1 AND ?imagine64.ext=3)));(($xnviewmp64.ext=3 OR ($xnviewmp64.ext=-1 AND ?xnviewmp64.ext=3)) AND ($imagine.ext=3 OR ($imagine.ext=-1 AND ?imagine.ext=3) OR $imagine64.ext=3 OR ($imagine64.ext=-1 AND ?imagine64.ext=3)));(($imagine.ext=3 OR ($imagine.ext=-1 AND ?imagine.ext=3)) AND ($imagine64.ext=3 OR ($imagine64.ext=-1 AND ?imagine64.ext=3)))?>
 	<?endif?>
 
 	<Package Name="RECOIL - Retro Computer Image Library $(var.VERSION)" Language="1033"
