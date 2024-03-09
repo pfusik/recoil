@@ -31,7 +31,7 @@
 		<?endif?>
 
 		<Icon Id="recoil.ico" SourceFile="recoil.ico" />
-		<Property Id="ARPHELPLINK" Value="http://recoil.sourceforge.net/" />
+		<Property Id="ARPHELPLINK" Value="https://recoil.sourceforge.net/" />
 		<Property Id="ARPPRODUCTICON" Value="recoil.ico" />
 		<WixVariable Id="WixUILicenseRtf" Value="setup\license.rtf" />
 		<WixVariable Id="WixUIDialogBmp" Value="setup\dialog.jpg" />
