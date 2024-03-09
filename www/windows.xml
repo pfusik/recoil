@@ -1,8 +1,8 @@
 ﻿<page title="Windows">
 	<h2>Windows</h2>
 	<p>On Windows 11/10/8/7/Vista/XP download
-	<a href="https://sourceforge.net/projects/recoil/files/recoil/6.4.0/recoil-6.4.0-win64.msi/download">recoil-6.4.0-win64.msi</a> (for 64-bit Windows)
-	or <a href="https://sourceforge.net/projects/recoil/files/recoil/6.4.0/recoil-6.4.0-win32.msi/download">recoil-6.4.0-win32.msi</a> (for 32-bit Windows).
+	<download prefix="recoil-" suffix="-win64.msi" /> (for 64-bit Windows)
+	or <download prefix="recoil-" suffix="-win32.msi" /> (for 32-bit Windows).
 	This includes:</p>
 	<ul>
 		<li>Windows Explorer thumbnails</li>
