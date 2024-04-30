@@ -8614,6 +8614,8 @@ public class RECOIL
 				rgb |= rgb >> 4;
 			}
 			return rgb;
+		case RECOILResolution.X68K1x1:
+			return (rgb & 0xf8f8f8) | (rgb >> 10 & 1) * 0x040404 | (rgb >> 6 & 0x030303);
 		default:
 			return rgb;
 		}
