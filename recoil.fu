@@ -9447,7 +9447,21 @@ public class RECOIL
 	{
 		for (int c = 0; c < colors; c++) {
 			int offset = paletteOffset + c * 3;
-			ContentPalette[c] = content[offset + 1] << 16 | content[offset] << 8 | content[offset + 2]; // GRB
+			int rgb = content[offset + 1] << 16 | content[offset] << 8 | content[offset + 2]; // GRB
+			switch (Resolution) {
+			case RECOILResolution.Msx21x1:
+			case RECOILResolution.Msx21x2:
+			case RECOILResolution.Msx21x1i:
+			case RECOILResolution.Msx22x1i:
+			case RECOILResolution.Msx2Plus1x1:
+			case RECOILResolution.Msx2Plus2x1i:
+				rgb &= 0xe0e0e0;
+				rgb |= rgb >> 3 | (rgb >> 6 & 0x030303);
+				break;
+			default:
+				break;
+			}
+			ContentPalette[c] = rgb;
 		}
 	}
 
