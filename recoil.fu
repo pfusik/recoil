@@ -8590,7 +8590,7 @@ public class RECOIL
 		return rgb | (rgb >> 6 & 0x030303);
 	}
 
-	int RestrictPlatformColor(int rgb)
+	int RestrictPlatformColor(int rgb, int colors)
 	{
 		switch (Resolution) {
 		case RECOILResolution.FmTowns1x1:
@@ -8608,6 +8608,12 @@ public class RECOIL
 			return rgb | rgb >> 4;
 		case RECOILResolution.Pc88Va1x1:
 			return (rgb & 0xf8fcf8) | (rgb >> 5 & 0x070007) | (rgb >> 6 & 0x000300);
+		case RECOILResolution.Pc981x1:
+			if (colors == 16) {
+				rgb &= 0xf0f0f0;
+				rgb |= rgb >> 4;
+			}
+			return rgb;
 		default:
 			return rgb;
 		}
@@ -8804,7 +8810,7 @@ public class RECOIL
 				int color = stream.ReadBits(16);
 				if (color < 0)
 					return false;
-				ContentPalette[c] = RestrictPlatformColor(GetX68KColor(color));
+				ContentPalette[c] = RestrictPlatformColor(GetX68KColor(color), 1 << depth);
 			}
 			break;
 		case 15:
@@ -9439,7 +9445,7 @@ public class RECOIL
 	{
 		for (int c = 0; c < colors; c++) {
 			int offset = paletteOffset + c * 3;
-			ContentPalette[c] = RestrictPlatformColor(content[offset + rOffset] << 16 | content[offset + 1 - rOffset] << 8 | content[offset + 2]);
+			ContentPalette[c] = RestrictPlatformColor(content[offset + rOffset] << 16 | content[offset + 1 - rOffset] << 8 | content[offset + 2], colors);
 		}
 	}
 
