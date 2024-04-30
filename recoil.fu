@@ -8593,6 +8593,8 @@ public class RECOIL
 	int RestrictPlatformColor(int rgb)
 	{
 		switch (Resolution) {
+		case RECOILResolution.FmTowns1x1:
+			return (rgb & 0xf8f8f8) | (rgb >> 5 & 0x070707);
 		case RECOILResolution.Msx21x1:
 		case RECOILResolution.Msx21x2:
 		case RECOILResolution.Msx21x1i:
@@ -8601,6 +8603,11 @@ public class RECOIL
 		case RECOILResolution.Msx2Plus2x1i:
 			rgb &= 0xe0e0e0;
 			return rgb | rgb >> 3 | (rgb >> 6 & 0x030303);
+		case RECOILResolution.Pc881x2:
+			rgb &= 0xf0f0f0;
+			return rgb | rgb >> 4;
+		case RECOILResolution.Pc88Va1x1:
+			return (rgb & 0xf8fcf8) | (rgb >> 5 & 0x070007) | (rgb >> 6 & 0x000300);
 		default:
 			return rgb;
 		}
