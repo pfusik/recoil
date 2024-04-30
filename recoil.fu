@@ -8590,6 +8590,22 @@ public class RECOIL
 		return rgb | (rgb >> 6 & 0x030303);
 	}
 
+	int RestrictPlatformColor(int rgb)
+	{
+		switch (Resolution) {
+		case RECOILResolution.Msx21x1:
+		case RECOILResolution.Msx21x2:
+		case RECOILResolution.Msx21x1i:
+		case RECOILResolution.Msx22x1i:
+		case RECOILResolution.Msx2Plus1x1:
+		case RECOILResolution.Msx2Plus2x1i:
+			rgb &= 0xe0e0e0;
+			return rgb | rgb >> 3 | (rgb >> 6 & 0x030303);
+		default:
+			return rgb;
+		}
+	}
+
 	bool DecodeX68KPicChain!(BitStream! stream, int pixelsOffset, int color)
 	{
 		for (;;) {
@@ -8781,7 +8797,7 @@ public class RECOIL
 				int color = stream.ReadBits(16);
 				if (color < 0)
 					return false;
-				ContentPalette[c] = GetX68KColor(color);
+				ContentPalette[c] = RestrictPlatformColor(GetX68KColor(color));
 			}
 			break;
 		case 15:
@@ -9416,21 +9432,7 @@ public class RECOIL
 	{
 		for (int c = 0; c < colors; c++) {
 			int offset = paletteOffset + c * 3;
-			int rgb = content[offset + rOffset] << 16 | content[offset + 1 - rOffset] << 8 | content[offset + 2];
-			switch (Resolution) {
-			case RECOILResolution.Msx21x1:
-			case RECOILResolution.Msx21x2:
-			case RECOILResolution.Msx21x1i:
-			case RECOILResolution.Msx22x1i:
-			case RECOILResolution.Msx2Plus1x1:
-			case RECOILResolution.Msx2Plus2x1i:
-				rgb &= 0xe0e0e0;
-				rgb |= rgb >> 3 | (rgb >> 6 & 0x030303);
-				break;
-			default:
-				break;
-			}
-			ContentPalette[c] = rgb;
+			ContentPalette[c] = RestrictPlatformColor(content[offset + rOffset] << 16 | content[offset + 1 - rOffset] << 8 | content[offset + 2]);
 		}
 	}
 
