@@ -9412,6 +9412,28 @@ public class RECOIL
 		}
 	}
 
+	void SetPiPalette!(byte[] content, int paletteOffset, int colors, int rOffset)
+	{
+		for (int c = 0; c < colors; c++) {
+			int offset = paletteOffset + c * 3;
+			int rgb = content[offset + rOffset] << 16 | content[offset + 1 - rOffset] << 8 | content[offset + 2];
+			switch (Resolution) {
+			case RECOILResolution.Msx21x1:
+			case RECOILResolution.Msx21x2:
+			case RECOILResolution.Msx21x1i:
+			case RECOILResolution.Msx22x1i:
+			case RECOILResolution.Msx2Plus1x1:
+			case RECOILResolution.Msx2Plus2x1i:
+				rgb &= 0xe0e0e0;
+				rgb |= rgb >> 3 | (rgb >> 6 & 0x030303);
+				break;
+			default:
+				break;
+			}
+			ContentPalette[c] = rgb;
+		}
+	}
+
 	bool DecodePi!(byte[] content, int contentLength)
 	{
 		if (contentLength < 18 || content[0] != 'P' || content[1] != 'i')
@@ -9436,33 +9458,11 @@ public class RECOIL
 			return false;
 		s.ContentOffset = contentOffset + 6 + (3 << depth);
 		if (s.Unpack(width, height, depth)) {
-			DecodeR8G8B8Colors(content, contentOffset + 6, 1 << depth, ContentPalette, 0);
+			SetPiPalette(content, contentOffset + 6, 1 << depth, 0);
 			DecodeBytes(s.Indexes, 0);
 			return true;
 		}
 		return false;
-	}
-
-	void SetMagPalette!(byte[] content, int paletteOffset, int colors)
-	{
-		for (int c = 0; c < colors; c++) {
-			int offset = paletteOffset + c * 3;
-			int rgb = content[offset + 1] << 16 | content[offset] << 8 | content[offset + 2]; // GRB
-			switch (Resolution) {
-			case RECOILResolution.Msx21x1:
-			case RECOILResolution.Msx21x2:
-			case RECOILResolution.Msx21x1i:
-			case RECOILResolution.Msx22x1i:
-			case RECOILResolution.Msx2Plus1x1:
-			case RECOILResolution.Msx2Plus2x1i:
-				rgb &= 0xe0e0e0;
-				rgb |= rgb >> 3 | (rgb >> 6 & 0x030303);
-				break;
-			default:
-				break;
-			}
-			ContentPalette[c] = rgb;
-		}
 	}
 
 	bool DecodeMaki1!(byte[] content, int contentLength)
@@ -9472,7 +9472,7 @@ public class RECOIL
 		 || content[44] != 2 || content[45] != 0x80 || content[46] != 1 || content[47] != 0x90)
 			return false;
 		SetSize(640, 400, GetPiPlatform(content, 8, false));
-		SetMagPalette(content, 48, 16);
+		SetPiPalette(content, 48, 16, 1);
 		int contentOffset = 1096;
 
 		ushort[8000] haveBuffer;
@@ -9665,7 +9665,7 @@ public class RECOIL
 		byte[]# unpacked = new byte[bytesPerLine * height];
 		if (!UnpackMag(content, headerOffset, contentLength, bytesPerLine, height, unpacked))
 			return false;
-		SetMagPalette(content, headerOffset + 32, colors);
+		SetPiPalette(content, headerOffset + 32, colors, 1);
 		switch (msxMode) {
 		case 0x20:
 		case 0x24:
