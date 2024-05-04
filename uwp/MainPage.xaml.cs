@@ -1,7 +1,7 @@
 ﻿/*
  * MainPage.xaml.cs - Universal Windows application
  *
- * Copyright (C) 2014-2021  Piotr Fusik
+ * Copyright (C) 2014-2024  Piotr Fusik
  *
  * This file is part of RECOIL (Retro Computer Image Library),
  * see http://recoil.sourceforge.net
@@ -55,8 +55,29 @@ namespace RECOIL
 		const string Disclaimer = "\nAre you opening a graphics file originating from a 20th century computer? " +
 			"This app only supports such files.";
 
-		public async Task ShowFile(StorageFile file)
+		int FindPrevious()
 		{
+			int index = this.Index;
+			while (--index >= 0 && !Recoil.RECOIL.IsOurFile(this.Files[index].Path)) {
+			}
+			return index;
+		}
+
+		int FindNext()
+		{
+			int index = this.Index;
+			while (++index < this.Files.Count && !Recoil.RECOIL.IsOurFile(this.Files[index].Path)) {
+			}
+			return index;
+		}
+
+		public async Task ShowFile(int index)
+		{
+			this.Index = index;
+			this.PreviousButton.IsEnabled = FindPrevious() >= 0;
+			this.NextButton.IsEnabled = FindNext() < this.Files.Count;
+			StorageFile file = this.Files[index];
+
 			// read
 			byte[] content;
 			try {
@@ -74,8 +95,8 @@ namespace RECOIL
 			}
 
 			// decode
-			Recoil.RECOIL recoil = new Recoil.RECOIL();
-			if (!recoil.Decode(file.Name, content, content.Length)) {
+			StorageFileRECOIL recoil = new StorageFileRECOIL(this.Files);
+			if (!recoil.Decode(file.Path, content, content.Length)) {
 				await new MessageDialog("Decoding error." + Disclaimer).ShowAsync();
 				return;
 			}
@@ -120,27 +141,31 @@ namespace RECOIL
 			this.FullScreenButton.Visibility = Visibility.Visible;
 		}
 
-		void SetIndex(int index)
+		void HidePreviousNext()
 		{
-			this.Index = index;
-			this.PreviousButton.IsEnabled = index > 0;
-			this.NextButton.IsEnabled = index + 1 < this.Files.Count;
+			this.Files = null;
+			this.PreviousButton.Visibility = Visibility.Collapsed;
+			this.NextButton.Visibility = Visibility.Collapsed;
 		}
 
 		public async Task ShowFiles(IReadOnlyList<StorageFile> files)
 		{
 			if (files.Count > 0) {
-				await ShowFile(files[0]);
-				if (files.Count > 1) {
-					this.Files = files;
-					SetIndex(0);
-					this.PreviousButton.Visibility = Visibility.Visible;
-					this.NextButton.Visibility = Visibility.Visible;
+				this.Files = files;
+				this.Index = -1;
+				int index = FindNext();
+				if (index < files.Count) {
+					await ShowFile(index);
+					if (this.NextButton.IsEnabled) {
+						this.PreviousButton.Visibility = Visibility.Visible;
+						this.NextButton.Visibility = Visibility.Visible;
+					}
+					else
+						HidePreviousNext();
 				}
 				else {
-					this.Files = null;
-					this.PreviousButton.Visibility = Visibility.Collapsed;
-					this.NextButton.Visibility = Visibility.Collapsed;
+					HidePreviousNext();
+					await new MessageDialog("Not an image file.").ShowAsync();
 				}
 			}
 		}
@@ -152,17 +177,19 @@ namespace RECOIL
 
 		async void OpenPrevious(object sender, RoutedEventArgs e)
 		{
-			if (this.Files != null && this.Index > 0) {
-				SetIndex(this.Index - 1);
-				await ShowFile(this.Files[Index]);
+			if (this.Files != null) {
+				int index = FindPrevious();
+				if (index >= 0)
+					await ShowFile(index);
 			}
 		}
 
 		async void OpenNext(object sender, RoutedEventArgs e)
 		{
-			if (this.Files != null && this.Index + 1 < this.Files.Count) {
-				SetIndex(this.Index + 1);
-				await ShowFile(this.Files[this.Index]);
+			if (this.Files != null) {
+				int index = FindNext();
+				if (index < this.Files.Count)
+					await ShowFile(index);
 			}
 		}
 

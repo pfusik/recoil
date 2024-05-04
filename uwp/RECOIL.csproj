@@ -97,6 +97,7 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="FilePicker.cs" />
     <Compile Include="RECOIL.cs" />
+    <Compile Include="StorageFileRECOIL.cs" />
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>

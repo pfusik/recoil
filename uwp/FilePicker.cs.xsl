@@ -16,7 +16,7 @@ namespace RECOIL
 		{
 			return new FileOpenPicker {
 				FileTypeFilter = { </xsl:text>
-				<xsl:for-each select="platform/format/ext[not(. = following::ext)]">
+				<xsl:for-each select="platform/format/*[(self::ext or self::companionExt) and not(. = following::ext) and not(. = following::companionExt) and . != 'RP.INI']">
 					<xsl:sort />
 					<xsl:if test="position() != 1">, </xsl:if>
 					<xsl:text>".</xsl:text>
