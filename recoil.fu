@@ -655,8 +655,12 @@ class ArtPalette : MultiPalette
 {
 	internal override void SetLinePalette!(RECOIL! recoil, int y)
 	{
-		if ((y & 1) == 0)
-			recoil.SetStPalette(Content, 0x8000 + (y << 4), 16);
+		if (y == 0)
+			recoil.SetStPalette(Content, 0x8000, 16);
+		else if (ContentOffset < 0x9000 && Content[ContentOffset] == 0 && Content[ContentOffset + 1] == y) {
+			recoil.SetStPalette(Content, ContentOffset, 16, 1);
+			ContentOffset += 32;
+		}
 	}
 }
 
@@ -12259,10 +12263,10 @@ public class RECOIL
 		}
 	}
 
-	internal void SetStPalette!(byte[] content, int contentOffset, int colors)
+	internal void SetStPalette!(byte[] content, int contentOffset, int colors, int c = 0)
 	{
-		for (int c = 0; c < colors; c++)
-			ContentPalette[c] = GetStColor(content, contentOffset + c * 2);
+		for (; c < colors; c++)
+			ContentPalette[c] = GetStColor(content, contentOffset + (c << 1));
 	}
 
 	internal static int GetSteInterlacedColor(int rgb)
@@ -12490,7 +12494,7 @@ public class RECOIL
 		if (contentLength != 36864 || content[0x8c80] != 0xff || content[0x8c81] != 0xff)
 			return false;
 		SetSize(320, 200, RECOILResolution.St1x1);
-		ArtPalette() palette = { Content = content };
+		ArtPalette() palette = { Content = content, ContentOffset = 0x8020 };
 		DecodeScaledBitplanes(content, 0, 320, 200, 4, false, palette);
 		return true;
 	}
