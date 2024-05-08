@@ -11944,11 +11944,11 @@ public class RECOIL
 		if (contentLength < 5)
 			return false;
 		int width = content[0] << 8 | content[1];
-		int height = content[2] << 8 | content[3];
+		int height = (content[2] << 8) + content[3] + 1;
 		if (content[0] < 0x80)
-			return SetSize(width, height, RECOILResolution.St1x1)
+			return SetSize(width + 1, height, RECOILResolution.St1x1)
 				&& DecodeBlackAndWhite(content, 4, contentLength, false, 0xffffff);
-		if (!SetSize(65536 - width, height, RECOILResolution.St1x1))
+		if (!SetSize(65537 - width, height, RECOILResolution.St1x1))
 			return false;
 		BldStream() rle = { Content = content, ContentOffset = 4, ContentLength = contentLength };
 		return DecodeRleBlackAndWhite(rle, 0xffffff);
