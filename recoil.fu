@@ -1773,7 +1773,7 @@ class ImgStream : RleStream
 		 && Content[ContentOffset + 1] == 0
 		 && Content[ContentOffset + 2] == 0xff) {
 			ContentOffset += 4;
-			return Content[ContentOffset - 1] + 1;
+			return Content[ContentOffset - 1];
 		}
 		return 1;
 	}
