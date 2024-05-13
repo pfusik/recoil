@@ -8663,7 +8663,7 @@ public class RECOIL
 			}
 
 			pixelsOffset += Width;
-			if (pixelsOffset >= Width * Height)
+			if (pixelsOffset < 0 || pixelsOffset >= Width * Height)
 				return false;
 			Pixels[pixelsOffset] = color;
 		}
