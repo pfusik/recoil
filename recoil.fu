@@ -14516,8 +14516,8 @@ public class RECOIL
 		case 8:
 			if (!SetSizeStOrFalcon(width, height, bitplanes, false))
 				return false;
-			int paletteLength = content[6] << 8 | content[7];
-			SetStVdiPalette(content, 128, paletteLength, bitplanes);
+			ContentPalette.Fill(0);
+			SetStVdiPalette(content, 128, content[6] << 8 | content[7], bitplanes);
 			DecodeScaledBitplanes(bitmap, bitmapOffset, width, height, bitplanes, false, null);
 			return true;
 		case 16:
@@ -14540,8 +14540,10 @@ public class RECOIL
 		if (contentLength < 128 || content[0] != 'P' || content[1] != 'N' || content[2] != 'T' || content[3] != 0
 		 || content[4] != 1 || content[5] != 0 || content[12] != 0 || content[14] != 0)
 			return false;
-		int paletteLength = content[6] << 8 | content[7];
-		int bitmapOffset = 128 + paletteLength * 6;
+		int colors = content[6] << 8 | content[7];
+		if (colors > 256)
+			return false;
+		int bitmapOffset = 128 + colors * 6;
 		int bitmapLength = Get32BigEndian(content, 16);
 		if (bitmapLength <= 0 || contentLength < bitmapOffset + bitmapLength)
 			return false;
