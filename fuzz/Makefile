@@ -1,7 +1,7 @@
-run: BoundsCheck.exe
-	./BoundsCheck.exe ../../examples
+run: Fuzzer.exe
+	./Fuzzer.exe ../../examples
 
-BoundsCheck.exe: BoundsCheck.cs RECOIL.cs
+Fuzzer.exe: Fuzzer.cs RECOIL.cs
 	"C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/Roslyn/csc.exe" -nologo -out:$@ -debug $^
 
 RECOIL.cs: ../recoil.fu

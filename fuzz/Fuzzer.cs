@@ -19,18 +19,27 @@ class FileRECOIL : RECOIL
 	}
 }
 
-public class BoundsChecker
+public class Fuzzer
 {
 	public static void Main(string[] args)
 	{
 		if (args.Length != 1)
-			throw new ArgumentException("Usage: BoundsCheck DIRECTORY");
+			throw new ArgumentException("Usage: Fuzzer DIRECTORY");
 		Parallel.ForEach(Directory.GetFiles(args[0]), filename => {
 			RECOIL recoil = new FileRECOIL();
 			Console.WriteLine(filename);
 			byte[] content = File.ReadAllBytes(filename);
 			int length = content.Length;
 			if (recoil.Decode(filename, content, length)) {
+				for (int offset = 0; offset < length && offset < 10000; offset++) {
+					if (offset > 0 && offset % 2000 == 0)
+						Console.WriteLine(offset);
+					for (byte mask = 0x80; mask != 0; mask >>= 1) {
+						content[offset] ^= mask;
+						recoil.Decode(filename, content, length);
+						content[offset] ^= mask;
+					}
+				}
 				if (length > 6000)
 					length = 6000;
 				while (length > 0) {
@@ -48,5 +57,3 @@ public class BoundsChecker
 		});
 	}
 }
-
-			
