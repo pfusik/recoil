@@ -21,11 +21,24 @@ class FileRECOIL : RECOIL
 
 public class Fuzzer
 {
+	static bool Check(RECOIL recoil, string filename, byte[] content, int length)
+	{
+		try {
+			recoil.Decode(filename, content, length);
+			return true;
+		}
+		catch (Exception) {
+			File.WriteAllBytes("BAD_" + Path.GetFileName(filename), content);
+			return false;
+		}
+	}
+
 	public static void Main(string[] args)
 	{
 		if (args.Length != 1)
 			throw new ArgumentException("Usage: Fuzzer DIRECTORY");
-		Parallel.ForEach(Directory.GetFiles(args[0]), filename => {
+		string[] filenames = Directory.GetFiles(args[0]);
+		Parallel.ForEach(filenames, filename => {
 			RECOIL recoil = new FileRECOIL();
 			Console.WriteLine(filename);
 			byte[] content = File.ReadAllBytes(filename);
@@ -36,7 +49,8 @@ public class Fuzzer
 						Console.WriteLine(offset);
 					for (byte mask = 0x80; mask != 0; mask >>= 1) {
 						content[offset] ^= mask;
-						recoil.Decode(filename, content, length);
+						if (!Check(recoil, filename, content, length))
+							return;
 						content[offset] ^= mask;
 					}
 				}
@@ -48,7 +62,8 @@ public class Fuzzer
 					content = smaller;
 					if (content.Length % 2000 == 0)
 						Console.WriteLine(length);
-					recoil.Decode(filename, content, length);
+					if (!Check(recoil, filename, content, length))
+						break;
 				}
 			}
 			else {
