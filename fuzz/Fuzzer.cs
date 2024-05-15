@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Recoil;
@@ -38,9 +39,10 @@ public class Fuzzer
 		if (args.Length != 1)
 			throw new ArgumentException("Usage: Fuzzer DIRECTORY");
 		string[] filenames = Directory.GetFiles(args[0]);
+		int count = filenames.Length;
 		Parallel.ForEach(filenames, filename => {
 			RECOIL recoil = new FileRECOIL();
-			Console.WriteLine(filename);
+			Console.WriteLine("{0} {1}", Interlocked.Decrement(ref count), filename);
 			byte[] content = File.ReadAllBytes(filename);
 			int length = content.Length;
 			if (recoil.Decode(filename, content, length)) {
