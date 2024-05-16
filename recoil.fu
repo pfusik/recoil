@@ -14859,8 +14859,11 @@ public class RECOIL
 							else
 								rleBits >>= 8;
 						}
-						if ((rleBits >> 8 & 1) != 0)
+						if ((rleBits >> 8 & 1) != 0) {
+							if (picOffset >= contentLength)
+								return false;
 							pic = content[picOffset++];
+						}
 						unpacked[((bitplane * lumps + lump) * lumpLines + y) * width + x] = pic;
 					}
 				}
