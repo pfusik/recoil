@@ -7246,13 +7246,13 @@ public class RECOIL
 		return height < 212 ? height : 212;
 	}
 
-	int DecodeMsxYjk(byte[] content, int contentOffset, int x, bool usePalette)
+	int DecodeMsxYjk(byte[] content, int contentOffset, int x, int width, bool usePalette)
 	{
 		int y = content[contentOffset + x] >> 3;
 		if (usePalette && (y & 1) != 0)
 			return ContentPalette[y >> 1];
 		int rgb;
-		if ((x | 3) >= Width) {
+		if ((x | 3) >= width) {
 			// missing color information
 			// not sure if correct, but at least avoids buffer overflow
 			rgb = y * 0x010101;
@@ -7318,10 +7318,10 @@ public class RECOIL
 					rgb = ContentPalette[screen[screenOffset + (y >> interlaceMask << 8) + (x >> interlaceMask)]];
 					break;
 				case 10:
-					rgb = DecodeMsxYjk(screen, screenOffset + (y >> interlaceMask << 8), x >> interlaceMask, true);
+					rgb = DecodeMsxYjk(screen, screenOffset + (y >> interlaceMask << 8), x >> interlaceMask, 256, true);
 					break;
 				case 12:
-					rgb = DecodeMsxYjk(screen, screenOffset + (y >> interlaceMask << 8), x >> interlaceMask, false);
+					rgb = DecodeMsxYjk(screen, screenOffset + (y >> interlaceMask << 8), x >> interlaceMask, 256, false);
 					break;
 				default:
 					assert false;
@@ -7669,7 +7669,7 @@ public class RECOIL
 		int width = GetOriginalWidth();
 		for (int y = 0; y < Height; y++)
 			for (int x = 0; x < width; x++)
-				SetScaledPixel(x, y, DecodeMsxYjk(content, contentOffset + y * width, x, usePalette));
+				SetScaledPixel(x, y, DecodeMsxYjk(content, contentOffset + y * width, x, width, usePalette));
 	}
 
 	void DecodeSccSca!(string filename, byte[] content, int contentLength, int height, bool usePalette)
