@@ -13493,7 +13493,9 @@ public class RECOIL
 			return false;
 		if (paletteOffset == 0x18020 && unpackedLength == 0x25fa0)
 			return DecodeSpuVariable(unpacked, 597, 160, 0x17fc0, false);
-		return DecodeSpuVariable(unpacked, (unpackedLength - paletteOffset) / 96, 320, paletteOffset, false);
+		int height = (unpackedLength - paletteOffset) / 96;
+		return paletteOffset >= 320 + height * 160
+			&& DecodeSpuVariable(unpacked, height, 320, paletteOffset, false);
 	}
 
 	bool DecodeSpx!(byte[] content, int contentLength)
@@ -14848,13 +14850,11 @@ public class RECOIL
 									return false;
 								rleBits = content[rleOffset++] << 1 | 1;
 							}
-							else {
+							else
 								rleBits >>= 8;
-							}
 						}
-						if ((rleBits >> 8 & 1) != 0) {
+						if ((rleBits >> 8 & 1) != 0)
 							pic = content[picOffset++];
-						}
 						unpacked[((bitplane * lumps + lump) * lumpLines + y) * width + x] = pic;
 					}
 				}
