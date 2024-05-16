@@ -2771,6 +2771,8 @@ class Ice21Stream
 			case 1:
 				// literals
 				length = ReadLiteralLength();
+				if (length < 0)
+					return false;
 				if (length > unpackedOffset - unpackedStart)
 					length = unpackedOffset - unpackedStart;
 				ContentOffset -= length;
