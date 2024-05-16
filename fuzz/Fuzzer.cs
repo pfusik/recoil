@@ -17,6 +17,9 @@ class FileRECOIL : RECOIL
 		catch (FileNotFoundException) {
 			return -1;
 		}
+		catch (ArgumentException) { // illegal characters in VSC file
+			return -1;
+		}
 	}
 }
 
