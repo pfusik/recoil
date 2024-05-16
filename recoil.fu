@@ -11119,7 +11119,7 @@ public class RECOIL
 		while (contentOffset + 8 <= contentLength) {
 			int chunkLength = Get32LittleEndian(content, contentOffset + 4);
 			int nextChunkOffset = contentOffset + 8 + chunkLength;
-			if (nextChunkOffset > contentLength)
+			if (nextChunkOffset < 0 || nextChunkOffset > contentLength)
 				return false;
 			if (IsStringAt(content, contentOffset, "FRMT") && chunkLength == 12) {
 				matrixRows = content[contentOffset + 8];
