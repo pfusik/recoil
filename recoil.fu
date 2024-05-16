@@ -14818,6 +14818,8 @@ public class RECOIL
 		 || content[0x7c] != 0)
 			return false;
 		int width = content[0x76] << 8 | content[0x77];
+		if ((width & 1) != 0)
+			return false; // TODO? no sample file and DecodeAmigaPlanar aligns to 16 pixels
 		int lumps = content[0x78] << 8 | content[0x79];
 		int lumpLines = content[0x7a] << 8 | content[0x7b];
 		int height = lumps * lumpLines;
