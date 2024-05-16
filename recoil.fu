@@ -19152,8 +19152,8 @@ public class RECOIL
 		// draw shapes
 		SetSize(width << 1, y, RECOILResolution.Xe2x1);
 		byte[320 * 240] frame = 0;
-		for (i = 0; i < 256; i++) {
-			if (!DrawBlazingPaddlesVector(content, contentLength, frame, ys[i] * width + xs[i] << 1, i, startAddress))
+		for (int j = 0; j < i; j++) {
+			if (!DrawBlazingPaddlesVector(content, contentLength, frame, ys[j] * width + xs[j] << 1, j, startAddress))
 				break;
 		}
 
