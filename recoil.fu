@@ -17465,7 +17465,7 @@ public class RECOIL
 		int unpackedLength = contentStride * height;
 		if (content[7] == 0x30)
 			unpackedLength += (height + 1 >> 1) << 3; // Multi RIP: 8 bytes of palette per two lines
-		byte[84 * 239] unpacked = 0;
+		byte[239 * 80 + 120 * 8] unpacked = 0;
 		switch (content[9]) {
 		case 0:
 			if (headerLength + unpackedLength > contentLength)
