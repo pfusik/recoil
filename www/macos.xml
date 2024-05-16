@@ -1,19 +1,19 @@
 ﻿<page title="macOS">
 	<h2>macOS</h2>
-	<p>Download <download prefix="recoil-" suffix="-macos.dmg" />.</p>
+	<p>Download <a href="https://sourceforge.net/projects/recoil/files/recoil/6.4.2/recoil-6.4.2-macos.dmg/download">recoil-6.4.2-macos.dmg</a>.</p>
 
 	<h2>XnView MP plugin</h2>
 	<p>Install as follows:</p>
 	<ol>
 		<li>Install <a href="https://www.xnview.com/en/xnviewmp/">XnView MP</a> first.</li>
-		<li>Open <code>recoil-<version />-macos.dmg</code>.</li>
+		<li>Open <code>recoil-6.4.2-macos.dmg</code>.</li>
 		<li>Drag <code>Xrecoil.usr</code> to <code>XnViewMP</code>.</li>
 	</ol>
 
 	<h2>Quick Look plugin</h2>
 	<p>Install as follows:</p>
 	<ol>
-		<li>Open <code>recoil-<version />-macos.dmg</code>.</li>
+		<li>Open <code>recoil-6.4.2-macos.dmg</code>.</li>
 		<li>Drag <code>RECOIL.qlgenerator</code> to <code>QuickLook</code>.</li>
 		<li>Log out and in, or run <code>qlmanage -r</code>.</li>
 	</ol>
@@ -23,12 +23,12 @@
 	<p>Install as follows:</p>
 	<ol>
 		<li>Install the <a href="https://www.gimp.org/downloads/">official GIMP</a> first.</li>
-		<li>Open <code>recoil-<version />-macos.dmg</code>.</li>
+		<li>Open <code>recoil-6.4.2-macos.dmg</code>.</li>
 		<li>Drag <code>file-recoil</code> to <code>GIMP</code>.</li>
 	</ol>
 
 	<h2>Command-line converter</h2>
-	<p>To install, open <code>recoil-<version />-macos.dmg</code> then drag <code>recoil2png</code> to <code>bin</code>.</p>
+	<p>To install, open <code>recoil-6.4.2-macos.dmg</code> then drag <code>recoil2png</code> to <code>bin</code>.</p>
 	<recoil2png />
 
 	<a href="https://www.macstadium.com">
