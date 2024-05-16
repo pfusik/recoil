@@ -19957,6 +19957,7 @@ public class RECOIL
 				height += 240;
 				break;
 			case '/':
+			case ':':
 			case '\\':
 				return false;
 			default:
