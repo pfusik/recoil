@@ -14555,6 +14555,8 @@ public class RECOIL
 			return false;
 		int width = content[8] << 8 | content[9];
 		int height = content[10] << 8 | content[11];
+		if (width <= 0 || height > MaxPixelsLength / width)
+			return false;
 		int bitplanes = content[13];
 		int unpackedLength = (width + 15 >> 4 << 1) * height * bitplanes;
 		switch (content[15]) {
