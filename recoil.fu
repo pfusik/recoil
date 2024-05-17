@@ -14768,6 +14768,8 @@ public class RECOIL
 			width += spriteWidth;
 			if (height < spriteHeight)
 				height = spriteHeight;
+			if (width <= 0 || height > MaxPixelsLength / width)
+				return false;
 			contentOffset += 10 + (spriteWidth >> 3) * spriteHeight * bitplanes;
 		}
 		if (contentOffset + 64 != contentLength
