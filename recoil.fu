@@ -20100,6 +20100,8 @@ public class RECOIL
 	{
 		int width = content[4] | content[5] << 8;
 		int height = content[6] | content[7] << 8;
+		if (!SetSize(width, height, RECOILResolution.Pc1x1))
+			return false;
 		int planeStride = width + 7 >> 3;
 		bool colors256;
 		if (DecodeAwbmPalette(content, contentLength, 8 + width * height, 256))
@@ -20107,8 +20109,6 @@ public class RECOIL
 		else if (DecodeAwbmPalette(content, contentLength, 8 + (height * planeStride << 2), 16))
 			colors256 = false;
 		else
-			return false;
-		if (!SetSize(width, height, RECOILResolution.Pc1x1))
 			return false;
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
