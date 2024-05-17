@@ -13480,7 +13480,7 @@ public class RECOIL
 		if (content[5] != 1)
 			return false;
 		int unpackedLength = Get32BigEndian(content, stream.ContentStart);
-		if (unpackedLength <= 0)
+		if (unpackedLength <= 0 || unpackedLength > MaxPixelsLength)
 			return false;
 		int bitmapLength = Get32BigEndian(content, stream.ContentStart - 8);
 		int paletteOffset = Get32BigEndian(content, stream.ContentStart - 4);
