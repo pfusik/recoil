@@ -8388,7 +8388,7 @@ public class RECOIL
 				if (chunkLength <= 0)
 					return false;
 				contentOffset += chunkLength;
-				if (contentOffset < 0 || contentOffset + 6415 > contentLength)
+				if (contentOffset < 0 || contentOffset > contentLength - 6415)
 					break;
 				chunkLength = Get32LittleEndian(content, contentOffset);
 				if (chunkLength == 6415 && content[contentOffset + 4] == 8
