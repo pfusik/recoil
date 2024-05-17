@@ -9407,7 +9407,7 @@ public class RECOIL
 		int chunkPixels = 0;
 		for (int i = 0; i < 640 * 400; i++) {
 			if (--chunkPixels <= 0) {
-				if (nextChunkOffset + 6 >= contentLength)
+				if (nextChunkOffset >= contentLength - 6)
 					return false;
 				chunkPixels = (content[nextChunkOffset + 4] | content[nextChunkOffset + 5] << 8) << 1;
 				rle.Content = content;
