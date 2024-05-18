@@ -9,10 +9,7 @@ QLCODESIGN = bin/RECOIL.qlgenerator/Contents/_CodeSignature/CodeResources
 
 recoil-$(VERSION)-macos.dmg: bin/QuickLook $(QLCODESIGN) $(QLRECOIL) $(PLIST) bin/GIMP bin/file-recoil bin/XnViewMP bin/Xrecoil.usr bin/bin bin/recoil2png
 	hdiutil create -volname recoil-$(VERSION)-macos -srcfolder bin -format UDBZ -fs HFS+ -imagekey bzip2-level=3 -ov $@
-ifdef PORK_NOTARIZING_CREDENTIALS
-	xcrun altool --notarize-app --primary-bundle-id net.sf.recoil.qlrecoil $(PORK_NOTARIZING_CREDENTIALS) --file $@ \
-		| perl -pe 's/^RequestUUID =/xcrun altool $$ENV{PORK_NOTARIZING_CREDENTIALS} --notarization-info/ or next; $$c = $$_; until (/Status: success/) { sleep 20; $$_ = `$$c`; print; } last;'
-endif
+	/Applications/Xcode.app/Contents/Developer/usr/bin/notarytool submit --wait --keychain-profile recoilnotarization $@
 
 bin/QuickLook:
 	mkdir -p $(@D) && ln -s /Library/QuickLook $@
