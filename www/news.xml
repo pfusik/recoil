@@ -1,4 +1,8 @@
 ﻿<page title="News">
+	<release project="RECOIL" version="6.4.4" date="2024-05-18">
+		<p>Fixed crashes on malicious ABK, CGX, CHR, EPA, MAG, PIC, PNT, Q4, RIP, SHP, SHR/32K/GS, SPX files</p>
+	</release>
+
 	<release project="RECOIL" version="6.4.3" date="2024-05-10">
 		<ul>
 			<li>Fixed repeated lines in Atari ST IMG</li>
