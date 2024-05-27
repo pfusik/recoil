@@ -60,6 +60,9 @@ public class Fuzzer
 					byte b1 = content[offset + 1];
 					byte b2 = content[offset + 2];
 					byte b3 = content[offset + 3];
+					content[offset + 1] = content[offset] = 0;
+					if (!Check(recoil, filename, content, length))
+						return;
 					content[offset] = 0x7f;
 					content[offset + 3] = content[offset + 2] = content[offset + 1] = 0xff;
 					if (!Check(recoil, filename, content, length))
