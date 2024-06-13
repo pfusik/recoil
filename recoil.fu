@@ -4820,7 +4820,6 @@ public class RECOIL
 		int pixelsLength = width * height * frames;
 		// reuse if enough
 		if (PixelsLength < pixelsLength) {
-			Pixels = null; // free first
 			Pixels = new int[pixelsLength];
 			PixelsLength = pixelsLength;
 		}
@@ -22590,7 +22589,6 @@ public class RECOIL
 		int pixelsLength = Width * Height;
 		if (IndexesLength < pixelsLength) {
 			IndexesLength = pixelsLength;
-			Indexes = null; // free first
 			Indexes = new byte[pixelsLength];
 		}
 		for (int i = 0; i < pixelsLength; i++)
