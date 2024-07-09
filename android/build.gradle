@@ -19,20 +19,20 @@ allprojects {
 
 final SOURCE_ICON = '../recoil-512x512.png'
 final ICON_DIR = file 'build/generated/res/icons'
-task generateIcon(type:Exec) {
+tasks.register('generateIcon', Exec) {
     inputs.files SOURCE_ICON
     outputs.file new File(ICON_DIR, 'drawable/ic_launcher.png')
     commandLine 'magick', inputs.files.asPath, '-resize', '72x72', '-quality', '95', '-strip', outputs.files.asPath
     doFirst { new File(ICON_DIR, 'drawable').mkdirs() }
 }
-task generateRoundIcon(type:Exec) {
+tasks.register('generateRoundIcon', Exec) {
     inputs.files SOURCE_ICON
     outputs.file new File(ICON_DIR, 'drawable-v26/ic_launcher.png')
     commandLine 'magick', inputs.files.asPath, '-resize', '128x128', '-gravity', 'Center', '-extent', '192x192', '-quality', '95', '-strip', outputs.files.asPath
     doFirst { new File(ICON_DIR, 'drawable-v26').mkdirs() }
 }
 
-task generateStoreGfx(type:Exec) {
+tasks.register('generateStoreGfx', Exec) {
     inputs.files SOURCE_ICON
     outputs.file 'recoil-1024x500.png'
     commandLine 'magick', inputs.files.asPath, '-crop', '334x163+89+140', '-sample', '1024x500', '-quality', '95', '-strip', outputs.files.asPath
@@ -40,7 +40,7 @@ task generateStoreGfx(type:Exec) {
 
 final FUT_RESOURCES = [ 'altirrantsc.pal', 'altirrapal.pal', 'atari8.fnt', 'c16.pal', 'c64.fnt', 'zx81.fnt' ]
 final FUT_JAVA_DIR = file 'build/generated/source/fut/net/sf/recoil'
-task fut(type:Exec) {
+tasks.register('fut', Exec) {
     inputs.files '../recoil.fu', FUT_RESOURCES.collect { '../' + it }
     outputs.file new File(FUT_JAVA_DIR, 'RECOIL.java')
     commandLine 'fut', '-n', 'net.sf.recoil', '-o', outputs.files.asPath, '-I', '..', '../recoil.fu'
@@ -48,7 +48,7 @@ task fut(type:Exec) {
 }
 
 final JAVA_RESOURCES_DIR = file 'build/generated/resources'
-task copyJavaResources(type:Copy) {
+tasks.register('copyJavaResources', Copy) {
     from '..'
     into new File(JAVA_RESOURCES_DIR, 'net/sf/recoil')
     include FUT_RESOURCES
@@ -72,7 +72,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 34
     }
-    applicationVariants.all { variant ->
+    applicationVariants.configureEach { variant ->
         variant.mergeResourcesProvider.get().dependsOn generateIcon, generateRoundIcon
         variant.registerGeneratedResFolders files(ICON_DIR)
         variant.registerJavaGeneratingTask fut, FUT_JAVA_DIR
