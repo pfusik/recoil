@@ -96,7 +96,7 @@
 		</format>
 	</platform>
 	<platform name="Atari 8-bit" href="https://en.wikipedia.org/wiki/Atari_8-bit_family">
-		<format width="80" height="96" colors="256">
+		<format name="Paint 256" width="80" height="96" colors="256">
 			<ext>256</ext>
 			<ext>AP2</ext>
 		</format>

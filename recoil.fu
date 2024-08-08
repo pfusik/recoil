@@ -20240,7 +20240,22 @@ public class RECOIL
 		}
 	}
 
-	bool DecodePic!(byte[] content, int contentLength)
+	static bool IsPaint256(string filename)
+	{
+		int i = filename.Length - "PAINT?.PIC".Length;
+		if (i < 0)
+			return false;
+		if (i > 0 && filename[i - 1] != '/' && filename[i - 1] != '\\')
+			return false;
+		return (filename[i] | 0x20) == 'p'
+			&& (filename[i + 1] | 0x20) == 'a'
+			&& (filename[i + 2] | 0x20) == 'i'
+			&& (filename[i + 3] | 0x20) == 'n'
+			&& (filename[i + 4] | 0x20) == 't'
+			&& filename[i + 5] != '/' && filename[i + 5] != '\\';
+	}
+
+	bool DecodePic!(string filename, byte[] content, int contentLength)
 	{
 		if (DecodePsion3Pic(content, contentLength)
 		 || DecodeX68KPic(content, contentLength)
@@ -20253,7 +20268,7 @@ public class RECOIL
 		case 4325:
 			return DecodeGad(content, contentLength);
 		case 7680:
-			return DecodeGr8(content, contentLength);
+			return IsPaint256(filename) ? Decode256(content, contentLength) : DecodeGr8(content, contentLength);
 		case 7681:
 		case 7682:
 		case 7683:
@@ -21785,7 +21800,7 @@ public class RECOIL
 		case PackExt("PI9"):
 			return DecodePi9(content, contentLength);
 		case PackExt("PIC"):
-			return DecodePic(content, contentLength);
+			return DecodePic(filename, content, contentLength);
 		case PackExt("PIC0"):
 			return DecodePic0(filename, content, contentLength);
 		case PackExt("PIX"):
