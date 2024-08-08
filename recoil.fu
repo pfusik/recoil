@@ -2880,9 +2880,7 @@ class SpxStream : Ice21Stream
 			count = ReadCount();
 			if (count < 0)
 				return false;
-			count += 3;
-			if (count > unpackedOffset)
-				count = unpackedOffset;
+			count = Math.Min(count + 3, unpackedOffset);
 			do {
 				unpackedOffset--;
 				unpacked[unpackedOffset] = unpacked[unpackedOffset + distance];
@@ -3104,9 +3102,7 @@ class PiStream : BitStream
 				default:
 					assert false;
 				}
-				int copyEnd = indexesOffset + (length << 1);
-				if (copyEnd > indexesLength)
-					copyEnd = indexesLength;
+				int copyEnd = Math.Min(indexesOffset + (length << 1), indexesLength);
 				for (; indexesOffset < copyEnd; indexesOffset++) {
 					int sourceOffset = indexesOffset - position;
 					if (sourceOffset < 0)
@@ -7245,6 +7241,9 @@ public class RECOIL
 		return height < 212 ? height : 212;
 	}
 
+	// Math.Clamp unavailable on UWP
+	static int ClampU5(int x) => x < 0 ? 0 : x > 31 ? 31 : x;
+
 	int DecodeMsxYjk(byte[] content, int contentOffset, int x, int width, bool usePalette)
 	{
 		int y = content[contentOffset + x] >> 3;
@@ -7264,21 +7263,9 @@ public class RECOIL
 			k -= (k & 0x20) << 1;
 			j -= (j & 0x20) << 1;
 			// YJK to RGB
-			int r = y + j;
-			if (r < 0)
-				r = 0;
-			else if (r > 31)
-				r = 31;
-			int g = y + k;
-			if (g < 0)
-				g = 0;
-			else if (g > 31)
-				g = 31;
-			int b = 5 * y - 2 * j - k + 2 >> 2;
-			if (b < 0)
-				b = 0;
-			else if (b > 31)
-				b = 31;
+			int r = ClampU5(y + j);
+			int g = ClampU5(y + k);
+			int b = ClampU5(5 * y - 2 * j - k + 2 >> 2);
 			rgb = r << 16 | g << 8 | b;
 		}
 		// 5-bit RGB to 8-bit RGB
@@ -7764,21 +7751,9 @@ public class RECOIL
 				u -= (u & 0x20) << 1;
 				v -= (v & 0x20) << 1;
 				// YUV to RGB
-				int r = y + u;
-				if (r < 0)
-					r = 0;
-				else if (r > 31)
-					r = 31;
-				int g = (((5 * y - v) >> 1) - u) >> 1;
-				if (g < 0)
-					g = 0;
-				else if (g > 31)
-					g = 31;
-				int b = y + v;
-				if (b < 0)
-					b = 0;
-				else if (b > 31)
-					b = 31;
+				int r = ClampU5(y + u);
+				int g = ClampU5((((5 * y - v) >> 1) - u) >> 1);
+				int b = ClampU5(y + v);
 				int rgb = r << 16 | g << 8 | b;
 				// 5-bit RGB to 8-bit RGB
 				Pixels[i] = rgb << 3 | (rgb >> 2 & 0x070707);
@@ -9416,10 +9391,7 @@ public class RECOIL
 				if (nextChunkOffset < 0 || !rle.UnpackQ4())
 					return false;
 			}
-			int b = rle.ReadRle();
-			if (b < 0)
-				b = 0;
-			Pixels[i] = ContentPalette[b];
+			Pixels[i] = ContentPalette[Math.Max(rle.ReadRle(), 0)];
 		}
 		return true;
 	}
@@ -12188,10 +12160,7 @@ public class RECOIL
 		// At bitmapOffset there's a mono bitmap, bytesPerLine by height.
 		// Because it can be even 13360 pixels wide, we choose to layout it in several rows,
 		// taking care not to break any character.
-		int width = height << 4; // arbitrary
-		const int maxWidth = 3840; // arbitrary
-		if (width > maxWidth)
-			width = maxWidth;
+		int width = Math.Min(height << 4, 3840); // arbitrary
 		stream.ContentOffset = characterOffset;
 		stream.ContentLength = characterEndOffset;
 		stream.BitmapWidth = bytesPerLine << 3;
@@ -13160,9 +13129,7 @@ public class RECOIL
 		int bytesPerLine = bitplanes * bytesPerBitplane;
 		byte[]# unpacked = new byte[bytesPerLine];
 		for (int y = 0; y < height; ) {
-			int lineRepeatCount = rle.GetLineRepeatCount();
-			if (lineRepeatCount > height - y)
-				lineRepeatCount = height - y;
+			int lineRepeatCount = Math.Min(rle.GetLineRepeatCount(), height - y);
 
 			if (!rle.UnpackLine(unpacked, bytesPerLine, y))
 				return false;
@@ -15260,8 +15227,7 @@ public class RECOIL
 		return true;
 	}
 
-	static int ClampByte(int x)
-		=> x <= 0 ? 0 : x >= 255 ? 255 : x;
+	static int ClampByte(int x) => x <= 0 ? 0 : x >= 255 ? 255 : x;
 
 	bool DecodeDctv!(byte[] content, int width, int height, RECOILResolution resolution, int bitplanes)
 	{
@@ -17435,9 +17401,7 @@ public class RECOIL
 				int count = lengthTree.ReadCode(bitStream);
 				if (count < 0)
 					return false;
-				count += 2;
-				if (count > unpackedLength - unpackedOffset)
-					count = unpackedLength - unpackedOffset;
+				count = Math.Min(count + 2, unpackedLength - unpackedOffset);
 				if (!CopyPrevious(unpacked, unpackedOffset, distance, count))
 					return false;
 				unpackedOffset += count;
@@ -19205,16 +19169,12 @@ public class RECOIL
 
 	static void DrawSpcLine(byte[]! pixels, int x1, int y1, int x2, int y2, int color)
 	{
-		int dx = x2 - x1;
-		int dy = y2 - y1;
+		int dx = Math.Abs(x2 - x1);
+		int dy = Math.Abs(y2 - y1);
 		// FIXME: I do standard Bresenham's algorithm here,
 		// but the original program does something strange involving division of dx/dy.
 
 		// The original draws right or down, so I try it too.
-		if (dx < 0)
-			dx = -dx;
-		if (dy < 0)
-			dy = -dy;
 		if (dx >= dy) {
 			int e = dx;
 			if (x2 < x1) {
