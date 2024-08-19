@@ -502,6 +502,7 @@
 	<platform name="Commodore VIC-20" href="https://en.wikipedia.org/wiki/Commodore_VIC-20">
 		<format name="Best Paint" width="160" height="192" colors="9"><ext fake="true">BP</ext></format>
 		<format name="Turbo Rascal Syntax Error" colors="8"><ext>FLF</ext></format>
+		<format name="MINIPAINT" maxWidth="160" height="192" colors="10"><ext>MG</ext></format>
 		<format name="Picasso" width="88" height="176" colors="10">
 			<ext fake="true" skip="uwp">PIC0</ext>
 			<companionExt fake="true">PIC1</companionExt>

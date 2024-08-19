@@ -9852,6 +9852,38 @@ public class RECOIL
 		return true;
 	}
 
+	bool DecodeVic20Mg!(byte[] content, int contentLength)
+	{
+		if (contentLength != 4097 || content[0] != 0xf1 || content[1] != 0x10
+		 || content[2] != 0x0c || content[3] != 0x12 || content[4] != 0xd8 || content[5] != 0x07
+		 || content[6] != 0x9e || content[7] != 0x20
+		 || content[8] != '8' || content[9] != '5' || content[10] != '8' || content[11] != '4'
+		 || content[12] != 0 || content[13] != 0 || content[14] != 0)
+			return false;
+		SetSize(160, 192, RECOILResolution.Vic202x1);
+		byte[4] palette;
+		palette[0] = content[0x10] >> 4;
+		palette[1] = content[0x10] & 7;
+		palette[3] = content[0x0f] >> 4;
+		int invert = ~(content[0x10] >> 3) & 1;
+		for (int y = 0; y < 192; y++) {
+			for (int x = 0; x < 160; x++) {
+				palette[2] = content[0xf11 + (y >> 4) * 10 + (x >> 4)] >> (x >> 1 & 4) & 0xf;
+				int b = content[0x11 + (x >> 3) * 192 + y];
+				if (palette[2] >= 8) {
+					palette[2] &= 7;
+					b = b >> (~x & 6) & 3;
+				}
+				else {
+					Resolution = RECOILResolution.Vic201x1;
+					b = ((b >> (~x & 7) & 1) ^ invert) << 1;
+				}
+				Pixels[y * 160 + x] = Vic20Palette[palette[b]];
+			}
+		}
+		return true;
+	}
+
 	// Commodore 16 formats.
 
 	bool DecodeP4i!(byte[] content, int contentLength)
@@ -20824,6 +20856,7 @@ public class RECOIL
 		case PackExt("MCP"):
 		case PackExt("MCPP"):
 		case PackExt("MCS"):
+		case PackExt("MG"):
 		case PackExt("MG1"):
 		case PackExt("MG2"):
 		case PackExt("MG4"):
@@ -21666,6 +21699,8 @@ public class RECOIL
 			return DecodeMcpp(content, contentLength);
 		case PackExt("MCS"):
 			return DecodeMcs(content, contentLength);
+		case PackExt("MG"):
+			return DecodeVic20Mg(content, contentLength);
 		case PackExt("MG1"):
 		case PackExt("MG2"):
 		case PackExt("MG4"):
