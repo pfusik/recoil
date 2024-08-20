@@ -13127,15 +13127,19 @@ public class RECOIL
 				else if (headerLength == 54 && IsStringAt(content, 16, "STTT") && content[20] == 0 && content[21] == 0x10)
 					return DecodeSttt(rle, width, bytesPerBitplane);
 				else if (bitplanes == 8) {
-					// grayscale, inverted bits in reverse order
-					int rgb = 0xffffff;
-					for (int c = 0; c < 256; c++) {
-						ContentPalette[c] = rgb;
-						// decrement in reverse bit order
-						for (int mask = 0x808080; ; mask >>= 1) {
-							rgb ^= mask;
-							if ((rgb & mask) == 0)
-								break;
+					if (headerLength == 22 && IsXimg(content))
+						SetGrayscalePalette(0xff);
+					else {
+						// grayscale, inverted bits in reverse order
+						int rgb = 0xffffff;
+						for (int c = 0; c < 256; c++) {
+							ContentPalette[c] = rgb;
+							// decrement in reverse bit order
+							for (int mask = 0x808080; ; mask >>= 1) {
+								rgb ^= mask;
+								if ((rgb & mask) == 0)
+									break;
+							}
 						}
 					}
 				}
