@@ -248,7 +248,7 @@
 		<format width="160" height="192" colors="4"><ext>PIX</ext></format>
 		<format name="AtariTools-800 player" width="8" height="240" colors="2"><ext>PLA</ext></format>
 		<format name="Plama 256 (SFDN compressed)" width="80" height="96" colors="256"><ext>PLS</ext></format>
-		<format name="PMG Designer by Henryk Karpowicz"><ext>PMD</ext></format>
+		<format name="PMG Designer by Henryk Karpowicz"><ext skip="uwp">PMD</ext></format>
 		<format name="Print Shop" width="88" height="52" colors="2"><ext>PSF</ext></format>
 		<format name="Vidig Paint" width="80" height="192" colors="16"><ext>RAP</ext></format>
 		<format name="XL-Paint MAX" width="160" height="192" colors="16" frames="2"><ext skip="uwp">RAW</ext></format>
@@ -668,7 +668,7 @@
 			<ext>PI</ext>
 			<ext>BPL</ext>
 		</format>
-		<format name="Paint Magic" width="160" height="200" colors="16"><ext>PMG</ext></format>
+		<format name="Paint Magic" width="160" height="200" colors="16"><ext skip="uwp">PMG</ext></format>
 		<format name="Pixel Perfect" width="296" height="200" frames="2"><ext>PP</ext></format>
 		<format name="Pixel Perfect (compressed)" width="296" height="200" frames="2"><ext>PPP</ext></format>
 		<format name="Rainbow Painter" width="160" height="200" colors="16"><ext>RP</ext></format>
