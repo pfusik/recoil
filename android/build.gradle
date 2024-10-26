@@ -53,7 +53,7 @@ tasks.register('copyJavaResources', Copy) {
     into new File(JAVA_RESOURCES_DIR, 'net/sf/recoil')
     include FUT_RESOURCES
 }
-preBuild.dependsOn copyJavaResources
+preBuild.dependsOn generateIcon, generateRoundIcon, copyJavaResources
 
 android {
     compileOptions {
@@ -73,7 +73,6 @@ android {
         targetSdkVersion 34
     }
     applicationVariants.configureEach { variant ->
-        variant.mergeResourcesProvider.get().dependsOn generateIcon, generateRoundIcon
         variant.registerGeneratedResFolders files(ICON_DIR)
         variant.registerJavaGeneratingTask fut, FUT_JAVA_DIR
         if (variant.name == 'release') {
