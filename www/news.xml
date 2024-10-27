@@ -1,4 +1,13 @@
 ﻿<page title="News">
+	<release project="RECOIL" version="6.4.5" date="2024-10-27">
+		<ul>
+			<li>Added VIC-20 "MINIPAINT" format (MG)</li>
+			<li>Fixed colors in palette-less XIMG</li>
+			<li>Recognize 7680-byte "PAINT?.PIC" files as Paint 256</li>
+			<li>Removed PMD and PMG associations from the Windows 10 app</li>
+		</ul>
+	</release>
+
 	<release project="RECOIL" version="6.4.4" date="2024-05-18">
 		<p>Fixed crashes on malicious ABK, CGX, CHR, EPA, MAG, PIC, PNT, Q4, RIP, SHP, SHR/32K/GS, SPX files</p>
 	</release>
