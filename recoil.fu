@@ -22036,7 +22036,8 @@ public class RECOIL
 			return DecodeSs3(content, contentLength);
 		case PackExt("SS4"):
 		case PackExt("SCS4"):
-			return DecodeSs4(content, contentLength);
+			return DecodeSs4(content, contentLength)
+				|| DecodeSsx(content, contentLength);
 		case PackExt("SSB"):
 			return DecodeSsb(content, contentLength);
 		case PackExt("SSX"):
