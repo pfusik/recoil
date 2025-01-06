@@ -7055,6 +7055,12 @@ public class RECOIL
 		}
 	}
 
+	void SetElementZxPalette!(byte[] content, int paletteOffset, int colors)
+	{
+		for (int c = 0; c < colors; c++)
+			ContentPalette[c] = GetB8G8R8Color(content, paletteOffset + c * 3);
+	}
+
 	bool DecodeHgfx!(byte[] content, int contentLength, int width, int ultra)
 	{
 		int bitplaneLength = (width * 24) << ultra;
@@ -7065,11 +7071,20 @@ public class RECOIL
 		int colors = 1 << bitplanes;
 		if (paletteOffset + colors * 3 != contentLength)
 			return false;
-		for (int c = 0; c < colors; c++)
-			ContentPalette[c] = GetB8G8R8Color(content, paletteOffset + c * 3);
+		SetElementZxPalette(content, paletteOffset, colors);
 		return DecodeAmigaPlanar(content, 0, width, 192 << ultra,
 			width == 512 && ultra == 0 ? RECOILResolution.ElementZx1x2 : RECOILResolution.ElementZx1x1,
 			bitplanes, ContentPalette);
+	}
+
+	bool Decode546!(byte[] content, int contentLength)
+	{
+		if (contentLength != 98292 || !SetSize(720, 546, RECOILResolution.ElementZx1x1))
+			return false;
+		SetElementZxPalette(content, 0x17fe8, 4);
+		for (int i = 0; i < 720 * 546; i++)
+			Pixels[i] = ContentPalette[content[i >> 2] >> ((~i & 3) << 1) & 3];
+		return true;
 	}
 
 	// MSX formats.
@@ -20581,6 +20596,7 @@ public class RECOIL
 		case PackExt("4MI"):
 		case PackExt("4PL"):
 		case PackExt("4PM"):
+		case PackExt("546"):
 		case PackExt("64C"):
 		case PackExt("A"):
 		case PackExt("A4R"):
@@ -21163,6 +21179,8 @@ public class RECOIL
 			return Decode4pl(content, contentLength);
 		case PackExt("4PM"):
 			return Decode4pm(content, contentLength);
+		case PackExt("546"):
+			return Decode546(content, contentLength);
 		case PackExt("64C"):
 			return Decode64c(content, contentLength);
 		case PackExt("A"):
