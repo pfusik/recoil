@@ -137,6 +137,7 @@ enum RECOILResolution
 	ZxEvolution1x1,
 	SpectrumNext1x1,
 	ElementZx1x1,
+	ElementZx1x2,
 	Timex1x1,
 	Timex1x2,
 	Trs1x1,
@@ -4875,6 +4876,7 @@ public class RECOIL
 		case RECOILResolution.Msx21x2:
 		case RECOILResolution.Pc801x2:
 		case RECOILResolution.Pc881x2:
+		case RECOILResolution.ElementZx1x2:
 			height <<= 1;
 			break;
 		case RECOILResolution.Amiga1x4:
@@ -4921,6 +4923,7 @@ public class RECOIL
 		case RECOILResolution.Pc881x2:
 		case RECOILResolution.Msx21x2:
 		case RECOILResolution.SamCoupe1x2:
+		case RECOILResolution.ElementZx1x2:
 		case RECOILResolution.Trs1x2:
 			offset = (offset << 1) + x;
 			Pixels[offset + Width] = Pixels[offset] = rgb;
@@ -7052,18 +7055,19 @@ public class RECOIL
 		}
 	}
 
-	bool DecodeHgl!(byte[] content, int contentLength)
+	bool DecodeHgfx!(byte[] content, int contentLength, int width)
 	{
-		int bitplanes = contentLength / 6144;
+		int bitplaneLength = width * 24;
+		int bitplanes = contentLength / bitplaneLength;
 		if (bitplanes < 1 || bitplanes > 8)
 			return false;
-		int paletteOffset = bitplanes * 6144;
+		int paletteOffset = bitplanes * bitplaneLength;
 		int colors = 1 << bitplanes;
 		if (paletteOffset + colors * 3 != contentLength)
 			return false;
 		for (int c = 0; c < colors; c++)
 			ContentPalette[c] = GetB8G8R8Color(content, paletteOffset + c * 3);
-		return DecodeAmigaPlanar(content, 0, 256, 192, RECOILResolution.ElementZx1x1, bitplanes, ContentPalette);
+		return DecodeAmigaPlanar(content, 0, width, 192, width == 256 ? RECOILResolution.ElementZx1x1 : RECOILResolution.ElementZx1x2, bitplanes, ContentPalette);
 	}
 
 	// MSX formats.
@@ -20808,6 +20812,7 @@ public class RECOIL
 		case PackExt("HFC"):
 		case PackExt("HFD"):
 		case PackExt("HGB"):
+		case PackExt("HGH"):
 		case PackExt("HGL"):
 		case PackExt("HGR"):
 		case PackExt("HIM"):
@@ -21571,8 +21576,10 @@ public class RECOIL
 			return DecodeHfc(content, contentLength);
 		case PackExt("HGB"):
 			return DecodeHgb(content, contentLength);
+		case PackExt("HGH"):
+			return DecodeHgfx(content, contentLength, 512);
 		case PackExt("HGL"):
-			return DecodeHgl(content, contentLength);
+			return DecodeHgfx(content, contentLength, 256);
 		case PackExt("HGR"):
 			return DecodeHgr(content, contentLength);
 		case PackExt("HIM"):
@@ -22330,6 +22337,7 @@ public class RECOIL
 		case RECOILResolution.SpectrumNext1x1:
 			return "ZX Spectrum Next";
 		case RECOILResolution.ElementZx1x1:
+		case RECOILResolution.ElementZx1x2:
 			return "eLeMeNt ZX";
 		case RECOILResolution.Timex1x1:
 		case RECOILResolution.Timex1x2:
@@ -22401,6 +22409,7 @@ public class RECOIL
 		case RECOILResolution.Pc881x2:
 		case RECOILResolution.SamCoupe1x2:
 		case RECOILResolution.SpectrumProfi1x2:
+		case RECOILResolution.ElementZx1x2:
 		case RECOILResolution.Timex1x2:
 		case RECOILResolution.Trs1x2:
 		case RECOILResolution.Coco2x2:

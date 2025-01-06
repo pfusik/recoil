@@ -1005,6 +1005,7 @@
 		<format width="256" height="192" colors="256"><ext>NXI</ext></format>
 	</platform>
 	<platform name="eLeMeNt ZX" href="https://sites.google.com/view/elementzx/about">
+		<format name="HGFX High" width="512" height="192"><ext>HGH</ext></format>
 		<format name="HGFX Low" width="256" height="192"><ext>HGL</ext></format>
 	</platform>
 </formats>
