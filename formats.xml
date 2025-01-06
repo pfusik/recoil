@@ -934,7 +934,10 @@
 			<ext skip="uwp">SCR</ext>
 			<ext>THC</ext>
 		</format>
-		<format name="Hi-res" width="512" height="192" colors="2"><ext skip="uwp">SCR</ext></format>
+		<format name="Hi-res" width="512" height="192" colors="2">
+			<ext skip="uwp">SCR</ext>
+			<ext>THR</ext>
+		</format>
 	</platform>
 	<platform name="TRS-80" href="https://en.wikipedia.org/wiki/TRS-80">
 		<format width="640" height="240" colors="2"><ext>HR</ext></format>

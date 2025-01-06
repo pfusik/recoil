@@ -6433,6 +6433,15 @@ public class RECOIL
 		return true;
 	}
 
+	bool DecodeThr!(byte[] content, int contentLength)
+	{
+		if (contentLength != 12289)
+			return false;
+		SetSize(512, 384, RECOILResolution.Timex1x2);
+		DecodeTimexHires(content, 0, 0);
+		return true;
+	}
+
 	bool DecodeTcu!(byte[] content, int contentLength)
 	{
 		if (contentLength != 12352)
@@ -20373,9 +20382,7 @@ public class RECOIL
 		case 12288:
 			return DecodeThc(content, contentLength);
 		case 12289:
-			SetSize(512, 384, RECOILResolution.Timex1x2);
-			DecodeTimexHires(content, 0, 0);
-			return true;
+			return DecodeThr(content, contentLength);
 		case 12352:
 			return DecodeTcu(content, contentLength);
 		case 16000:
@@ -21061,6 +21068,7 @@ public class RECOIL
 		case PackExt("TCU"):
 		case PackExt("TG1"):
 		case PackExt("THC"):
+		case PackExt("THR"):
 		case PackExt("TIM"):
 		case PackExt("TIP"):
 		case PackExt("TL4"):
@@ -22086,6 +22094,8 @@ public class RECOIL
 			return DecodeTg1(content, contentLength);
 		case PackExt("THC"):
 			return DecodeThc(content, contentLength);
+		case PackExt("THR"):
+			return DecodeThr(content, contentLength);
 		case PackExt("TIM"):
 			return DecodeTim(content, contentLength);
 		case PackExt("TIP"):
