@@ -1005,11 +1005,12 @@
 		<format width="256" height="192" colors="256"><ext>NXI</ext></format>
 	</platform>
 	<platform name="eLeMeNt ZX" href="https://sites.google.com/view/elementzx/about">
-		<format name="HGFX PAL546" width="720" height="546" colors="4"><ext>546</ext></format>
+		<format name="HGFX PAL546" width="720" height="546" colors="4"><ext skip="uwp">546</ext></format>
 		<format name="HGFX HAM" maxWidth="512" height="192"><ext>HAM</ext></format>
-		<format name="HGFX High" width="512" height="192"><ext>HGH</ext></format>
-		<format name="HGFX Low" width="256" height="192"><ext>HGL</ext></format>
-		<format name="HiResColour" width="512" height="192" colors="15"><ext>HRC</ext></format>
+		<format name="HGFX High" width="512" height="192"><ext skip="uwp">HGH</ext></format>
+		<format name="HGFX Low" width="256" height="192"><ext skip="uwp">HGL</ext></format>
+		<format name="HiResColour Gigascreen" width="512" height="192" frames="2"><ext skip="uwp">HGS</ext></format>
+		<format name="HiResColour" width="512" height="192" colors="15"><ext skip="uwp">HRC</ext></format>
 		<format name="HGFX Ultra" width="512" height="384"><ext>SHR</ext></format>
 	</platform>
 </formats>

@@ -7056,20 +7056,35 @@ public class RECOIL
 		}
 	}
 
+	void DecodeHrcScreen!(byte[] content, int contentOffset, int yOffset)
+	{
+		for (int y = 0; y < 192; y++) {
+			for (int x = 0; x < 512; x++) {
+				int offset = contentOffset + (x >> 3);
+				int c = content[offset + (y << 6)] >> (~x & 7);
+				int a = content[offset + 0x3000 + (y >> 2 << 6)];
+				SetScaledPixel(x, yOffset + y, GetZxColor(c, a));
+			}
+		}
+	}
+
 	bool DecodeHrc!(byte[] content, int contentLength)
 	{
 		if (contentLength != 15360)
 			return false;
 		SetZxSize(512, 384, RECOILResolution.ElementZx1x2);
-		for (int y = 0; y < 192; y++) {
-			for (int x = 0; x < 512; x++) {
-				int col = x >> 3;
-				int c = content[y << 6 | col] >> (~x & 7);
-				int a = content[0x3000 + (y >> 2 << 6) + col];
-				SetScaledPixel(x, y, GetZxColor(c, a));
-			}
-		}
+		DecodeHrcScreen(content, 0, 0);
 		return true;
+	}
+
+	bool DecodeHgs!(byte[] content, int contentLength)
+	{
+		if (contentLength != 30720)
+			return false;
+		SetZxSize(512, 384, RECOILResolution.ElementZx1x2, 2);
+		DecodeHrcScreen(content, 0, 0);
+		DecodeHrcScreen(content, 0x3c00, 192);
+		return ApplyBlend();
 	}
 
 	void SetElementZxPalette!(byte[] content, int paletteOffset, int colors)
@@ -20879,6 +20894,7 @@ public class RECOIL
 		case PackExt("HGH"):
 		case PackExt("HGL"):
 		case PackExt("HGR"):
+		case PackExt("HGS"):
 		case PackExt("HIM"):
 		case PackExt("HIP"):
 		case PackExt("HIR"):
@@ -21651,6 +21667,8 @@ public class RECOIL
 			return DecodeHgfx(content, contentLength, 256, 0);
 		case PackExt("HGR"):
 			return DecodeHgr(content, contentLength);
+		case PackExt("HGS"):
+			return DecodeHgs(content, contentLength);
 		case PackExt("HIM"):
 			return DecodeHim(content, contentLength);
 		case PackExt("HIP"):
