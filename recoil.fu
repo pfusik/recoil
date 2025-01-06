@@ -136,6 +136,7 @@ enum RECOILResolution
 	SpectrumUlaPlus1x1,
 	ZxEvolution1x1,
 	SpectrumNext1x1,
+	ElementZx1x1,
 	Timex1x1,
 	Timex1x2,
 	Trs1x1,
@@ -5076,6 +5077,9 @@ public class RECOIL
 	static int GetR8G8B8Color(byte[] content, int contentOffset)
 		=> content[contentOffset] << 16 | content[contentOffset + 1] << 8 | content[contentOffset + 2];
 
+	static int GetB8G8R8Color(byte[] content, int contentOffset)
+		=> content[contentOffset + 2] << 16 | content[contentOffset + 1] << 8 | content[contentOffset];
+
 	static void DecodeR8G8B8Colors(byte[] content, int contentOffset, int count, int[]! destination, int destinationOffset)
 	{
 		for (int i = 0; i < count; i++)
@@ -7048,6 +7052,20 @@ public class RECOIL
 		}
 	}
 
+	bool DecodeHgl!(byte[] content, int contentLength)
+	{
+		int bitplanes = contentLength / 6144;
+		if (bitplanes < 1 || bitplanes > 8)
+			return false;
+		int paletteOffset = bitplanes * 6144;
+		int colors = 1 << bitplanes;
+		if (paletteOffset + colors * 3 != contentLength)
+			return false;
+		for (int c = 0; c < colors; c++)
+			ContentPalette[c] = GetB8G8R8Color(content, paletteOffset + c * 3);
+		return DecodeAmigaPlanar(content, 0, 256, 192, RECOILResolution.ElementZx1x1, bitplanes, ContentPalette);
+	}
+
 	// MSX formats.
 
 	void SetMsx1Palette!()
@@ -7748,8 +7766,7 @@ public class RECOIL
 	bool SetG9bPalette!(byte[] content, int colors)
 	{
 		for (int c = 0; c < colors; c++) {
-			int offset = 16 + c * 3;
-			int rgb = content[offset] << 16 | content[offset + 1] << 8 | content[offset + 2];
+			int rgb = GetR8G8B8Color(content, 16 + c * 3);
 			if ((rgb & 0xe0e0e0) != 0)
 				return false;
 			ContentPalette[c] = rgb << 3 | (rgb >> 2 & 0x070707);
@@ -9068,7 +9085,7 @@ public class RECOIL
 		if (contentLength < 368 || contentLength % 320 != 48)
 			return false;
 		for (int c = 0; c < 16; c++) {
-			int rgb = content[c * 3] << 16 | content[c * 3 + 1] << 8 | content[c * 3 + 2];
+			int rgb = GetR8G8B8Color(content, c * 3);
 			if ((((rgb >> 4) ^ rgb) & 0x0f0f0f) != 0) {
 				if ((rgb & 0xf0f0f0) != 0)
 					return false;
@@ -13116,7 +13133,7 @@ public class RECOIL
 				}
 				if (contentOffset + 2 >= contentLength)
 					return false;
-				Pixels[i] = content[contentOffset + 2] << 16 | content[contentOffset + 1] << 8 | content[contentOffset]; // BGR
+				Pixels[i] = GetB8G8R8Color(content, contentOffset);
 				contentOffset += 3;
 				count--;
 			}
@@ -20791,6 +20808,7 @@ public class RECOIL
 		case PackExt("HFC"):
 		case PackExt("HFD"):
 		case PackExt("HGB"):
+		case PackExt("HGL"):
 		case PackExt("HGR"):
 		case PackExt("HIM"):
 		case PackExt("HIP"):
@@ -21553,6 +21571,8 @@ public class RECOIL
 			return DecodeHfc(content, contentLength);
 		case PackExt("HGB"):
 			return DecodeHgb(content, contentLength);
+		case PackExt("HGL"):
+			return DecodeHgl(content, contentLength);
 		case PackExt("HGR"):
 			return DecodeHgr(content, contentLength);
 		case PackExt("HIM"):
@@ -22309,6 +22329,8 @@ public class RECOIL
 			return "ZX Evolution";
 		case RECOILResolution.SpectrumNext1x1:
 			return "ZX Spectrum Next";
+		case RECOILResolution.ElementZx1x1:
+			return "eLeMeNt ZX";
 		case RECOILResolution.Timex1x1:
 		case RECOILResolution.Timex1x2:
 			return "Timex 2048";
