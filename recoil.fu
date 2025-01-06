@@ -7087,6 +7087,33 @@ public class RECOIL
 		return true;
 	}
 
+	bool DecodeElementZxHam!(byte[] content, int contentLength)
+	{
+		int width;
+		switch (contentLength) {
+		case 49344:
+			width = 256;
+			SetSize(256, 192, RECOILResolution.ElementZx1x1);
+			break;
+		case 98496:
+			width = 512;
+			SetSize(512, 384, RECOILResolution.ElementZx1x2);
+			break;
+		default:
+			return false;
+		}
+		SetElementZxPalette(content, contentLength - 192, 64);
+		for (int y = 0; y < 192; y++) {
+			int rgb = ContentPalette[0];
+			for (int x = 0; x < width; x++) {
+				int c = GetBitplanePixel(content, (y * width + x) >> 3, x, 8, width * 24);
+				rgb = DecodeHamPixel(rgb, c, 6);
+				SetScaledPixel(x, y, rgb);
+			}
+		}
+		return true;
+	}
+
 	// MSX formats.
 
 	void SetMsx1Palette!()
@@ -15190,6 +15217,28 @@ public class RECOIL
 		return true;
 	}
 
+	int DecodeHamPixel(int rgb, int c, int holdBits)
+	{
+		switch (c >> holdBits) {
+		case 0:
+			return ContentPalette[c];
+		case 1: // blue
+			c = c << 8 - holdBits & 0xff;
+			c |= c >> holdBits;
+			return (rgb & 0xffff00) | c;
+		case 2: // red
+			c = c << 8 - holdBits & 0xff;
+			c |= c >> holdBits;
+			return (rgb & 0x00ffff) | c << 16;
+		case 3: // green
+			c = c << 8 - holdBits & 0xff;
+			c |= c >> holdBits;
+			return (rgb & 0xff00ff) | c << 8;
+		default:
+			assert false;
+		}
+	}
+
 	void DecodeHam!(byte[] unpacked, int width, int height, int bitplanes, MultiPalette!? multiPalette)
 	{
 		int bytesPerLine = (width + 15 >> 4 << 1) * bitplanes;
@@ -15200,28 +15249,7 @@ public class RECOIL
 			int rgb = ContentPalette[0];
 			for (int x = 0; x < width; x++) {
 				int c = GetBitplaneWordsPixel(unpacked, y * bytesPerLine, x, bitplanes);
-				switch (c >> holdBits) {
-				case 0:
-					rgb = ContentPalette[c];
-					break;
-				case 1: // blue
-					c = c << 8 - holdBits & 0xff;
-					c |= c >> holdBits;
-					rgb = (rgb & 0xffff00) | c;
-					break;
-				case 2: // red
-					c = c << 8 - holdBits & 0xff;
-					c |= c >> holdBits;
-					rgb = (rgb & 0x00ffff) | c << 16;
-					break;
-				case 3: // green
-					c = c << 8 - holdBits & 0xff;
-					c |= c >> holdBits;
-					rgb = (rgb & 0xff00ff) | c << 8;
-					break;
-				default:
-					assert false;
-				}
+				rgb = DecodeHamPixel(rgb, c, holdBits);
 				SetScaledPixel(x, y, rgb);
 			}
 		}
@@ -20820,6 +20848,7 @@ public class RECOIL
 		case PackExt("32K"):
 		case PackExt("GSC"):
 		case PackExt("GUN"):
+		case PackExt("HAM"):
 		case PackExt("HBM"):
 		case PackExt("FGS"):
 		case PackExt("MON"):
@@ -20865,7 +20894,6 @@ public class RECOIL
 		case PackExt("DCTV"):
 		case PackExt("DEEP"):
 		case PackExt("DR"):
-		case PackExt("HAM"):
 		case PackExt("HAM6"):
 		case PackExt("HAM8"):
 		case PackExt("LBM"):
@@ -21580,6 +21608,9 @@ public class RECOIL
 			return DecodeGsc(content, contentLength);
 		case PackExt("GUN"):
 			return DecodeGun(content, contentLength);
+		case PackExt("HAM"):
+			return DecodeIff(content, contentLength, RECOILResolution.Amiga1x1)
+				|| DecodeElementZxHam(content, contentLength);
 		case PackExt("HBM"):
 		case PackExt("FGS"):
 		case PackExt("MON"):
@@ -21660,7 +21691,6 @@ public class RECOIL
 		case PackExt("DCTV"):
 		case PackExt("DEEP"):
 		case PackExt("DR"):
-		case PackExt("HAM"):
 		case PackExt("HAM6"):
 		case PackExt("HAM8"):
 		case PackExt("LBM"):
