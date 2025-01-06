@@ -352,7 +352,7 @@
 		<format name="DEGAS Elite icon" colors="2"><ext>ICN</ext></format>
 		<format name="Interchange File Format"><ext>IFF</ext></format>
 		<format name="Atari Image Manager" maxWidth="256" maxHeight="256" grayscale="256"><ext>IM</ext></format>
-		<format name="GEM Bit Image"><ext>IMG</ext></format>
+		<format name="GEM Bit Image"><ext skip="uwp">IMG</ext></format>
 		<format name="Fullscreen Construction Kit" width="448" height="272" colors="16"><ext>KID</ext></format>
 		<format name="Dali (compressed)" width="320" height="200" colors="16"><ext>LPK</ext></format>
 		<format name="Dali (compressed)" width="640" height="200" colors="4"><ext>MPK</ext></format>
@@ -865,8 +865,8 @@
 		<format name="Maki-chan Graphics" maxWidth="640" maxHeight="200" colors="8"><ext>MAG</ext></format>
 	</platform>
 	<platform name="NEC PC-88" href="https://en.wikipedia.org/wiki/PC-8800_series">
-		<format name="ArtMaster88" width="640" height="200" colors="8"><ext>IMG</ext></format>
-		<format name="DaVinci" width="640" height="200" colors="8"><ext>IMG</ext></format>
+		<format name="ArtMaster88" width="640" height="200" colors="8"><ext skip="uwp">IMG</ext></format>
+		<format name="DaVinci" width="640" height="200" colors="8"><ext skip="uwp">IMG</ext></format>
 		<format name="Kitty" width="640" height="200" colors="8"><ext>KTY</ext></format>
 		<format name="Maki-chan Graphics" colors="8"><ext>MAG</ext></format>
 		<format colors="8"><ext>PI</ext></format>
@@ -967,7 +967,7 @@
 		<format name="Multicolor 8x2" width="256" height="192" colors="15"><ext>IFL</ext></format>
 		<format name="Gigascreen" width="256" height="192" frames="2">
 			<ext>GSC</ext>
-			<ext>IMG</ext>
+			<ext skip="uwp">IMG</ext>
 		</format>
 		<format name="Multicolor 8x1" width="256" height="192" colors="15"><ext>MC</ext></format>
 		<format name="MultiArtist 8x1" width="256" height="192" frames="2"><ext>MG1</ext></format>
