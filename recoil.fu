@@ -6424,13 +6424,22 @@ public class RECOIL
 		return true;
 	}
 
-	bool DecodeZxImg!(byte[] content, int contentLength)
+	bool DecodeGsc!(byte[] content, int contentLength)
 	{
-		if (contentLength != 13824)
+		int contentOffset;
+		switch (contentLength) {
+		case 13824:
+			contentOffset = 0;
+			break;
+		case 13952:
+			contentOffset = 128;
+			break;
+		default:
 			return false;
+		}
 		SetZx(RECOILResolution.Spectrum1x1, 2);
-		DecodeZx(content, 0, 0x1800, ZxAttributes8x8, 0);
-		DecodeZx(content, 0x1b00, 0x3300, ZxAttributes8x8, 256 * 192);
+		DecodeZx(content, contentOffset, contentOffset + 0x1800, ZxAttributes8x8, 0);
+		DecodeZx(content, contentOffset + 0x1b00, contentOffset + 0x3300, ZxAttributes8x8, 256 * 192);
 		return ApplyBlend();
 	}
 
@@ -20749,6 +20758,7 @@ public class RECOIL
 		case PackExt("GS"):
 		case PackExt("IIGS"):
 		case PackExt("32K"):
+		case PackExt("GSC"):
 		case PackExt("GUN"):
 		case PackExt("HBM"):
 		case PackExt("FGS"):
@@ -21499,6 +21509,8 @@ public class RECOIL
 		case PackExt("IIGS"):
 		case PackExt("32K"):
 			return DecodeApfShr(content, contentLength);
+		case PackExt("GSC"):
+			return DecodeGsc(content, contentLength);
 		case PackExt("GUN"):
 			return DecodeGun(content, contentLength);
 		case PackExt("HBM"):
@@ -21606,7 +21618,7 @@ public class RECOIL
 			return DecodeIm(content, contentLength);
 		case PackExt("IMG"):
 			return DecodeStImg(content, contentLength)
-				|| DecodeZxImg(content, contentLength)
+				|| DecodeGsc(content, contentLength)
 				|| DecodeArtMaster88(content, contentLength)
 				|| DecodeDaVinci(content, contentLength);
 		case PackExt("TIMG"):
