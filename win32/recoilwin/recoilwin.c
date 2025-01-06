@@ -1,7 +1,7 @@
 /*
  * recoilwin.c - Windows API port of RECOIL
  *
- * Copyright (C) 2009-2021  Piotr Fusik
+ * Copyright (C) 2009-2025  Piotr Fusik
  *
  * This file is part of RECOIL (Retro Computer Image Library),
  * see http://recoil.sourceforge.net
@@ -23,7 +23,6 @@
 
 #define UNICODE 1
 #define _UNICODE 1
-#define PRIts "ls"
 
 #include <windows.h>
 #include <commctrl.h>
@@ -130,12 +129,12 @@ static void UpdateText(void)
 	if (!show_path)
 		filename += GetPathLength(filename);
 	_TCHAR buf[MAX_PATH + 64];
-	_stprintf(buf, MAX_PATH + 64, _T("%" PRIts " - " APP_TITLE), filename);
+	_sntprintf(buf, MAX_PATH + 64, _T("%s - " APP_TITLE), filename);
 	SetWindowText(hWnd, buf);
 	int frames = RECOIL_GetFrames(recoil);
 	if (image_loaded) {
 		int colors = RECOIL_GetColors(recoil);
-		_stprintf(buf, MAX_PATH + 64, _T("%s, %dx%d, %d color%s, %s%d%% zoom"),
+		_sntprintf(buf, MAX_PATH + 64, _T("%hs, %dx%d, %d color%hs, %hs%d%% zoom"),
 			RECOIL_GetPlatform(recoil),
 			RECOIL_GetOriginalWidth(recoil), RECOIL_GetOriginalHeight(recoil),
 			colors, colors == 1 ? "" : "s",
@@ -447,7 +446,7 @@ static bool GetSiblingFile(LPTSTR filename, int dir)
 	if (path_len > MAX_PATH - 2)
 		return false;
 	_TCHAR mask[MAX_PATH];
-	_stprintf(mask, MAX_PATH, _T("%.*" PRIts "*"), path_len, filename);
+	_sntprintf(mask, MAX_PATH, _T("%.*s*"), path_len, filename);
 	_TCHAR best[MAX_PATH];
 	best[0] = '\0';
 	WIN32_FIND_DATA wfd;
