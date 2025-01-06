@@ -930,7 +930,10 @@
 	</platform>
 	<platform name="Timex 2048" href="https://en.wikipedia.org/wiki/Timex_Computer_2048">
 		<format name="Hi-res Gigascreen" width="512" height="192" colors="4" frames="2"><ext>HRG</ext></format>
-		<format name="Hi-color" width="256" height="192" colors="15"><ext skip="uwp">SCR</ext></format>
+		<format name="Hi-color" width="256" height="192" colors="15">
+			<ext skip="uwp">SCR</ext>
+			<ext>THC</ext>
+		</format>
 		<format name="Hi-res" width="512" height="192" colors="2"><ext skip="uwp">SCR</ext></format>
 	</platform>
 	<platform name="TRS-80" href="https://en.wikipedia.org/wiki/TRS-80">

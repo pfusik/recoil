@@ -6424,6 +6424,15 @@ public class RECOIL
 		return true;
 	}
 
+	bool DecodeThc!(byte[] content, int contentLength)
+	{
+		if (contentLength != 12288)
+			return false;
+		SetZx(RECOILResolution.Timex1x1);
+		DecodeZx(content, 0, 0x1800, ZxAttributesTimex, 0);
+		return true;
+	}
+
 	bool DecodeGsc!(byte[] content, int contentLength)
 	{
 		int contentOffset;
@@ -20353,9 +20362,7 @@ public class RECOIL
 			DecodeZx(content, 0, 0x1800, ZxAttributes8x8, 0);
 			return true;
 		case 12288:
-			SetZx(RECOILResolution.Timex1x1);
-			DecodeZx(content, 0, 0x1800, ZxAttributesTimex, 0);
-			return true;
+			return DecodeThc(content, contentLength);
 		case 12289:
 			SetSize(512, 384, RECOILResolution.Timex1x2);
 			DecodeTimexHires(content, 0, 0);
@@ -21045,6 +21052,7 @@ public class RECOIL
 		case PackExt("SXS"):
 		case PackExt("TCP"):
 		case PackExt("TG1"):
+		case PackExt("THC"):
 		case PackExt("TIM"):
 		case PackExt("TIP"):
 		case PackExt("TL4"):
@@ -22066,6 +22074,8 @@ public class RECOIL
 			return DecodeTcp(content, contentLength);
 		case PackExt("TG1"):
 			return DecodeTg1(content, contentLength);
+		case PackExt("THC"):
+			return DecodeThc(content, contentLength);
 		case PackExt("TIM"):
 			return DecodeTim(content, contentLength);
 		case PackExt("TIP"):
