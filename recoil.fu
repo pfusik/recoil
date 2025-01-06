@@ -6271,7 +6271,7 @@ public class RECOIL
 
 	// ZX Spectrum formats.
 
-	static int GetZxColor(int c)
+	static int GetZxPaletteColor(int c)
 		=> (c >> 1 & 1) * 0xff0000 | (c >> 2 & 1) * 0x00ff00 | (c & 1) * 0x0000ff;
 
 	void SetZxPalette!()
@@ -6280,7 +6280,7 @@ public class RECOIL
 		// Here we layout them as ULAplus 64-entry palette
 		// so that we can share code in DecodeZx.
 		for (int i = 0; i < 64; i++) {
-			int rgb = GetZxColor(i);
+			int rgb = GetZxPaletteColor(i);
 			if ((i & 0x10) == 0) // not bright
 				rgb &= 0xcdcdcd;
 			ContentPalette[i] = rgb;
@@ -6314,6 +6314,9 @@ public class RECOIL
 		for (int i = 0; i < 64; i++)
 			ContentPalette[i] = GetG3R3B2Color(content[paletteOffset + i]);
 	}
+
+	int GetZxColor(int c, int a)
+		=> ContentPalette[(a >> 2 & 0x30) | ((c & 1) == 0 ? 8 | (a >> 3 & 7) : a & 7)];
 
 	const int ZxBitmapCheckerboard = -3;
 	const int ZxBitmapHlr = -2;
@@ -6350,9 +6353,9 @@ public class RECOIL
 					c = content[bitmapOffset + GetZxLineOffset(y) + col] >> (~x & 7);
 					break;
 				}
-				c &= 1;
 				if (attributesMode == ZxAttributesNone) {
 					// black and white
+					c &= 1;
 					if (c != 0)
 						c = 0xffffff;
 				}
@@ -6384,7 +6387,7 @@ public class RECOIL
 						break;
 					}
 					a = content[a + col];
-					c = ContentPalette[(a >> 2 & 0x30) | (c == 0 ? 8 | (a >> 3 & 7) : a & 7)];
+					c = GetZxColor(c, a);
 				}
 				Pixels[pixelsOffset + (y << 8) + x] = c;
 			}
@@ -6393,7 +6396,7 @@ public class RECOIL
 
 	void DecodeTimexHires!(byte[] content, int contentOffset, int pixelsOffset)
 	{
-		int inkColor = GetZxColor(content[contentOffset + 0x3000] >> 3);
+		int inkColor = GetZxPaletteColor(content[contentOffset + 0x3000] >> 3);
 		for (int y = 0; y < 192; y++) {
 			for (int x = 0; x < 512; x++) {
 				int c = content[contentOffset + (x & 8) * 768 + GetZxLineOffset(y) + (x >> 4)] >> (~x & 7) & 1;
@@ -6543,7 +6546,7 @@ public class RECOIL
 			for (int y = 0; y < 192; y++) {
 				for (int x = 0; x < 256; x++) {
 					int b = content[(y & ~3) << 4 | (x >> 2 & ~3) | f << 1 | (x >> 3 & 1)];
-					int rgb = GetZxColor((x & 4) == 0 ? b >> 3 : b);
+					int rgb = GetZxPaletteColor((x & 4) == 0 ? b >> 3 : b);
 					if ((b & 0x40) == 0)
 						rgb &= 0xcdcdcd;
 					Pixels[(f * 192 + y << 8) + x] = rgb;
@@ -6598,9 +6601,8 @@ public class RECOIL
 				int c = content[0x38c + offset];
 				if (c >= 0x70)
 					return false;
-				c = content[12 + (c << 3) + (y & 7)] >> (~x & 7) & 1;
-				int a = content[0x68c + offset];
-				Pixels[(y << 8) + x] = ContentPalette[(a >> 2 & 0x30) | (c == 0 ? 8 | (a >> 3 & 7) : a & 7)];
+				c = content[12 + (c << 3) + (y & 7)] >> (~x & 7);
+				Pixels[(y << 8) + x] = GetZxColor(c, content[0x68c + offset]);
 			}
 		}
 		return true;
@@ -6623,9 +6625,8 @@ public class RECOIL
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
 				int offset = 14 + ((y >> 3) * columns + (x >> 3)) * 9;
-				int c = content[offset + (y & 7)] >> (~x & 7) & 1;
-				int a = content[offset + 8];
-				Pixels[y * width + x] = ContentPalette[(a >> 2 & 0x30) | (c == 0 ? 8 | (a >> 3 & 7) : a & 7)];
+				int c = content[offset + (y & 7)] >> (~x & 7);
+				Pixels[y * width + x] = GetZxColor(c, content[offset + 8]);
 			}
 		}
 		return true;
@@ -6695,7 +6696,7 @@ public class RECOIL
 							a = content[offset + 8];
 					}
 				}
-				Pixels[y * width + x] = ContentPalette[(a >> 2 & 0x30) | ((c & 1) == 0 ? 8 | (a >> 3 & 7) : a & 7)];
+				Pixels[y * width + x] = GetZxColor(c, a);
 			}
 		}
 		return true;
@@ -6822,7 +6823,7 @@ public class RECOIL
 					c = a = content[a];
 					if ((content[GetZxLineOffset(bY) + col] >> (~x & 7) & 1) == 0)
 						c >>= 3;
-					c = GetZxColor(c);
+					c = GetZxPaletteColor(c);
 					if ((a & 0x40) == 0)
 						c &= 0xcdcdcd;
 				}
@@ -6832,7 +6833,7 @@ public class RECOIL
 						borderOffset++;
 						c >>= 3;
 					}
-					c = GetZxColor(c) & 0xcdcdcd;
+					c = GetZxPaletteColor(c) & 0xcdcdcd;
 				}
 				Pixels[y * 384 + x] = c;
 			}
@@ -6870,7 +6871,7 @@ public class RECOIL
 					for (int y = 0; y < 8; y++) {
 						for (int x = 0; x < 8; x++) {
 							int c = content[contentOffset + y] >> (7 - x) & 1;
-							c = GetZxColor(c == 0 ? a >> 3 : a);
+							c = GetZxPaletteColor(c == 0 ? a >> 3 : a);
 							if ((a & 0x40) == 0)
 								c &= 0xcdcdcd;
 							Pixels[(((frame * rows + row << 3) + y) * columns + column << 3) + x] = c;
@@ -6892,7 +6893,7 @@ public class RECOIL
 		int c = a;
 		if ((content[bitmapOffset + GetZxLineOffset(y) + col] >> (~x & 7) & 1) == 0)
 			c >>= 3;
-		c = GetZxColor(c);
+		c = GetZxPaletteColor(c);
 		if ((a & 0x40) == 0)
 			c &= 0xcdcdcd;
 		return c;
@@ -6915,7 +6916,7 @@ public class RECOIL
 						if (borderOffset >= contentLength)
 							return false;
 						b = content[borderOffset++];
-						c = GetZxColor(b) & 0xcdcdcd;
+						c = GetZxPaletteColor(b) & 0xcdcdcd;
 						b >>= 3;
 						switch (b) {
 						case 0:
@@ -7053,6 +7054,22 @@ public class RECOIL
 		default:
 			return false;
 		}
+	}
+
+	bool DecodeHrc!(byte[] content, int contentLength)
+	{
+		if (contentLength != 15360)
+			return false;
+		SetZxSize(512, 384, RECOILResolution.ElementZx1x2);
+		for (int y = 0; y < 192; y++) {
+			for (int x = 0; x < 512; x++) {
+				int col = x >> 3;
+				int c = content[y << 6 | col] >> (~x & 7);
+				int a = content[0x3000 + (y >> 2 << 6) + col];
+				SetScaledPixel(x, y, GetZxColor(c, a));
+			}
+		}
+		return true;
 	}
 
 	void SetElementZxPalette!(byte[] content, int paletteOffset, int colors)
@@ -9396,7 +9413,7 @@ public class RECOIL
 		}
 		else {
 			for (int c = 0; c < 16; c++)
-				ContentPalette[c] = GetZxColor(c);
+				ContentPalette[c] = GetZxPaletteColor(c);
 			ContentPalette[8] = 0xffffff;
 		}
 		int pixelsLength = width * height;
@@ -20876,6 +20893,7 @@ public class RECOIL
 		case PackExt("HR"):
 		case PackExt("HR2"):
 		case PackExt("HCI"):
+		case PackExt("HRC"):
 		case PackExt("HRG"):
 		case PackExt("HRM"):
 		case PackExt("HRS"):
@@ -21663,6 +21681,8 @@ public class RECOIL
 		case PackExt("HR2"):
 		case PackExt("HCI"):
 			return DecodeHr2(content, contentLength);
+		case PackExt("HRC"):
+			return DecodeHrc(content, contentLength);
 		case PackExt("HRG"):
 			return DecodeHrg(content, contentLength);
 		case PackExt("HRM"):
