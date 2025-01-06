@@ -990,6 +990,10 @@
 	</platform>
 	<platform name="ZX Spectrum ULAplus" href="https://sites.google.com/site/ulaplus/">
 		<format name="ULAplus" width="256" height="192" colors="64"><ext skip="uwp">SCR</ext></format>
+		<format name="Timex hi-color ULAplus" width="256" height="192" colors="64">
+			<ext skip="uwp">SCR</ext>
+			<ext>TCU</ext>
+		</format>
 	</platform>
 	<platform name="ZX Evolution" href="http://nedopc.com/zxevo/zxevo_eng.php">
 		<format name="Speccy eXtended Graphics" colors="256"><ext>SXG</ext></format>

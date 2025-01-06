@@ -6433,6 +6433,15 @@ public class RECOIL
 		return true;
 	}
 
+	bool DecodeTcu!(byte[] content, int contentLength)
+	{
+		if (contentLength != 12352)
+			return false;
+		SetUlaPlus(content, 0x3000);
+		DecodeZx(content, 0, 0x1800, ZxAttributesTimex, 0);
+		return true;
+	}
+
 	bool DecodeGsc!(byte[] content, int contentLength)
 	{
 		int contentOffset;
@@ -20367,10 +20376,8 @@ public class RECOIL
 			SetSize(512, 384, RECOILResolution.Timex1x2);
 			DecodeTimexHires(content, 0, 0);
 			return true;
-		case 12352: // untested, based on https://web.archive.org/web/20140315185332/http://www.zxshed.co.uk/sinclairfaq/index.php5?title=ULAplus
-			SetUlaPlus(content, 0x3000);
-			DecodeZx(content, 0, 0x1800, ZxAttributesTimex, 0);
-			return true;
+		case 12352:
+			return DecodeTcu(content, contentLength);
 		case 16000:
 			SetSize(640, 400, RECOILResolution.Mc05151x2);
 			ContentPalette[0] = 0;
@@ -21051,6 +21058,7 @@ public class RECOIL
 		case PackExt("SXG"):
 		case PackExt("SXS"):
 		case PackExt("TCP"):
+		case PackExt("TCU"):
 		case PackExt("TG1"):
 		case PackExt("THC"):
 		case PackExt("TIM"):
@@ -22072,6 +22080,8 @@ public class RECOIL
 			return DecodeSxs(content, contentLength);
 		case PackExt("TCP"):
 			return DecodeTcp(content, contentLength);
+		case PackExt("TCU"):
+			return DecodeTcu(content, contentLength);
 		case PackExt("TG1"):
 			return DecodeTg1(content, contentLength);
 		case PackExt("THC"):
