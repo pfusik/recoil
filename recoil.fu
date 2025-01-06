@@ -7055,11 +7055,11 @@ public class RECOIL
 		}
 	}
 
-	bool DecodeHgfx!(byte[] content, int contentLength, int width)
+	bool DecodeHgfx!(byte[] content, int contentLength, int width, int ultra)
 	{
-		int bitplaneLength = width * 24;
+		int bitplaneLength = (width * 24) << ultra;
 		int bitplanes = contentLength / bitplaneLength;
-		if (bitplanes < 1 || bitplanes > 8)
+		if (bitplanes < 1 || bitplanes > 8 >> ultra)
 			return false;
 		int paletteOffset = bitplanes * bitplaneLength;
 		int colors = 1 << bitplanes;
@@ -7067,7 +7067,9 @@ public class RECOIL
 			return false;
 		for (int c = 0; c < colors; c++)
 			ContentPalette[c] = GetB8G8R8Color(content, paletteOffset + c * 3);
-		return DecodeAmigaPlanar(content, 0, width, 192, width == 256 ? RECOILResolution.ElementZx1x1 : RECOILResolution.ElementZx1x2, bitplanes, ContentPalette);
+		return DecodeAmigaPlanar(content, 0, width, 192 << ultra,
+			width == 512 && ultra == 0 ? RECOILResolution.ElementZx1x2 : RECOILResolution.ElementZx1x1,
+			bitplanes, ContentPalette);
 	}
 
 	// MSX formats.
@@ -21577,9 +21579,9 @@ public class RECOIL
 		case PackExt("HGB"):
 			return DecodeHgb(content, contentLength);
 		case PackExt("HGH"):
-			return DecodeHgfx(content, contentLength, 512);
+			return DecodeHgfx(content, contentLength, 512, 0);
 		case PackExt("HGL"):
-			return DecodeHgfx(content, contentLength, 256);
+			return DecodeHgfx(content, contentLength, 256, 0);
 		case PackExt("HGR"):
 			return DecodeHgr(content, contentLength);
 		case PackExt("HIM"):
@@ -22055,6 +22057,7 @@ public class RECOIL
 			return DecodeApfShr(content, contentLength)
 				|| DecodeAppleIIShr(content, contentLength)
 				|| DecodeSh3(content, contentLength)
+				|| DecodeHgfx(content, contentLength, 512, 1)
 				|| DecodeTrsShr(content, contentLength);
 		case PackExt("SHS"):
 			return DecodeShs(content, contentLength);

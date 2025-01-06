@@ -1007,5 +1007,6 @@
 	<platform name="eLeMeNt ZX" href="https://sites.google.com/view/elementzx/about">
 		<format name="HGFX High" width="512" height="192"><ext>HGH</ext></format>
 		<format name="HGFX Low" width="256" height="192"><ext>HGL</ext></format>
+		<format name="HGFX Ultra" width="512" height="384"><ext>SHR</ext></format>
 	</platform>
 </formats>
