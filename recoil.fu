@@ -6315,8 +6315,8 @@ public class RECOIL
 			ContentPalette[i] = GetG3R3B2Color(content[paletteOffset + i]);
 	}
 
-	int GetZxColor(int c, int a)
-		=> ContentPalette[(a >> 2 & 0x30) | ((c & 1) == 0 ? 8 | (a >> 3 & 7) : a & 7)];
+	static int GetZxIndex(int c, int a)
+		=> (a >> 2 & 0x30) | ((c & 1) == 0 ? 8 | (a >> 3 & 7) : a & 7);
 
 	const int ZxBitmapCheckerboard = -3;
 	const int ZxBitmapHlr = -2;
@@ -6387,7 +6387,7 @@ public class RECOIL
 						break;
 					}
 					a = content[a + col];
-					c = GetZxColor(c, a);
+					c = ContentPalette[GetZxIndex(c, a)];
 				}
 				Pixels[pixelsOffset + (y << 8) + x] = c;
 			}
@@ -6602,7 +6602,7 @@ public class RECOIL
 				if (c >= 0x70)
 					return false;
 				c = content[12 + (c << 3) + (y & 7)] >> (~x & 7);
-				Pixels[(y << 8) + x] = GetZxColor(c, content[0x68c + offset]);
+				Pixels[(y << 8) + x] = ContentPalette[GetZxIndex(c, content[0x68c + offset])];
 			}
 		}
 		return true;
@@ -6626,7 +6626,7 @@ public class RECOIL
 			for (int x = 0; x < width; x++) {
 				int offset = 14 + ((y >> 3) * columns + (x >> 3)) * 9;
 				int c = content[offset + (y & 7)] >> (~x & 7);
-				Pixels[y * width + x] = GetZxColor(c, content[offset + 8]);
+				Pixels[y * width + x] = ContentPalette[GetZxIndex(c, content[offset + 8])];
 			}
 		}
 		return true;
@@ -6696,7 +6696,7 @@ public class RECOIL
 							a = content[offset + 8];
 					}
 				}
-				Pixels[y * width + x] = GetZxColor(c, a);
+				Pixels[y * width + x] = ContentPalette[GetZxIndex(c, a)];
 			}
 		}
 		return true;
@@ -7056,14 +7056,16 @@ public class RECOIL
 		}
 	}
 
-	void DecodeHrcScreen!(byte[] content, int contentOffset, int yOffset)
+	void DecodeHrcScreen!(byte[] content, int contentOffset, int yOffset, int key = -1)
 	{
 		for (int y = 0; y < 192; y++) {
 			for (int x = 0; x < 512; x++) {
-				int offset = contentOffset + (x >> 3);
-				int c = content[offset + (y << 6)] >> (~x & 7);
-				int a = content[offset + 0x3000 + (y >> 2 << 6)];
-				SetScaledPixel(x, yOffset + y, GetZxColor(c, a));
+				int bitmapOffset = contentOffset + (y << 6) + (x >> 3);
+				int attributeOffset = contentOffset + 0x3000 + (y >> 2 << 6) + (x >> 3);
+				int c = GetZxIndex(content[bitmapOffset] >> (~x & 7), content[attributeOffset]);
+				if ((c & 0x17) == key || ((c | key) & 7) == 0)
+					c = GetZxIndex(content[bitmapOffset - 0x3c00] >> (~x & 7), content[attributeOffset - 0x3c00]);
+				SetScaledPixel(x, yOffset + y, ContentPalette[c]);
 			}
 		}
 	}
@@ -7074,6 +7076,15 @@ public class RECOIL
 			return false;
 		SetZxSize(512, 384, RECOILResolution.ElementZx1x2);
 		DecodeHrcScreen(content, 0, 0);
+		return true;
+	}
+
+	bool DecodeHkl!(byte[] content, int contentLength)
+	{
+		if (contentLength != 30721 || content[0x7800] > 15)
+			return false;
+		SetZxSize(512, 384, RECOILResolution.ElementZx1x2);
+		DecodeHrcScreen(content, 0x3c00, 0, content[0x7800]);
 		return true;
 	}
 
@@ -20901,6 +20912,7 @@ public class RECOIL
 		case PackExt("HLE"):
 		case PackExt("HLF"):
 		case PackExt("HIE"):
+		case PackExt("HKL"):
 		case PackExt("HLR"):
 		case PackExt("HPC"):
 		case PackExt("HPI"):
@@ -21682,6 +21694,8 @@ public class RECOIL
 		case PackExt("HLF"):
 		case PackExt("HIE"):
 			return DecodeHlf(content, contentLength);
+		case PackExt("HKL"):
+			return DecodeHkl(content, contentLength);
 		case PackExt("HLR"):
 			return DecodeHlr(content, contentLength);
 		case PackExt("HPC"):
