@@ -7104,6 +7104,23 @@ public class RECOIL
 			ContentPalette[c] = GetB8G8R8Color(content, paletteOffset + c * 3);
 	}
 
+	bool DecodeHrx!(byte[] content, int contentLength)
+	{
+		if (contentLength != 15456)
+			return false;
+		SetZxSize(512, 384, RECOILResolution.ElementZx1x2);
+		SetElementZxPalette(content, 0x3c00, 32);
+		for (int y = 0; y < 192; y++) {
+			for (int x = 0; x < 512; x++) {
+				int bitmapOffset = (y << 6) + (x >> 3);
+				int a = content[0x3000 + (y >> 2 << 6) + (x >> 3)];
+				int c = (content[bitmapOffset] >> (~x & 7) & 1) == 0 ? 16 + (a >> 4) : a & 0xf;
+				SetScaledPixel(x, y, ContentPalette[c]);
+			}
+		}
+		return true;
+	}
+
 	bool DecodeHgfx!(byte[] content, int contentLength, int width, int ultra)
 	{
 		int bitplaneLength = (width * 24) << ultra;
@@ -20925,6 +20942,7 @@ public class RECOIL
 		case PackExt("HRG"):
 		case PackExt("HRM"):
 		case PackExt("HRS"):
+		case PackExt("HRX"):
 		case PackExt("HS2"):
 		case PackExt("IB3"):
 		case PackExt("IBI"):
@@ -21721,6 +21739,8 @@ public class RECOIL
 			return DecodeHrm(content, contentLength);
 		case PackExt("HRS"):
 			return DecodeHrs(content, contentLength);
+		case PackExt("HRX"):
+			return DecodeHrx(content, contentLength);
 		case PackExt("HS2"):
 			return DecodeHs2(content, contentLength);
 		case PackExt("IB3"):
