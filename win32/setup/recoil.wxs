@@ -315,7 +315,7 @@
 				<?endif?>
 
 				<Component Id="diff_recoil.js">
-					<File Source="diff-recoil.js" KeyPath="yes" />
+					<File Id="diff_recoil.js" Source="diff-recoil.js" KeyPath="yes" />
 				</Component>
 				<Component Id="diff_tsvn.reg">
 					<?foreach EXT in $(var.RECOIL_EXTS)?>
