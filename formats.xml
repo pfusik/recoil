@@ -213,7 +213,7 @@
 		<format width="56" height="60" colors="2"><ext>KFX</ext></format>
 		<format name="Envision"><ext skip="uwp">MAP</ext></format>
 		<format name="EnvisionPC"><ext skip="uwp">MAP</ext></format>
-		<format name="XL-Paint MAX" width="160" height="192" frames="2"><ext>MAX</ext></format>
+		<format name="XL-Paint MAX" width="160" height="192" frames="2"><ext skip="uwp">MAX</ext></format>
 		<format name="Mad Designer" width="512" height="256" colors="2"><ext>MBG</ext></format>
 		<format name="Graph2Font" maxWidth="336" height="240" colors="256"><ext>MCH</ext></format>
 		<format name="McPainter" width="160" height="200" colors="16" frames="2"><ext>MCP</ext></format>
@@ -511,7 +511,7 @@
 	<platform name="Commodore 64" href="https://en.wikipedia.org/wiki/Commodore_64">
 		<format name="GoDot" width="320" height="200" colors="16"><ext>4BT</ext></format>
 		<format name="8x8 font" colors="2"><ext>64C</ext></format>
-		<format name="SEUCK sprites" colors="16"><ext>A</ext></format>
+		<format name="SEUCK sprites" colors="16"><ext skip="uwp">A</ext></format>
 		<format name="Wigmore Artist 64" width="160" height="200" colors="16">
 			<ext>A64</ext>
 			<ext>WIG</ext>
@@ -582,7 +582,7 @@
 		</format>
 		<format name="FLI Profi" width="160" height="200" colors="16"><ext>FPR</ext></format>
 		<format name="SEUCK font" colors="2"><ext>G</ext></format>
-		<format name="Printfox" width="640" height="400" colors="2"><ext>GB</ext></format>
+		<format name="Printfox" width="640" height="400" colors="2"><ext skip="uwp">GB</ext></format>
 		<format width="320" height="200" colors="2">
 			<ext name="Gigacad">GCD</ext>
 			<ext name="Mono Magic">MON</ext>
@@ -671,7 +671,7 @@
 		<format name="Paint Magic" width="160" height="200" colors="16"><ext skip="uwp">PMG</ext></format>
 		<format name="Pixel Perfect" width="296" height="200" frames="2"><ext>PP</ext></format>
 		<format name="Pixel Perfect (compressed)" width="296" height="200" frames="2"><ext>PPP</ext></format>
-		<format name="Rainbow Painter" width="160" height="200" colors="16"><ext>RP</ext></format>
+		<format name="Rainbow Painter" width="160" height="200" colors="16"><ext skip="uwp">RP</ext></format>
 		<format name="Run Paint" width="320" height="200" colors="16"><ext>RPH</ext></format>
 		<format name="Run Paint" width="160" height="200" colors="16"><ext skip="uwp">RPM</ext></format>
 		<format name="Run Paint" width="320" height="200" colors="2">
@@ -770,7 +770,7 @@
 		</format>
 		<format name="Maki-chan Graphics">
 			<ext>MAG</ext>
-			<ext>MAX</ext>
+			<ext skip="uwp">MAX</ext>
 		</format>
 		<format name="MSX Interchange Format" maxWidth="512" maxHeight="424" maxFrames="2"><ext>MIF</ext></format>
 		<format name="MIG" maxWidth="512" maxHeight="424" maxFrames="2"><ext>MIG</ext></format>
@@ -892,7 +892,10 @@
 	</platform>
 	<platform name="Oric" href="https://en.wikipedia.org/wiki/Oric">
 		<format name="6x8 font" colors="2"><ext>CHS</ext></format>
-		<format width="240" height="200" colors="8"><ext>HIR</ext><ext>HRS</ext></format>
+		<format width="240" height="200" colors="8">
+			<ext>HIR</ext>
+			<ext>HRS</ext>
+		</format>
 	</platform>
 	<platform name="PC" href="https://en.wikipedia.org/wiki/IBM_PC_compatible">
 		<format name="Award BIOS logo"><ext>EPA</ext></format>
@@ -946,14 +949,19 @@
 	</platform>
 	<platform name="TRS-80 Color Computer" href="https://en.wikipedia.org/wiki/TRS-80_Color_Computer">
 		<format width="40" height="56" colors="2"><ext>CLP</ext></format>
-		<format width="256" height="192" colors="2"><ext>GRF</ext><ext>MAX</ext><ext>P41</ext><ext>PIX</ext></format>
+		<format width="256" height="192" colors="2">
+			<ext>GRF</ext>
+			<ext skip="uwp">MAX</ext>
+			<ext>P41</ext>
+			<ext>PIX</ext>
+		</format>
 		<format width="128" height="96" colors="4"><ext>P11</ext></format>
 	</platform>
 	<platform name="Vector-06C" href="https://en.wikipedia.org/wiki/Vector-06C">
 		<format name="256" height="256" colors="16"><ext>SPR</ext></format>
 	</platform>
 	<platform name="ZX81" href="https://en.wikipedia.org/wiki/ZX81">
-		<format name="Sinclair BASIC" width="32" height="24" unit="characters" colors="2"><ext>P</ext></format>
+		<format name="Sinclair BASIC" width="32" height="24" unit="characters" colors="2"><ext skip="uwp">P</ext></format>
 		<format name="ZXPaintyONE v2.0" width="32" height="24" unit="characters" colors="2"><ext skip="uwp">RAW</ext></format>
 		<format name="ZXpaintyONE" width="32" height="24" unit="characters" colors="2"><ext fake="true">ZP1</ext></format>
 	</platform>
