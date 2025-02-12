@@ -17,7 +17,7 @@ TAR = /usr/bin/tar
 SEVENZIP = 'C:/Program Files/7-Zip/7z' a -mx=9 -bd -bso0
 WIX = wix
 MAGICK = magick
-GIMP_PLUGIN_DIR = C:/Program Files/GIMP 2/lib/gimp/2.0/plug-ins
+GIMP_PLUGIN_DIR = $(LOCALAPPDATA)/Programs/GIMP 3/lib/gimp/3.0/plug-ins
 IMAGEMAGICK_i686_DIR = C:/Program Files (x86)/ImageMagick-7.1.1-Q16-HDRI
 IMAGEMAGICK_x86_64_DIR = C:/Program Files/ImageMagick-7.1.1-Q16-HDRI
 XNVIEWMP_DIR = C:/Program Files/XnViewMP
@@ -39,8 +39,8 @@ all: $(WIN32_BIN) $(WIN64_BIN)
 %/recoil2png.exe: ../recoil2png.c ../pngsave.c ../pngsave.h ../recoil-stdio.c ../recoil-stdio.h ../recoil.c ../recoil.h
 	$(DO)$(DO_CC) -static -lpng16 -lz
 
-%/file-recoil.exe: ../file-recoil.c ../recoil-stdio.c ../recoil-stdio.h ../recoil.c ../recoil.h
-	$(DO)$(DO_CC) `gimptool-2.0 --cflags` -Wl,-subsystem,windows `gimptool-2.0 --libs`
+%/file-recoil.exe: ../file-recoil3.c ../recoil-stdio.c ../recoil-stdio.h ../recoil.c ../recoil.h
+	$(DO)$(DO_CC) `gimptool-3.0 --cflags` -Wl,-subsystem,windows `gimptool-3.0 --libs`
 
 %/IM_MOD_RL_recoil_.dll: ../imagemagick/recoilmagick.c ../formats.h ../recoil.c ../recoil.h
 	$(DO)$(DO_CC) -D MAGICK7 -I"$(IMAGEMAGICK_$(@D)_DIR)"/include -lCORE_RL_MagickCore_ -L"$(IMAGEMAGICK_$(@D)_DIR)" -static-libgcc

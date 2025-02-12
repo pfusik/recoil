@@ -165,7 +165,7 @@
 			</Property>
 
 			<Property Id="GIMP64.DIR">
-				<RegistrySearch Id="gimp.installdir" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\GIMP-2_is1" Name="InstallLocation" Type="directory" />
+				<RegistrySearch Id="gimp.installdir" Root="HKCU" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\GIMP-3_is1" Name="InstallLocation" Type="directory" />
 			</Property>
 		<?endif?>
 
@@ -370,10 +370,10 @@
 					</Component>
 				</Directory>
 
-				<Directory Id="GIMP64.DIR" Name="GIMP 2">
+				<Directory Id="GIMP64.DIR" Name="GIMP 3">
 					<Directory Id="GIMPLIB64.DIR" Name="lib">
 						<Directory Id="GIMPGIMP64.DIR" Name="gimp">
-							<Directory Id="GIMP2064.DIR" Name="2.0">
+							<Directory Id="GIMP2064.DIR" Name="3.0">
 								<Directory Id="GIMPPLUG64.DIR" Name="plug-ins">
 									<Directory Id="GIMPRECOIL64.DIR" Name="file-recoil">
 										<Component Id="filerecoil64.exe">
@@ -520,7 +520,7 @@
 				</Feature>
 			</Feature>
 
-			<Feature Id="gimp64" Title="GIMP 64-bit plugin" Level="9" ConfigurableDirectory="GIMPRECOIL64.DIR" Description="Plugin for GIMP." AllowAdvertise="no">
+			<Feature Id="gimp64" Title="GIMP 3 64-bit plugin" Level="9" ConfigurableDirectory="GIMPRECOIL64.DIR" Description="Plugin for GIMP 3." AllowAdvertise="no">
 				<Level Value="1" Condition="GIMP64.DIR" />
 				<ComponentRef Id="filerecoil64.exe" />
 			</Feature>
