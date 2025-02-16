@@ -156,10 +156,10 @@
 
 		<?if $(sys.BUILDARCH) = x64?>
 			<Property Id="XNVIEWMP64.DIR">
-				<RegistrySearch Id="xnviewmp.installdir" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\XnViewMP_is1" Name="InstallLocation" Type="directory" />
+				<RegistrySearch Id="xnviewmp.installdir" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\XnView MP (x64)_is1" Name="InstallLocation" Type="directory" />
 			</Property>
 			<Property Id="XNVIEWMP64.EXE">
-				<RegistrySearch Id="xnviewmp.exe" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\XnViewMP_is1" Name="InstallLocation" Type="directory">
+				<RegistrySearch Id="xnviewmp.exe" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\XnView MP (x64)_is1" Name="InstallLocation" Type="directory">
 					<FileSearch Name="xnviewmp.exe" />
 				</RegistrySearch>
 			</Property>
