@@ -1009,6 +1009,9 @@
 	<platform name="ZX Evolution" href="http://nedopc.com/zxevo/zxevo_eng.php">
 		<format name="Speccy eXtended Graphics" colors="256"><ext>SXG</ext></format>
 	</platform>
+	<platform name="ZX-Uno" href="https://zxuno.speccy.org/index_e.shtml">
+		<format name="Radastan" width="128" height="96"><ext>RAD</ext></format>
+	</platform>
 	<platform name="ZX Spectrum Next" href="https://en.wikipedia.org/wiki/ZX_Spectrum_Next">
 		<format width="256" height="192" colors="256"><ext>NXI</ext></format>
 	</platform>

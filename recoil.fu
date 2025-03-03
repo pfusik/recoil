@@ -135,6 +135,7 @@ enum RECOILResolution
 	SpectrumProfi1x2,
 	SpectrumUlaPlus1x1,
 	ZxEvolution1x1,
+	ZxUno2x2,
 	SpectrumNext1x1,
 	ElementZx1x1,
 	ElementZx1x2,
@@ -6308,10 +6309,10 @@ public class RECOIL
 			| (c & 3) * 0x55;
 	}
 
-	void SetUlaPlus!(byte[] content, int paletteOffset)
+	void SetUlaPlus!(RECOILResolution resolution, byte[] content, int paletteOffset, int colors)
 	{
-		SetSize(256, 192, RECOILResolution.SpectrumUlaPlus1x1);
-		for (int i = 0; i < 64; i++)
+		SetSize(256, 192, resolution);
+		for (int i = 0; i < colors; i++)
 			ContentPalette[i] = GetG3R3B2Color(content[paletteOffset + i]);
 	}
 
@@ -6456,7 +6457,7 @@ public class RECOIL
 	{
 		if (contentLength != 12352)
 			return false;
-		SetUlaPlus(content, 0x3000);
+		SetUlaPlus(RECOILResolution.SpectrumUlaPlus1x1, content, 0x3000, 64);
 		DecodeZx(content, 0, 0x1800, ZxAttributesTimex, 0);
 		return true;
 	}
@@ -6965,6 +6966,18 @@ public class RECOIL
 		return DecodeBspFrame(0, content, contentLength, 0x48, 0x3648)
 			&& DecodeBspFrame(384 * 304, content, contentLength, 0x1b48, content[0x46] | content[0x47] << 8)
 			&& ApplyBlend();
+	}
+
+	bool DecodeRad!(byte[] content, int contentLength)
+	{
+		if (contentLength != 6160)
+			return false;
+		SetUlaPlus(RECOILResolution.ZxUno2x2, content, 0x1800, 16);
+		for (int y = 0; y < 192; y++) {
+			for (int x = 0; x < 256; x++)
+				Pixels[(y << 8) + x] = ContentPalette[GetNibble(content, y >> 1 << 6, x >> 1)];
+		}
+		return true;
 	}
 
 	bool DecodeNxi!(byte[] content, int contentLength)
@@ -20502,7 +20515,7 @@ public class RECOIL
 			DecodeZx(content, 0, 0x1800, ZxAttributes8x8, 0);
 			return true;
 		case 6976:
-			SetUlaPlus(content, 0x1b00);
+			SetUlaPlus(RECOILResolution.SpectrumUlaPlus1x1, content, 0x1b00, 64);
 			DecodeZx(content, 0, 0x1800, ZxAttributes8x8, 0);
 			return true;
 		case 12288:
@@ -21112,6 +21125,7 @@ public class RECOIL
 		case PackExt("PSC"):
 		case PackExt("PSF"):
 		case PackExt("Q4"):
+		case PackExt("RAD"):
 		case PackExt("RAG"):
 		case PackExt("RAGC"):
 		case PackExt("RAP"):
@@ -22061,6 +22075,8 @@ public class RECOIL
 			return DecodePsf(content, contentLength);
 		case PackExt("Q4"):
 			return DecodeQ4(content, contentLength);
+		case PackExt("RAD"):
+			return DecodeRad(content, contentLength);
 		case PackExt("RAG"):
 			return DecodeRag(content, contentLength);
 		case PackExt("RAGC"):
@@ -22457,6 +22473,8 @@ public class RECOIL
 			return "ZX Spectrum ULAplus";
 		case RECOILResolution.ZxEvolution1x1:
 			return "ZX Evolution";
+		case RECOILResolution.ZxUno2x2:
+			return "ZX-Uno";
 		case RECOILResolution.SpectrumNext1x1:
 			return "ZX Spectrum Next";
 		case RECOILResolution.ElementZx1x1:
@@ -22496,6 +22514,7 @@ public class RECOIL
 		case RECOILResolution.Msx22x1i:
 		case RECOILResolution.Msx2Plus2x1i:
 		case RECOILResolution.SamCoupe2x1i:
+		case RECOILResolution.ZxUno2x2:
 			return Width >> 1;
 		case RECOILResolution.Amiga4x1:
 		case RECOILResolution.Msx14x4:
@@ -22536,6 +22555,7 @@ public class RECOIL
 		case RECOILResolution.Timex1x2:
 		case RECOILResolution.Trs1x2:
 		case RECOILResolution.Coco2x2:
+		case RECOILResolution.ZxUno2x2:
 			return Height >> 1;
 		case RECOILResolution.Amiga1x4:
 		case RECOILResolution.Msx14x4:
