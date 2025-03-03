@@ -20528,6 +20528,8 @@ public class RECOIL
 			SetZx(RECOILResolution.Spectrum1x1);
 			DecodeZx(content, 0, -1, ZxAttributesNone, 0);
 			return true;
+		case 6160:
+			return DecodeRad(content, contentLength);
 		case 6912:
 		case 6913: // border color - ignore
 			SetZx(RECOILResolution.Spectrum1x1);
@@ -20543,12 +20545,24 @@ public class RECOIL
 			return DecodeThr(content, contentLength);
 		case 12352:
 			return DecodeTcu(content, contentLength);
+		case 13824:
+			return DecodeGsc(content, contentLength);
+		case 15360:
+			return DecodeHrc(content, contentLength);
+		case 15456:
+			return DecodeHrx(content, contentLength);
 		case 16000:
 			SetSize(640, 400, RECOILResolution.Mc05151x2);
 			ContentPalette[0] = 0;
 			ContentPalette[1] = 0xffffff;
 			DecodeScaledBitplanes(content, 0, 640, 200, 1, false, null);
 			return true;
+		case 30720:
+			return DecodeHgs(content, contentLength);
+		case 30721:
+			return DecodeHkl(content, contentLength);
+		case 30913:
+			return DecodeXkl(content, contentLength);
 		case 32768:
 			return DecodeAppleIIShr(content, contentLength);
 		default:

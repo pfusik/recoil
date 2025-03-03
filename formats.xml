@@ -982,6 +982,7 @@
 		<format name="Gigascreen" width="256" height="192" frames="2">
 			<ext>GSC</ext>
 			<ext skip="uwp">IMG</ext>
+			<ext skip="uwp">SCR</ext>
 		</format>
 		<format name="Multicolor 8x1" width="256" height="192" colors="15"><ext>MC</ext></format>
 		<format name="MultiArtist 8x1" width="256" height="192" frames="2"><ext>MG1</ext></format>
@@ -1010,7 +1011,10 @@
 		<format name="Speccy eXtended Graphics" colors="256"><ext>SXG</ext></format>
 	</platform>
 	<platform name="ZX-Uno" href="https://zxuno.speccy.org/index_e.shtml">
-		<format name="Radastan" width="128" height="96"><ext>RAD</ext></format>
+		<format name="Radastan" width="128" height="96">
+			<ext>RAD</ext>
+			<ext skip="uwp">SCR</ext>
+		</format>
 	</platform>
 	<platform name="ZX Spectrum Next" href="https://en.wikipedia.org/wiki/ZX_Spectrum_Next">
 		<format width="256" height="192" colors="256"><ext>NXI</ext></format>
@@ -1020,11 +1024,26 @@
 		<format name="HGFX HAM" maxWidth="512" height="192"><ext>HAM</ext></format>
 		<format name="HGFX High" width="512" height="192"><ext skip="uwp">HGH</ext></format>
 		<format name="HGFX Low" width="256" height="192"><ext skip="uwp">HGL</ext></format>
-		<format name="HiResColor Gigascreen" width="512" height="192" frames="2"><ext skip="uwp">HGS</ext></format>
-		<format name="HiResColor/KeyLayer" width="512" height="192" colors="15"><ext skip="uwp">HKL</ext></format>
-		<format name="HiResColor" width="512" height="192" colors="15"><ext skip="uwp">HRC</ext></format>
-		<format name="HiResindeXedColor" width="512" height="192" colors="32"><ext skip="uwp">HRX</ext></format>
+		<format name="HiResColor Gigascreen" width="512" height="192" frames="2">
+			<ext skip="uwp">HGS</ext>
+			<ext skip="uwp">SCR</ext>
+		</format>
+		<format name="HiResColor/KeyLayer" width="512" height="192" colors="15">
+			<ext skip="uwp">HKL</ext>
+			<ext skip="uwp">SCR</ext>
+		</format>
+		<format name="HiResColor" width="512" height="192" colors="15">
+			<ext skip="uwp">HRC</ext>
+			<ext skip="uwp">SCR</ext>
+		</format>
+		<format name="HiResindeXedColor" width="512" height="192" colors="32">
+			<ext skip="uwp">HRX</ext>
+			<ext skip="uwp">SCR</ext>
+		</format>
 		<format name="HGFX Ultra" width="512" height="384"><ext>SHR</ext></format>
-		<format name="HiResindeXedColor/KeyLayer" width="512" height="192" colors="63"><ext>XKL</ext></format>
+		<format name="HiResindeXedColor/KeyLayer" width="512" height="192" colors="63">
+			<ext skip="uwp">XKL</ext>
+			<ext skip="uwp">SCR</ext>
+		</format>
 	</platform>
 </formats>
