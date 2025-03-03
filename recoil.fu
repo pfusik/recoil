@@ -7111,26 +7111,45 @@ public class RECOIL
 		return ApplyBlend();
 	}
 
-	void SetElementZxPalette!(byte[] content, int paletteOffset, int colors)
+	void SetElementZxPalette!(byte[] content, int paletteOffset, int colors, int c = 0)
 	{
-		for (int c = 0; c < colors; c++)
+		for (; c < colors; c++)
 			ContentPalette[c] = GetB8G8R8Color(content, paletteOffset + c * 3);
+	}
+
+	void DecodeHrxScreen!(byte[] content, int contentOffset, int key)
+	{
+		SetSize(512, 384, RECOILResolution.ElementZx1x2);
+		SetElementZxPalette(content, contentOffset + 0x3c00, 32);
+		for (int y = 0; y < 192; y++) {
+			for (int x = 0; x < 512; x++) {
+				int attributeOffset = 0x3000 + (y >> 2 << 6) + (x >> 3);
+				int bitmapOffset = (y << 6) + (x >> 3);
+				int a = content[contentOffset + attributeOffset];
+				int c = (content[contentOffset + bitmapOffset] >> (~x & 7) & 1) == 0 ? 16 + (a >> 4) : a & 0xf;
+				if (c == key) {
+					a = content[attributeOffset];
+					c = (content[bitmapOffset] >> (~x & 7) & 1) == 0 ? 48 + (a >> 4) : 32 + (a & 0xf);
+				}
+				SetScaledPixel(x, y, ContentPalette[c]);
+			}
+		}
 	}
 
 	bool DecodeHrx!(byte[] content, int contentLength)
 	{
 		if (contentLength != 15456)
 			return false;
-		SetZxSize(512, 384, RECOILResolution.ElementZx1x2);
-		SetElementZxPalette(content, 0x3c00, 32);
-		for (int y = 0; y < 192; y++) {
-			for (int x = 0; x < 512; x++) {
-				int bitmapOffset = (y << 6) + (x >> 3);
-				int a = content[0x3000 + (y >> 2 << 6) + (x >> 3)];
-				int c = (content[bitmapOffset] >> (~x & 7) & 1) == 0 ? 16 + (a >> 4) : a & 0xf;
-				SetScaledPixel(x, y, ContentPalette[c]);
-			}
-		}
+		DecodeHrxScreen(content, 0, -1);
+		return true;
+	}
+
+	bool DecodeXkl!(byte[] content, int contentLength)
+	{
+		if (contentLength != 30913)
+			return false;
+		SetElementZxPalette(content, 0x3c00 - 32 * 3, 64, 32);
+		DecodeHrxScreen(content, 0x3c60, content[0x78c0]);
 		return true;
 	}
 
@@ -21245,6 +21264,7 @@ public class RECOIL
 		case PackExt("WND"):
 		case PackExt("XFL"):
 		case PackExt("XGA"):
+		case PackExt("XKL"):
 		case PackExt("XLP"):
 		case PackExt("ZIM"):
 		case PackExt("ZM4"):
@@ -22313,6 +22333,8 @@ public class RECOIL
 			return DecodeXfl(content, contentLength);
 		case PackExt("XGA"):
 			return DecodeXga(content, contentLength);
+		case PackExt("XKL"):
+			return DecodeXkl(content, contentLength);
 		case PackExt("XLP"):
 			return DecodeXlp(content, contentLength);
 		case PackExt("ZIM"):

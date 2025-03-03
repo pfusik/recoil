@@ -1025,5 +1025,6 @@
 		<format name="HiResColor" width="512" height="192" colors="15"><ext skip="uwp">HRC</ext></format>
 		<format name="HiResindeXedColor" width="512" height="192" colors="32"><ext skip="uwp">HRX</ext></format>
 		<format name="HGFX Ultra" width="512" height="384"><ext>SHR</ext></format>
+		<format name="HiResindeXedColor/KeyLayer" width="512" height="192" colors="63"><ext>XKL</ext></format>
 	</platform>
 </formats>
