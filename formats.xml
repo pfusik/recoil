@@ -1041,6 +1041,10 @@
 			<ext skip="uwp">SCR</ext>
 		</format>
 		<format name="HGFX Ultra" width="512" height="384"><ext>SHR</ext></format>
+		<format name="KeyLayer" width="256" height="192" colors="15">
+			<ext skip="uwp">SKL</ext>
+			<ext skip="uwp">SCR</ext>
+		</format>
 		<format name="HiResindeXedColor/KeyLayer" width="512" height="192" colors="63">
 			<ext skip="uwp">XKL</ext>
 			<ext skip="uwp">SCR</ext>

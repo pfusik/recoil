@@ -7069,6 +7069,29 @@ public class RECOIL
 		}
 	}
 
+	bool DecodeSkl!(byte[] content, int contentLength)
+	{
+		if (contentLength != 13825)
+			return false;
+		SetZxSize(256, 192, RECOILResolution.ElementZx1x1);
+		DecodeZx(content, 0x1b00, 0x1b00 + 0x1800, ZxAttributes8x8, 0);
+		int key = content[0x3600];
+		for (int y = 0; y < 192; y++) {
+			for (int x = 0; x < 256; x++) {
+				int bitmapOffset = GetZxLineOffset(y) + (x >> 3);
+				int attributesOffset = 0x1800 + (y >> 3 << 5) + (x >> 3);
+				int c = content[0x1b00 + bitmapOffset] >> (~x & 7);
+				c = GetZxIndex(c, content[0x1b00 + attributesOffset]);
+				if ((c & 0x17) == key || ((c | key) & 7) == 0) {
+					c = content[bitmapOffset] >> (~x & 7);
+					c = GetZxIndex(c, content[attributesOffset]);
+				}
+				Pixels[(y << 8) + x] = ContentPalette[c];
+			}
+		}
+		return true;
+	}
+
 	void DecodeHrcScreen!(byte[] content, int contentOffset, int yOffset, int key = -1)
 	{
 		for (int y = 0; y < 192; y++) {
@@ -20547,6 +20570,8 @@ public class RECOIL
 			return DecodeTcu(content, contentLength);
 		case 13824:
 			return DecodeGsc(content, contentLength);
+		case 13825:
+			return DecodeSkl(content, contentLength);
 		case 15360:
 			return DecodeHrc(content, contentLength);
 		case 15456:
@@ -21221,6 +21246,7 @@ public class RECOIL
 		case PackExt("SHR"):
 		case PackExt("SHX"):
 		case PackExt("SIF"):
+		case PackExt("SKL"):
 		case PackExt("SKP"):
 		case PackExt("SPC"):
 		case PackExt("SPD"):
@@ -22236,6 +22262,8 @@ public class RECOIL
 		case PackExt("SIF"):
 			return DecodeAtari8Sif(content, contentLength)
 				|| DecodeC64Sif(content, contentLength);
+		case PackExt("SKL"):
+			return DecodeSkl(content, contentLength);
 		case PackExt("SKP"):
 			return DecodeSkp(content, contentLength);
 		case PackExt("SPC"):
