@@ -32,6 +32,7 @@
 					@media (min-width: 901px) {
 						.menuToggle { display: none; }
 					}
+					.big { font-size: 1.3em; }
 					table.formats { border-collapse: collapse; }
 					table.formats th, table.formats td { border: solid #aaa 1px; padding-left: 1em; padding-right: 1em; }
 					th { background-color: #ddd; }

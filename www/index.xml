@@ -1,18 +1,17 @@
 ﻿<page title="Home">
-	<img src="Amiga-Ferrari.png" alt="Amiga" style="float: right; margin-left: 3em;" />
+	<img src="recoil-180x180.png" alt="Logo" style="float: right; margin-left: 2em;" />
 
-	<p>RECOIL is a viewer of pictures in <a href="formats.html">native formats</a> of 20th century computers:
-	Amiga, Amstrad CPC, Apple II, Atari 8-bit, Atari Portfolio, Atari ST/TT/Falcon, BBC Micro,
-	Commodore VIC-20, Commodore 64, Commodore 16/116/Plus4, Commodore 128, Electronika BK, FM Towns, HP 48,
-	Macintosh 128K, MSX, NEC PC-80, NEC PC-88, NEC PC-98, Oric, Psion Series 3, SAM Coupé, Sharp X68000,
-	Tandy 1000, Timex 2048, TRS-80, TRS-80 Color Computer, Vector-06C, ZX81 and ZX Spectrum.</p>
+	<p class="big">RECOIL is a modern viewer and converter of pictures in native formats of 20th century computers:
+	Commodore, Amiga, Atari, ZX Spectrum, MSX and many more.
+	Current version <version /> opens <formats-count /> different file formats
+	- see the <a href="formats.html">full list</a>.</p>
 
-	<p>RECOIL is available on <a href="android.html">Android</a>,
-	<a href="windows.html">Windows</a>, <a href="macos.html">macOS</a>,
-	<a href="linux.html">Linux</a> and <a href="web.html">modern web browsers</a>.</p>
+	<p class="big">Standalone apps and plugins to image viewers, file managers and image editors are available on
+	<a href="android.html">Android</a>, <a href="windows.html">Windows</a>, <a href="macos.html">macOS</a>
+	and <a href="linux.html">Linux</a>.
+	You can also use RECOIL <a href="web.html">in your web browser</a>.</p>
 
-	<h2>License</h2>
-	<p>RECOIL is free software, you can redistribute it and/or modify it under the terms
+	<p class="big">RECOIL is free software, you can redistribute it and/or modify it under the terms
 	of the <a href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt">GNU General Public License</a>.</p>
 
 	<div style="clear: right;" />
