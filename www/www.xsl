@@ -20,14 +20,14 @@
 					html { background-color: #fff; color: #000; font-family: Segoe UI,Helvetica,Arial,sans-serif; padding: 0em 3em; }
 					h1, h2, nav li.tab_selected { color: #006374; }
 					a, .menuToggle:hover, nav li a:hover { color: #00c; }
-					nav ul { margin: 0px; padding: 0.5em 0em; }
+					nav ul { padding: 0px; }
 					nav li { display: inline; }
 					nav li a { padding: 0.5em; color: #999; text-decoration: none; }
+					nav li.tab_selected { padding: 0.5em; }
 					@media (max-width: 900px) {
 						.menuToggle { float: right; background-color: #006374; color: #fff; border: none; font-size: 2.5em; }
 						.collapsed { display: none; }
-						nav li { display: block; padding: 0.5em; text-align: right; }
-						nav li a { padding: 0.5em 0em; }
+						nav li { display: block; padding: 0.5em 0px; text-align: right; }
 					}
 					@media (min-width: 901px) {
 						.menuToggle { display: none; }
