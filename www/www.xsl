@@ -17,29 +17,43 @@
 				</title>
 				<link rel="apple-touch-icon" href="recoil-180x180.png" />
 				<style>
-					html { background-color: #eee; color: #000; font-family: Segoe UI,Helvetica,Arial,sans-serif; padding: 0em 3em; }
-					h1, h2 { color: #006374; }
-					h1 { font-family: Georgia,"Times New Roman",Times,serif; }
-					a { color: #00c; }
-					nav ul { border-bottom: solid #ccc 1px; margin: 0px; padding: 0.5em 0em; }
+					html { background-color: #fff; color: #000; font-family: Segoe UI,Helvetica,Arial,sans-serif; padding: 0em 3em; }
+					h1, h2, nav li.tab_selected { color: #006374; }
+					a, .menuToggle:hover, nav li a:hover { color: #00c; }
+					nav ul { margin: 0px; padding: 0.5em 0em; }
 					nav li { display: inline; }
-					nav li.tab_selected { background-color: #fff; border: solid #ccc 1px; border-bottom-color: #fff; padding: 0.5em; }
-					nav li a { padding: 0.5em; text-decoration: none; }
-					main { background-color: #fff; border: solid #ccc 1px; border-top-style: none; padding: 1em 3em 3em 3em; }
+					nav li a { padding: 0.5em; color: #999; text-decoration: none; }
+					@media (max-width: 900px) {
+						.menuToggle { float: right; background-color: #006374; color: #fff; border: none; font-size: 2.5em; }
+						.collapsed { display: none; }
+						nav li { display: block; padding: 0.5em; text-align: right; }
+						nav li a { padding: 0.5em 0em; }
+					}
+					@media (min-width: 901px) {
+						.menuToggle { display: none; }
+					}
 					table.formats { border-collapse: collapse; }
 					table.formats th, table.formats td { border: solid #aaa 1px; padding-left: 1em; padding-right: 1em; }
 					th { background-color: #ddd; }
 					.author { color: #006374; padding-right: 1em; text-align: right; }
 					.rip { border: solid #000 1px; padding-left: 2px; padding-right: 2px; color: #000; }
 				</style>
+				<script>
+					function toggleMenu()
+					{
+						const menu = document.getElementById("menu");
+						menu.className = menu.className == "collapsed" ? "" : "collapsed";
+					}
+				</script>
 				<xsl:apply-templates select="script" />
 			</head>
 			<body>
+				<input type="button" class="menuToggle" value="&#8801;" onclick="toggleMenu()" />
 				<header>
 					<h1>RECOIL - Retro Computer Image Library</h1>
 				</header>
 				<nav>
-					<ul>
+					<ul id="menu" class="collapsed">
 						<xsl:call-template name="menu"><xsl:with-param name="page">Home</xsl:with-param></xsl:call-template>
 						<xsl:call-template name="menu"><xsl:with-param name="page">Formats</xsl:with-param></xsl:call-template>
 						<xsl:call-template name="menu"><xsl:with-param name="page">Android</xsl:with-param></xsl:call-template>
