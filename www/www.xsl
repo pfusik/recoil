@@ -18,19 +18,20 @@
 				<link rel="apple-touch-icon" href="recoil-180x180.png" />
 				<meta name="viewport" content="initial-scale=1" />
 				<style>
-					html { background-color: #fff; color: #000; font-family: Segoe UI,Helvetica,Arial,sans-serif; padding: 0em 3em; }
+					html { background-color: #fff; color: #000; font-family: Segoe UI,Helvetica,Arial,sans-serif; }
 					h1, h2, nav li.tab_selected { color: #006374; }
 					a, .menuToggle:hover, nav li a:hover { color: #00c; }
 					nav ul { padding: 0px; }
 					nav li { display: inline; }
 					nav li a { padding: 0.5em; color: #999; text-decoration: none; }
 					nav li.tab_selected { padding: 0.5em; }
-					@media (max-width: 900px) {
+					@media (max-width: 990px) {
 						.menuToggle { float: right; background-color: #006374; color: #fff; border: none; font-size: 2.5em; }
 						.collapsed { display: none; }
 						nav li { display: block; padding: 0.5em 0px; text-align: right; }
 					}
-					@media (min-width: 901px) {
+					@media (min-width: 991px) {
+						html { padding: 0em 3em; }
 						.menuToggle { display: none; }
 					}
 					.big { font-size: 1.3em; }
