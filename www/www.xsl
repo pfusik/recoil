@@ -16,6 +16,7 @@
 					</xsl:if>
 				</title>
 				<link rel="apple-touch-icon" href="recoil-180x180.png" />
+				<meta name="viewport" content="initial-scale=1" />
 				<style>
 					html { background-color: #fff; color: #000; font-family: Segoe UI,Helvetica,Arial,sans-serif; padding: 0em 3em; }
 					h1, h2, nav li.tab_selected { color: #006374; }
