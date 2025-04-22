@@ -6,7 +6,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.9.1'
+        classpath 'com.android.tools.build:gradle:8.9.2'
     }
 }
 
@@ -60,7 +60,7 @@ android {
         sourceCompatibility 11
         targetCompatibility 11
     }
-    compileSdk 35
+    compileSdk = 35
     sourceSets {
         main {
             resources {
@@ -89,8 +89,8 @@ android {
     }
     buildTypes {
         release {
-            signingConfig signingConfigs.release
+            signingConfig = signingConfigs.release
         }
     }
-    namespace 'net.sf.recoil'
+    namespace = 'net.sf.recoil'
 }
