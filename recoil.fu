@@ -7445,7 +7445,7 @@ public class RECOIL
 		return true;
 	}
 
-	int GetMsx128Height(byte[] content, int contentLength)
+	int GetMsx128Height(byte[] content, int contentLength, bool sr)
 	{
 		if (contentLength < 135 || content[0] != 0xfe)
 			return -1;
@@ -7455,7 +7455,9 @@ public class RECOIL
 		int height = (header + 1) >> 7;
 		if (contentLength < 7 + (height << 7))
 			return -1;
-		return height < 212 ? height : 212;
+		if (sr && height == 256)
+			return 256;
+		return Math.Min(height, 212);
 	}
 
 	// Math.Clamp unavailable on UWP
@@ -7553,7 +7555,7 @@ public class RECOIL
 
 	bool DecodeSc5!(string filename, byte[] content, int contentLength)
 	{
-		int height = GetMsx128Height(content, contentLength);
+		int height = GetMsx128Height(content, contentLength, false);
 		if (height <= 0)
 			return false;
 		SetMsx2Palette(content, 0x7687, contentLength);
@@ -7571,7 +7573,7 @@ public class RECOIL
 
 	bool DecodeSr5!(string filename, byte[] content, int contentLength)
 	{
-		int height = GetMsx128Height(content, contentLength);
+		int height = GetMsx128Height(content, contentLength, true);
 		if (height <= 0)
 			return false;
 		SetMsxCompanionPalette(filename, "PL5", "pl5");
@@ -7603,7 +7605,7 @@ public class RECOIL
 
 	bool DecodeSc6!(string filename, byte[] content, int contentLength)
 	{
-		int height = GetMsx128Height(content, contentLength);
+		int height = GetMsx128Height(content, contentLength, false);
 		if (height <= 0)
 			return false;
 		if (contentLength >= 30351)
@@ -7627,7 +7629,7 @@ public class RECOIL
 
 	bool DecodeSr6!(string filename, byte[] content, int contentLength)
 	{
-		int height = GetMsx128Height(content, contentLength);
+		int height = GetMsx128Height(content, contentLength, true);
 		if (height <= 0)
 			return false;
 		SetSize(512, height << 1, RECOILResolution.Msx21x2);
@@ -7697,15 +7699,25 @@ public class RECOIL
 		return true;
 	}
 
+	static bool IsMsx256Lines(byte[] content, int contentLength)
+		=> contentLength == 65543 && content[0] == 0xfe && GetMsxHeader(content) == 0xffff;
+
 	bool DecodeSr7!(string filename, byte[] content, int contentLength)
 	{
 		byte[54279] unpacked = 0;
-		byte[]? source = UnpackSr(content, contentLength, unpacked);
-		if (source == null)
-			return false;
+		int height;
+		if (IsMsx256Lines(content, contentLength))
+			height = 256 * 2;
+		else {
+			byte[]? source = UnpackSr(content, contentLength, unpacked);
+			if (source == null)
+				return false;
+			content = source;
+			height = 212 * 2;
+		}
 		SetMsxCompanionPalette(filename, "PL7", "pl7");
-		SetSize(512, 212 * 2, RECOILResolution.Msx21x2);
-		DecodeNibbles(source, 7, 256);
+		SetSize(512, height, RECOILResolution.Msx21x2);
+		DecodeNibbles(content, 7, 256);
 		return true;
 	}
 
@@ -7746,11 +7758,18 @@ public class RECOIL
 	bool DecodeSc8!(string? filename, byte[] content, int contentLength)
 	{
 		byte[54279] unpacked = 0;
-		byte[]? source = UnpackSr(content, contentLength, unpacked);
-		if (source == null)
-			return false;
+		int height;
+		if (IsMsx256Lines(content, contentLength))
+			height = 256;
+		else {
+			byte[]? source = UnpackSr(content, contentLength, unpacked);
+			if (source == null)
+				return false;
+			content = source;
+			height = 212;
+		}
 		SetSc8Palette();
-		if (!DecodeMsxSc(filename, source, 7, "S18", "s18", 212, 8)
+		if (!DecodeMsxSc(filename, content, 7, "S18", "s18", height, 8)
 		 && contentLength == 64167) {
 			const byte[32] spritePalette = {
 				0x00, 0,
@@ -7888,7 +7907,9 @@ public class RECOIL
 	bool DecodeScc!(string filename, byte[] content, int contentLength)
 	{
 		int height;
-		if (contentLength >= 49159 && content[0] == 0xfe && GetMsxHeader(content) == 0xbfff)
+		if (IsMsx256Lines(content, contentLength))
+			height = 256;
+		else if (contentLength >= 49159 && content[0] == 0xfe && GetMsxHeader(content) == 0xbfff)
 			height = 192;
 		else {
 			byte[54279] unpacked = 0;
@@ -7906,8 +7927,16 @@ public class RECOIL
 	{
 		if (contentLength < 64167 || content[0] != 0xfe || GetMsxHeader(content) < 0xd3ff)
 			return false;
-		SetMsxPalette(content, 0xfa87, 16);
-		DecodeSccSca(filename, content, contentLength, 212, true);
+		int height;
+		if (IsMsx256Lines(content, contentLength)) {
+			SetMsxCompanionPalette(filename, "PLA", "pla");
+			height = 256;
+		}
+		else {
+			SetMsxPalette(content, 0xfa87, 16);
+			height = 212;
+		}
+		DecodeSccSca(filename, content, contentLength, height, true);
 		return true;
 	}
 
@@ -21223,6 +21252,7 @@ public class RECOIL
 		case PackExt("SR8"):
 		case PackExt("SCA"):
 		case PackExt("SCB"):
+		case PackExt("SRA"):
 		case PackExt("SCC"):
 		case PackExt("SD0"):
 		case PackExt("SD1"):
@@ -22207,6 +22237,7 @@ public class RECOIL
 			return DecodeSc8(filename, content, contentLength);
 		case PackExt("SCA"):
 		case PackExt("SCB"):
+		case PackExt("SRA"):
 			return DecodeSca(filename, content, contentLength);
 		case PackExt("SCC"):
 		case PackExt("SRS"):

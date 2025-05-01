@@ -808,19 +808,19 @@
 			<ext>SC8</ext>
 			<companionExt>S18</companionExt>
 		</format>
-		<format name="Graph Saurus" width="256" maxHeight="212" colors="16">
+		<format name="Graph Saurus" width="256" maxHeight="256" colors="16">
 			<ext>SR5</ext>
 			<companionExt optional="true">PL5</companionExt>
 		</format>
-		<format name="Graph Saurus" width="512" maxHeight="212" colors="4">
+		<format name="Graph Saurus" width="512" maxHeight="256" colors="4">
 			<ext>SR6</ext>
 			<companionExt optional="true">PL6</companionExt>
 		</format>
-		<format name="Graph Saurus" width="512" height="212" colors="16">
+		<format name="Graph Saurus" width="512" maxHeight="256" colors="16">
 			<ext>SR7</ext>
 			<companionExt optional="true">PL7</companionExt>
 		</format>
-		<format name="Graph Saurus" width="256" height="212" colors="256"><ext>SR8</ext></format>
+		<format name="Graph Saurus" width="256" maxHeight="256" colors="256"><ext>SR8</ext></format>
 		<format name="Graph Saurus" width="512" height="424" colors="16" frames="2">
 			<ext>SRI</ext>
 			<companionExt optional="true">PL7</companionExt>
@@ -840,15 +840,17 @@
 			<ext>GLS</ext>
 			<ext>SHC</ext>
 		</format>
-		<format name="Screen 10" width="256" height="212" colors="12515">
+		<format name="Screen 10" width="256" maxHeight="256" colors="12515">
 			<ext>SCA</ext>
 			<ext skip="uwp">SCB</ext>
+			<ext>SRA</ext>
+			<companionExt optional="true">PLA</companionExt>
 		</format>
 		<format name="Screen 10 interlaced" width="256" height="424" colors="12515" frames="2">
 			<ext>SCA</ext>
 			<companionExt>S1A</companionExt>
 		</format>
-		<format name="Screen 12" width="256" maxHeight="212" colors="19268">
+		<format name="Screen 12" width="256" maxHeight="256" colors="19268">
 			<ext>SCC</ext>
 			<ext>SRS</ext>
 			<ext>YJK</ext>
