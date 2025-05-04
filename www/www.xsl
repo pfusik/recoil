@@ -19,6 +19,7 @@
 				<meta name="viewport" content="initial-scale=1" />
 				<style>
 					html { background-color: #fff; color: #000; font-family: Segoe UI,Helvetica,Arial,sans-serif; }
+					img { max-width: 95%; height: auto; }
 					h1, h2, nav li.tab_selected { color: #006374; }
 					a, .menuToggle:hover, nav li a:hover { color: #00c; }
 					nav ul { padding: 0px; }
