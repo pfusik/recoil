@@ -5889,6 +5889,18 @@ public class RECOIL
 		return pal[palOffset];
 	}
 
+	bool SetAmstradFirmwarePalette!(byte[] content, int contentOffset, int count)
+	{
+		for (int i = 0; i < count; i++) {
+			int c = content[contentOffset + i];
+			if (c > 26)
+				return false;
+			const byte[3] triLevel = { 0, 0x80, 0xff };
+			ContentPalette[i] = triLevel[c / 3 % 3] << 16 | triLevel[c / 9] << 8 | triLevel[c % 3];
+		}
+		return true;
+	}
+
 	void DecodeAmstradMode0Line!(byte[] content, int lineOffset, int y)
 	{
 		int skip = Resolution == RECOILResolution.Amstrad1x1 ? (y ^ (y >= Height ? 1 : 0)) & 1 : 0;
@@ -5901,6 +5913,13 @@ public class RECOIL
 			// 0bX0X2X1X3 -> 0b3210
 			Pixels[y * Width + x] = ContentPalette[((b & 1) << 3) + (b >> 2 & 4) + (b >> 1 & 2) + (b >> 6 & 1)];
 		}
+	}
+
+	void DecodeAmstradMode0!(byte[] content, int contentOffset)
+	{
+		SetSize(320, 200, RECOILResolution.Amstrad2x1);
+		for (int y = 0; y < 200; y++)
+			DecodeAmstradMode0Line(content, contentOffset + ((y & 7) << 11) + (y >> 3) * 80, y);
 	}
 
 	void DecodeAmstradMode1Line!(byte[] content, int lineOffset, int y)
@@ -5929,9 +5948,7 @@ public class RECOIL
 
 		switch (SetAmstradPalette(filename)) {
 		case 0:
-			SetSize(320, 200, RECOILResolution.Amstrad2x1);
-			for (int y = 0; y < 200; y++)
-				DecodeAmstradMode0Line(content, contentOffset + ((y & 7) << 11) + (y >> 3) * 80, y);
+			DecodeAmstradMode0(content, contentOffset);
 			return true;
 		case 1:
 			SetSize(320, 200, RECOILResolution.Amstrad1x1);
@@ -5941,6 +5958,11 @@ public class RECOIL
 		case 2:
 			return DecodeAmstradMode2(content, contentOffset, 640, 200);
 		default:
+			if (content[contentOffset + 0x17d0] == 0 // TODO: other modes
+			 && SetAmstradFirmwarePalette(content, contentOffset + 0x17d1, 16)) {
+				DecodeAmstradMode0(content, contentOffset);
+				return true;
+			 }
 			return false;
 		}
 	}
@@ -6131,18 +6153,6 @@ public class RECOIL
 				}
 				chunkLeft += chunkWidth;
 			}
-		}
-		return true;
-	}
-
-	bool SetAmstradFirmwarePalette!(byte[] content, int contentOffset, int count)
-	{
-		for (int i = 0; i < count; i++) {
-			int c = content[contentOffset + i];
-			if (c > 26)
-				return false;
-			const byte[3] triLevel = { 0, 0x80, 0xff };
-			ContentPalette[i] = triLevel[c / 3 % 3] << 16 | triLevel[c / 9] << 8 | triLevel[c % 3];
 		}
 		return true;
 	}
