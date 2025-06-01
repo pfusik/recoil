@@ -5915,13 +5915,6 @@ public class RECOIL
 		}
 	}
 
-	void DecodeAmstradMode0!(byte[] content, int contentOffset)
-	{
-		SetSize(320, 200, RECOILResolution.Amstrad2x1);
-		for (int y = 0; y < 200; y++)
-			DecodeAmstradMode0Line(content, contentOffset + ((y & 7) << 11) + (y >> 3) * 80, y);
-	}
-
 	void DecodeAmstradMode1Line!(byte[] content, int lineOffset, int y)
 	{
 		for (int x = 0; x < Width; x++) {
@@ -5946,9 +5939,17 @@ public class RECOIL
 			break;
 		}
 
-		switch (SetAmstradPalette(filename)) {
+		int mode = SetAmstradPalette(filename);
+		if (mode < 0) {
+			mode = content[contentOffset + 0x17d0];
+			if (mode > 2 || !SetAmstradFirmwarePalette(content, contentOffset + 0x17d1, 1 << (4 >> mode)))
+				return false;
+		}
+		switch (mode) {
 		case 0:
-			DecodeAmstradMode0(content, contentOffset);
+			SetSize(320, 200, RECOILResolution.Amstrad2x1);
+			for (int y = 0; y < 200; y++)
+				DecodeAmstradMode0Line(content, contentOffset + ((y & 7) << 11) + (y >> 3) * 80, y);
 			return true;
 		case 1:
 			SetSize(320, 200, RECOILResolution.Amstrad1x1);
@@ -5958,11 +5959,6 @@ public class RECOIL
 		case 2:
 			return DecodeAmstradMode2(content, contentOffset, 640, 200);
 		default:
-			if (content[contentOffset + 0x17d0] == 0 // TODO: other modes
-			 && SetAmstradFirmwarePalette(content, contentOffset + 0x17d1, 16)) {
-				DecodeAmstradMode0(content, contentOffset);
-				return true;
-			 }
 			return false;
 		}
 	}
