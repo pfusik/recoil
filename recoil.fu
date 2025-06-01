@@ -5815,16 +5815,20 @@ public class RECOIL
 		return true;
 	}
 
+	void DecodeAmstradMode2Line!(byte[] content, int lineOffset, int y)
+	{
+		for (int x = 0; x < Width; x++) {
+			int offset = (y * Width << 1) + x;
+			int c = content[lineOffset + (x >> 3)] >> (~x & 7) & 1;
+			Pixels[offset + Width] = Pixels[offset] = ContentPalette[c];
+		}
+	}
+
 	bool DecodeAmstradMode2!(byte[] content, int contentOffset, int width, int height)
 	{
 		SetSize(width, height << 1, RECOILResolution.Amstrad1x2);
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
-				int offset = (y * width << 1) + x;
-				int c = content[contentOffset + ((y & 7) << 11) + ((y >> 3) * width + x >> 3)] >> (~x & 7) & 1;
-				Pixels[offset + width] = Pixels[offset] = ContentPalette[c];
-			}
-		}
+		for (int y = 0; y < height; y++)
+			DecodeAmstradMode2Line(content, contentOffset + ((y & 7) << 11) + (y >> 3) * (width >> 3), y);
 		return true;
 	}
 
@@ -5901,9 +5905,8 @@ public class RECOIL
 		return true;
 	}
 
-	void DecodeAmstradMode0Line!(byte[] content, int lineOffset, int y)
+	void DecodeAmstradMode0Line!(byte[] content, int lineOffset, int y, int skip = 0)
 	{
-		int skip = Resolution == RECOILResolution.Amstrad1x1 ? (y ^ (y >= Height ? 1 : 0)) & 1 : 0;
 		for (int x = 0; x < Width; x++) {
 			int i = x + skip;
 			int b = i >= Width ? 0 : content[lineOffset + (i >> 2)];
@@ -5942,7 +5945,7 @@ public class RECOIL
 		int mode = SetAmstradPalette(filename);
 		if (mode < 0) {
 			mode = content[contentOffset + 0x17d0];
-			if (mode > 2 || !SetAmstradFirmwarePalette(content, contentOffset + 0x17d1, 1 << (4 >> mode)))
+			if (mode > 4 || !SetAmstradFirmwarePalette(content, contentOffset + 0x17d1, 1 << (4 >> mode % 3)))
 				return false;
 		}
 		switch (mode) {
@@ -5958,6 +5961,27 @@ public class RECOIL
 			return true;
 		case 2:
 			return DecodeAmstradMode2(content, contentOffset, 640, 200);
+		case 3:
+			SetSize(320, 200, RECOILResolution.Amstrad1x1);
+			for (int y = 0; y < 200; y += 2) {
+				int offset = contentOffset + ((y & 7) << 11) + (y >> 3) * 80;
+				DecodeAmstradMode1Line(content, offset, y);
+				DecodeAmstradMode0Line(content, offset + 0x800, y + 1);
+			}
+			return true;
+		case 4:
+			SetSize(640, 400, RECOILResolution.Amstrad1x2);
+			for (int y = 0; y < 200; y += 2) {
+				int lineOffset = contentOffset + ((y & 7) << 11) + (y >> 3) * 80;
+				DecodeAmstradMode2Line(content, lineOffset, y);
+				// mode 1, stretched 2x2:
+				for (int x = 0; x < 320; x++) {
+					int offset = 1280 + y * 1280 + (x << 1);
+					int b = content[lineOffset + 0x800 + (x >> 2)] >> (~x & 3);
+					Pixels[offset + 641] = Pixels[offset + 640] = Pixels[offset + 1] = Pixels[offset] = ContentPalette[((b & 1) << 1) + (b >> 4 & 1)];
+				}
+			}
+			return true;
 		default:
 			return false;
 		}
@@ -6156,13 +6180,25 @@ public class RECOIL
 	bool SetAmstradFirmwarePalette16!(byte[] content)
 		=> content[5] == 1 && SetAmstradFirmwarePalette(content, 6, 16);
 
-	bool DecodePphFrame!(string filename, string upperExt, string lowerExt, byte[]! bitmap, byte[] pph, int yOffset)
+	bool DecodePphFrame!(string filename, string upperExt, string lowerExt, byte[]! bitmap, byte[] pph, int frame)
 	{
 		int bitmapStride = Width >> 2;
 		int bitmapLength = Height * bitmapStride;
 		if (ReadCompanionFile(filename, upperExt, lowerExt, bitmap, bitmapLength + 1) != bitmapLength)
 			return false;
-		if (pph[0] == 5) {
+		int yOffset = frame * Height;
+		switch (pph[0]) {
+		case 3:
+			// mode R
+			for (int y = 0; y < Height; y++)
+				DecodeAmstradMode0Line(bitmap, y * bitmapStride, yOffset + y, (y ^ frame) & 1);
+			break;
+		case 4:
+			// mode B0
+			for (int y = 0; y < Height; y++)
+				DecodeAmstradMode0Line(bitmap, y * bitmapStride, yOffset + y);
+			break;
+		case 5:
 			// mode B1
 			int paletteOffset = 6;
 			int paletteLines = 0;
@@ -6182,11 +6218,9 @@ public class RECOIL
 				DecodeAmstradMode1Line(bitmap, y * bitmapStride, yOffset + y);
 				paletteLines--;
 			}
-		}
-		else {
-			// mode R, B0
-			for (int y = 0; y < Height; y++)
-				DecodeAmstradMode0Line(bitmap, y * bitmapStride, yOffset + y);
+			break;
+		default:
+			assert false;
 		}
 		return true;
 	}
@@ -6224,7 +6258,7 @@ public class RECOIL
 		SetSize(width, height, resolution, 2);
 		byte[96 * 272 + 1] bitmap;
 		return DecodePphFrame(filename, "ODD", "odd", bitmap, content, 0)
-			&& DecodePphFrame(filename, "EVE", "eve", bitmap, content, height)
+			&& DecodePphFrame(filename, "EVE", "eve", bitmap, content, 1)
 			&& ApplyBlend();
 	}
 

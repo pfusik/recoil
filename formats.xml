@@ -54,7 +54,7 @@
 		</format>
 		<format name="Advanced OCP Art Studio">
 			<ext skip="uwp">SCR</ext>
-			<companionExt>PAL</companionExt>
+			<companionExt optional="true">PAL</companionExt>
 		</format>
 		<format name="SymbOS graphic" colors="16"><ext>SGX</ext></format>
 		<format name="Advanced OCP Art Studio">
