@@ -5930,7 +5930,13 @@ public class RECOIL
 	{
 		byte[16384] unpacked;
 		int contentOffset = GetAmstradHeader(content, contentLength);
+		int width = 320;
+		int height = 200;
 		switch (contentLength - contentOffset) {
+		case 15872:
+			width = 256;
+			height = 192;
+			break;
 		case 16336:
 		case 16384:
 			break;
@@ -5950,26 +5956,28 @@ public class RECOIL
 		}
 		switch (mode) {
 		case 0:
-			SetSize(320, 200, RECOILResolution.Amstrad2x1);
-			for (int y = 0; y < 200; y++)
-				DecodeAmstradMode0Line(content, contentOffset + ((y & 7) << 11) + (y >> 3) * 80, y);
+			SetSize(width, height, RECOILResolution.Amstrad2x1);
+			for (int y = 0; y < height; y++)
+				DecodeAmstradMode0Line(content, contentOffset + ((y & 7) << 11) + (y >> 3) * (width >> 2), y);
 			return true;
 		case 1:
-			SetSize(320, 200, RECOILResolution.Amstrad1x1);
-			for (int y = 0; y < 200; y++)
-				DecodeAmstradMode1Line(content, contentOffset + ((y & 7) << 11) + (y >> 3) * 80, y);
+			SetSize(width, height, RECOILResolution.Amstrad1x1);
+			for (int y = 0; y < height; y++)
+				DecodeAmstradMode1Line(content, contentOffset + ((y & 7) << 11) + (y >> 3) * (width >> 2), y);
 			return true;
 		case 2:
-			return DecodeAmstradMode2(content, contentOffset, 640, 200);
+			return DecodeAmstradMode2(content, contentOffset, width << 1, height);
 		case 3:
-			SetSize(320, 200, RECOILResolution.Amstrad1x1);
-			for (int y = 0; y < 200; y += 2) {
-				int offset = contentOffset + ((y & 7) << 11) + (y >> 3) * 80;
+			SetSize(width, height, RECOILResolution.Amstrad1x1);
+			for (int y = 0; y < height; y += 2) {
+				int offset = contentOffset + ((y & 7) << 11) + (y >> 3) * (width >> 2);
 				DecodeAmstradMode1Line(content, offset, y);
 				DecodeAmstradMode0Line(content, offset + 0x800, y + 1);
 			}
 			return true;
 		case 4:
+			if (width != 320)
+				return false;
 			SetSize(640, 400, RECOILResolution.Amstrad1x2);
 			for (int y = 0; y < 200; y += 2) {
 				int lineOffset = contentOffset + ((y & 7) << 11) + (y >> 3) * 80;
@@ -20646,6 +20654,8 @@ public class RECOIL
 		case 15456:
 			return DecodeHrx(content, contentLength);
 		case 16000:
+			if (DecodeAmstradScr(filename, content, contentLength))
+				return true;
 			SetSize(640, 400, RECOILResolution.Mc05151x2);
 			ContentPalette[0] = 0;
 			ContentPalette[1] = 0xffffff;
