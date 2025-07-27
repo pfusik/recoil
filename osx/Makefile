@@ -39,7 +39,7 @@ ifdef PORK_CODESIGNING_IDENTITY
 endif
 
 install-gimp: bin/file-recoil/file-recoil
-	mkdir $(GIMP_RES)/lib/gimp/3.0/plug-ins/file-recoil && cp $< $(GIMP_RES)/lib/gimp/3.0/plug-ins/file-recoil/
+	mkdir -p ~/Library/'Application Support'/GIMP/3.0/plug-ins/file-recoil && cp $< ~/Library/'Application Support'/GIMP/3.0/plug-ins/file-recoil/
 
 bin/XnViewMP:
 	mkdir -p $(@D) && ln -s /Applications/XnViewMP.app/Contents/MacOS/Plugins $@
