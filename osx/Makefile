@@ -6,8 +6,9 @@ CODESIGN = codesign --options runtime -f -s $(PORK_CODESIGNING_IDENTITY)
 QLRECOIL = bin/RECOIL.qlgenerator/Contents/MacOS/qlrecoil
 PLIST = bin/RECOIL.qlgenerator/Contents/Info.plist
 QLCODESIGN = bin/RECOIL.qlgenerator/Contents/_CodeSignature/CodeResources
+GIMP_RES = /Applications/GIMP.app/Contents/Resources
 
-recoil-$(VERSION)-macos.dmg: bin/QuickLook $(QLCODESIGN) $(QLRECOIL) $(PLIST) bin/GIMP bin/file-recoil bin/XnViewMP bin/Xrecoil.usr bin/bin bin/recoil2png
+recoil-$(VERSION)-macos.dmg: bin/QuickLook $(QLCODESIGN) $(QLRECOIL) $(PLIST) bin/GIMP bin/file-recoil/file-recoil bin/XnViewMP bin/Xrecoil.usr bin/bin bin/recoil2png
 	hdiutil create -volname recoil-$(VERSION)-macos -srcfolder bin -format UDBZ -fs HFS+ -imagekey bzip2-level=3 -ov $@
 	/Applications/Xcode.app/Contents/Developer/usr/bin/notarytool submit --wait --keychain-profile recoilnotarization $@
 
@@ -28,16 +29,17 @@ $(PLIST): Info.plist.xsl ../formats.xml
 	mkdir -p $(@D) && xsltproc -o $@ Info.plist.xsl ../formats.xml
 
 bin/GIMP:
-	mkdir -p $(@D) && ln -s /Applications/GIMP-2.10.app/Contents/Resources/lib/gimp/2.0/plug-ins $@
+	mkdir -p $(@D) && ln -s $(GIMP_RES)/lib/gimp/3.0/plug-ins $@
 
-bin/file-recoil: ../file-recoil.c ../formats.h ../recoil-stdio.c ../recoil-stdio.h ../recoil.c ../recoil.h
-	mkdir -p $(@D) && $(CC) $(CFLAGS_MIN) `gimptool-2.0 --cflags` -o $@ -I .. ../file-recoil.c ../recoil-stdio.c ../recoil.c -rpath @executable_path/../../../ -L /Applications/GIMP-2.10.app/Contents/Resources/lib -lgimp-2.0.0 -lgegl-0.4.0 -lbabl-0.1.0 -lgobject-2.0.0
+bin/file-recoil/file-recoil: ../file-recoil.c ../formats.h ../recoil-stdio.c ../recoil-stdio.h ../recoil.c ../recoil.h
+	mkdir -p $(@D) && $(CC) $(CFLAGS_MIN) $(addprefix -I $(GIMP_RES)/, include/gimp-3.0 include/gdk-pixbuf-2.0 include include/gegl-0.4 include/babl-0.1 include/pango-1.0 include/cairo include/harfbuzz include/glib-2.0 lib/glib-2.0/include) \
+		-o $@ -I .. ../file-recoil3.c ../recoil-stdio.c ../recoil.c -rpath $(GIMP_RES)/ -L $(GIMP_RES)/lib -lgimp-3.0 -lgimpbase-3.0 -lgegl-0.4 -lbabl-0.1 -lgio-2.0 -lgobject-2.0 -lglib-2.0
 ifdef PORK_CODESIGNING_IDENTITY
 	$(CODESIGN) --entitlements gimp-entitlements.xml $@
 endif
 
-install-gimp: bin/file-recoil
-	cp $< /Applications/GIMP-2.10.app/Contents/Resources/lib/gimp/2.0/plug-ins/
+install-gimp: bin/file-recoil/file-recoil
+	mkdir $(GIMP_RES)/lib/gimp/3.0/plug-ins/file-recoil && cp $< $(GIMP_RES)/lib/gimp/3.0/plug-ins/file-recoil/
 
 bin/XnViewMP:
 	mkdir -p $(@D) && ln -s /Applications/XnViewMP.app/Contents/MacOS/Plugins $@
