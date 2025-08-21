@@ -1,7 +1,7 @@
 /*
  * Viewer.java - RECOIL for Android
  *
- * Copyright (C) 2013-2024  Piotr Fusik
+ * Copyright (C) 2013-2025  Piotr Fusik
  *
  * This file is part of RECOIL (Retro Computer Image Library),
  * see http://recoil.sourceforge.net
@@ -195,6 +195,7 @@ public class Viewer extends Activity implements AdapterView.OnItemSelectedListen
 			return getError(R.string.error_decoding_file, filename);
 
 		ImageView imageView = convertView instanceof ImageView ? (ImageView) convertView : new ImageView(this);
+		imageView.setFitsSystemWindows(true);
 		imageView.setLayoutParams(new Gallery.LayoutParams(Gallery.LayoutParams.MATCH_PARENT, Gallery.LayoutParams.MATCH_PARENT));
 		imageView.setImageBitmap(getBitmap(recoil));
 		return imageView;
