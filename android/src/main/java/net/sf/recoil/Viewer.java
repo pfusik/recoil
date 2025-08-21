@@ -32,6 +32,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
@@ -267,7 +268,8 @@ public class Viewer extends Activity implements AdapterView.OnItemSelectedListen
 		setContentView(view);
 		boolean enableMenu = !(view instanceof TextView);
 		this.menu.findItem(R.id.menu_info).setVisible(enableMenu);
-		this.menu.findItem(R.id.menu_share_as_png).setVisible(enableMenu);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+			this.menu.findItem(R.id.menu_share_as_png).setVisible(enableMenu);
 		this.menu.findItem(R.id.menu_save_as_png).setVisible(enableMenu);
 	}
 
@@ -347,7 +349,13 @@ public class Viewer extends Activity implements AdapterView.OnItemSelectedListen
 		values.put(MediaStore.MediaColumns.MIME_TYPE, "image/png");
 		values.put(MediaStore.MediaColumns.DATE_ADDED, now);
 		values.put(MediaStore.MediaColumns.DATE_MODIFIED, now);
-		Uri uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+		Uri uri;
+		try {
+			uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+		}
+		catch (SecurityException e) {
+			return;
+		}
 		if (!savePng(uri, recoil))
 			return;
 
