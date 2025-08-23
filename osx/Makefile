@@ -1,12 +1,13 @@
 VERSION = 6.4.5
 
-CFLAGS_MIN = -O2 -Wall
-CFLAGS = $(CFLAGS_MIN) -mmacosx-version-min=10.6 -arch x86_64 -arch arm64
+CFLAGS = -O2 -Wall -mmacosx-version-min=10.6 -arch x86_64 -arch arm64
 CODESIGN = codesign --options runtime -f -s $(PORK_CODESIGNING_IDENTITY)
 QLRECOIL = bin/RECOIL.qlgenerator/Contents/MacOS/qlrecoil
 PLIST = bin/RECOIL.qlgenerator/Contents/Info.plist
 QLCODESIGN = bin/RECOIL.qlgenerator/Contents/_CodeSignature/CodeResources
 GIMP_RES = /Applications/GIMP.app/Contents/Resources
+GIMP_X86_64_RES = ~/GIMP-x86_64/GIMP.app/Contents/Resources
+GIMP_LIBS = gimp-3.0 gimpbase-3.0 gegl-0.4 babl-0.1 gio-2.0 gobject-2.0 glib-2.0
 
 recoil-$(VERSION)-macos.dmg: bin/QuickLook $(QLCODESIGN) $(QLRECOIL) $(PLIST) bin/GIMP bin/file-recoil/file-recoil bin/XnViewMP bin/Xrecoil.usr bin/bin bin/recoil2png
 	hdiutil create -volname recoil-$(VERSION)-macos -srcfolder bin -format UDBZ -fs HFS+ -imagekey bzip2-level=3 -ov $@
@@ -32,8 +33,8 @@ bin/GIMP:
 	mkdir -p $(@D) && ln -s $(GIMP_RES)/lib/gimp/3.0/plug-ins $@
 
 bin/file-recoil/file-recoil: ../file-recoil.c ../formats.h ../recoil-stdio.c ../recoil-stdio.h ../recoil.c ../recoil.h
-	mkdir -p $(@D) && $(CC) $(CFLAGS_MIN) $(addprefix -I $(GIMP_RES)/, include/gimp-3.0 include/gdk-pixbuf-2.0 include include/gegl-0.4 include/babl-0.1 include/pango-1.0 include/cairo include/harfbuzz include/glib-2.0 lib/glib-2.0/include) \
-		-o $@ -I .. ../file-recoil3.c ../recoil-stdio.c ../recoil.c -rpath $(GIMP_RES)/ -L $(GIMP_RES)/lib -lgimp-3.0 -lgimpbase-3.0 -lgegl-0.4 -lbabl-0.1 -lgio-2.0 -lgobject-2.0 -lglib-2.0
+	mkdir -p $(@D) && $(CC) $(CFLAGS) $(addprefix -I $(GIMP_RES)/, include/gimp-3.0 include/gdk-pixbuf-2.0 include include/gegl-0.4 include/babl-0.1 include/pango-1.0 include/cairo include/harfbuzz include/glib-2.0 lib/glib-2.0/include) \
+		-o $@ -I .. ../file-recoil3.c ../recoil-stdio.c ../recoil.c -rpath $(GIMP_RES)/ $(GIMP_LIBS:%=$(GIMP_RES)/lib/lib%.dylib) $(GIMP_LIBS:%=$(GIMP_X86_64_RES)/lib/lib%.dylib)
 ifdef PORK_CODESIGNING_IDENTITY
 	$(CODESIGN) --entitlements gimp-entitlements.xml $@
 endif
