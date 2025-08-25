@@ -159,9 +159,9 @@ rpm64:
 	scp vm:rpmbuild/RPMS/noarch/recoil-thumbnailer-$(VERSION)-1.noarch.rpm ../../
 
 mac:
-	scp ../../recoil-$(VERSION).tar.gz mac:.
-	ssh mac 'security unlock-keychain ~/Library/Keychains/login.keychain && rm -rf recoil-$(VERSION) && tar xf recoil-$(VERSION).tar.gz && PATH=/usr/local/bin:$$PATH make -C recoil-$(VERSION)/osx'
-	scp mac:recoil-$(VERSION)/osx/recoil-$(VERSION)-macos.dmg ../../
+	scp ../../recoil-$(VERSION).tar.gz wiesmac:.
+	ssh wiesmac 'security unlock-keychain login.keychain && rm -rf recoil-$(VERSION) && tar xf recoil-$(VERSION).tar.gz && PATH=/usr/local/bin:$$PATH make -C recoil-$(VERSION)/osx'
+	scp wiesmac:recoil-$(VERSION)/osx/recoil-$(VERSION)-macos.dmg ../../
 
 clean:
 	$(RM) i686/recoil2png.exe i686/recoilwin.exe $(WINBOTH_BIN) i686/recoilwin-res.o x86_64/recoilwin-res.o BoundsCheck.exe BoundsCheck.pdb recoil.ico COPYING.txt \
