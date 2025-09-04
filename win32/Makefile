@@ -18,8 +18,8 @@ SEVENZIP = 'C:/Program Files/7-Zip/7z' a -mx=9 -bd -bso0
 WIX = wix
 MAGICK = magick
 GIMP_PLUGIN_DIR = $(LOCALAPPDATA)/Programs/GIMP 3/lib/gimp/3.0/plug-ins
-IMAGEMAGICK_i686_DIR = C:/Program Files (x86)/ImageMagick-7.1.1-Q16-HDRI
-IMAGEMAGICK_x86_64_DIR = C:/Program Files/ImageMagick-7.1.1-Q16-HDRI
+IMAGEMAGICK_i686_DIR = C:/Program Files (x86)/ImageMagick-7.1.2-Q16-HDRI
+IMAGEMAGICK_x86_64_DIR = C:/Program Files/ImageMagick-7.1.2-Q16-HDRI
 XNVIEWMP_DIR = C:/Program Files/XnViewMP
 PAINT_NET_DIR = C:/Program Files/paint.net
 DOTNET_REF_DIR = `echo C:/Program\ Files/dotnet/packs/Microsoft.NETCore.App.Ref/9.0.*/ref/net9.0`
