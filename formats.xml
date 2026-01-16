@@ -216,6 +216,7 @@
 		<format name="XL-Paint MAX" width="160" height="192" frames="2"><ext skip="uwp">MAX</ext></format>
 		<format name="Mad Designer" width="512" height="256" colors="2"><ext>MBG</ext></format>
 		<format name="Graph2Font" maxWidth="336" height="240" colors="256"><ext>MCH</ext></format>
+		<format name="Multi Color Map" width="160" height="240" colors="8"><ext>MCM</ext></format>
 		<format name="McPainter" width="160" height="200" colors="16" frames="2"><ext>MCP</ext></format>
 		<format name="Paradox" width="160" height="100" colors="16"><ext>MCPP</ext></format>
 		<format width="160" height="192" colors="9"><ext>MCS</ext></format>

@@ -19738,6 +19738,50 @@ public class RECOIL
 		return ApplyAtari8Palette(frame);
 	}
 
+	static bool GetMcmSprite(byte[] content, int x, int y)
+	{
+		if ((y & 7) == 0)
+			return false; // bad line
+		const byte[20] offsets = { 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 5, 3, 3, 3, 3, 5, 4, 4 };
+		int b = content[0x2cb0 + offsets[x >> 4] * 30 + (y >> 3)];
+		const byte[20] bits    = { 7, 5, 3, 1, 7, 5, 3, 1, 7, 5, 3, 1, 5, 7, 5, 3, 1, 7, 7, 5 };
+		return (b >> (bits[x >> 4] ^ (x >> 3 & 1)) & 1) != 0;
+	}
+
+	bool DecodeMcm!(byte[] content, int contentLength)
+	{
+		if (contentLength != 11626)
+			return false;
+		SetSize(320, 240, RECOILResolution.Xe2x1);
+		byte[320 * 240] frame;
+		for (int y = 0; y < 240; y++) {
+			for (int x = 0; x < 320; x++) {
+				int ch = content[0x2800 + (y & ~7) * 5 + (x >> 3)];
+				int c;
+				switch (content[(y / 24 << 10) + ((ch & 0x7f) << 3) + (y & 7)] >> (~x & 6) & 3) {
+				case 0:
+					c = content[GetMcmSprite(content, x, y) ? 0x2d69 : 0x2d64];
+					break;
+				case 1:
+					c = content[0x2d65];
+					break;
+				case 2:
+					c = content[0x2d66];
+					break;
+				case 3:
+					c = content[0x2d67 + (ch >> 7)];
+					if (GetMcmSprite(content, x, y))
+						c |= content[0x2d69];
+					break;
+				default:
+					assert false;
+				}
+				frame[y * 320 + x] = c & 0xfe;
+			}
+		}
+		return ApplyAtari8Palette(frame);
+	}
+
 	bool DecodeHcm!(byte[] content, int contentLength)
 	{
 		if (contentLength != 8208 || !IsStringAt(content, 0, "HCMA8") || content[5] != 1)
@@ -22036,6 +22080,8 @@ public class RECOIL
 			return DecodeMch(content, contentLength);
 		case PackExt("MCI"):
 			return DecodeMci(content, contentLength);
+		case PackExt("MCM"):
+			return DecodeMcm(content, contentLength);
 		case PackExt("MCP"):
 			return DecodeMcp(content, contentLength);
 		case PackExt("MCPP"):
