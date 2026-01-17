@@ -21215,6 +21215,7 @@ public class RECOIL
 		case PackExt("MC"):
 		case PackExt("MCH"):
 		case PackExt("MCI"):
+		case PackExt("MCM"):
 		case PackExt("MCP"):
 		case PackExt("MCPP"):
 		case PackExt("MCS"):
