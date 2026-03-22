@@ -210,7 +210,7 @@
 			<ext>LUM</ext>
 			<companionExt optional="true">COL</companionExt>
 		</format>
-		<format width="56" height="60" colors="2"><ext>KFX</ext></format>
+		<format width="56" height="60" colors="2"><ext skip="uwp">KFX</ext></format>
 		<format name="Envision"><ext skip="uwp">MAP</ext></format>
 		<format name="EnvisionPC"><ext skip="uwp">MAP</ext></format>
 		<format name="XL-Paint MAX" width="160" height="192" frames="2"><ext skip="uwp">MAX</ext></format>
@@ -773,7 +773,7 @@
 			<ext>MAG</ext>
 			<ext skip="uwp">MAX</ext>
 		</format>
-		<format name="MSX Interchange Format" maxWidth="512" maxHeight="424" maxFrames="2"><ext>MIF</ext></format>
+		<format name="MSX Interchange Format" maxWidth="512" maxHeight="424" maxFrames="2"><ext skip="uwp">MIF</ext></format>
 		<format name="MIG" maxWidth="512" maxHeight="424" maxFrames="2"><ext>MIG</ext></format>
 		<format name="Dynamic Publisher screen" width="512" height="704" colors="2"><ext>PCT</ext></format>
 		<format><ext>PI</ext></format>
