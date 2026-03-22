@@ -20926,14 +20926,14 @@ public class RECOIL
 		case PackExt("BFL"):
 		case PackExt("BFLI"):
 		case PackExt("BG9"):
+		case PackExt("G09"):
+		case PackExt("BGP"):
 		case PackExt("BIL"):
+		case PackExt("BKG"):
+		case PackExt("BKS"):
 		case PackExt("BRUS"):
 		case PackExt("IP"):
 		case PackExt("PICT"):
-		case PackExt("G09"):
-		case PackExt("BGP"):
-		case PackExt("BKG"):
-		case PackExt("BKS"):
 		case PackExt("BL1"):
 		case PackExt("BL2"):
 		case PackExt("BL3"):
@@ -21349,13 +21349,13 @@ public class RECOIL
 		case PackExt("SCB"):
 		case PackExt("SRA"):
 		case PackExt("SCC"):
+		case PackExt("SRS"):
+		case PackExt("YJK"):
+		case PackExt("SCR"):
 		case PackExt("SD0"):
 		case PackExt("SD1"):
 		case PackExt("SD2"):
 		case PackExt("SEV"):
-		case PackExt("SRS"):
-		case PackExt("YJK"):
-		case PackExt("SCR"):
 		case PackExt("SG3"):
 		case PackExt("SGE"):
 		case PackExt("SGX"):
@@ -21369,6 +21369,7 @@ public class RECOIL
 		case PackExt("SHI"):
 		case PackExt("SHP"):
 		case PackExt("SHR"):
+		case PackExt("SHS"):
 		case PackExt("SHX"):
 		case PackExt("SIF"):
 		case PackExt("SKL"):
