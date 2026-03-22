@@ -58,7 +58,11 @@
 					<comment xml:lang="vi">Ảnh <xsl:value-of select="." /></comment>
 					<comment xml:lang="zh_CN"><xsl:value-of select="." /> 图像</comment>
 					<comment xml:lang="zh_TW"><xsl:value-of select="." /> 影像</comment>
-					<glob pattern="*.{$lc}" />
+					<glob pattern="*.{$lc}">
+						<xsl:if test="@fd">
+							<xsl:attribute name="weight">60</xsl:attribute>
+						</xsl:if>
+					</glob>
 				</mime-type>
 			</xsl:for-each>
 		</mime-info>
