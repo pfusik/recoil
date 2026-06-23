@@ -1,7 +1,7 @@
 /*
  * StorageFileRECOIL.cs - UWP subclass of RECOIL
  *
- * Copyright (C) 2024  Piotr Fusik
+ * Copyright (C) 2024-2026  Piotr Fusik
  *
  * This file is part of RECOIL (Retro Computer Image Library),
  * see http://recoil.sourceforge.net
@@ -40,7 +40,7 @@ namespace RECOIL
 
 		protected override int ReadFile(string filename, byte[] content, int contentLength)
 		{
-			StorageFile file;
+			StorageFile? file;
 			try {
 				file = this.Files.SingleOrDefault(f => f.Path == filename);
 			}

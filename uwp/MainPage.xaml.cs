@@ -1,7 +1,7 @@
 ﻿/*
  * MainPage.xaml.cs - Universal Windows application
  *
- * Copyright (C) 2014-2024  Piotr Fusik
+ * Copyright (C) 2014-2026  Piotr Fusik
  *
  * This file is part of RECOIL (Retro Computer Image Library),
  * see http://recoil.sourceforge.net
@@ -41,7 +41,7 @@ namespace RECOIL
 {
 	public sealed partial class MainPage : Page
 	{
-		IReadOnlyList<StorageFile> Files;
+		IReadOnlyList<StorageFile>? Files;
 		int Index;
 		float DpiX;
 		float DpiY;
@@ -58,7 +58,7 @@ namespace RECOIL
 		int FindPrevious()
 		{
 			int index = this.Index;
-			while (--index >= 0 && !Recoil.RECOIL.IsOurFile(this.Files[index].Path)) {
+			while (--index >= 0 && !Recoil.RECOIL.IsOurFile(this.Files![index].Path)) {
 			}
 			return index;
 		}
@@ -66,7 +66,7 @@ namespace RECOIL
 		int FindNext()
 		{
 			int index = this.Index;
-			while (++index < this.Files.Count && !Recoil.RECOIL.IsOurFile(this.Files[index].Path)) {
+			while (++index < this.Files!.Count && !Recoil.RECOIL.IsOurFile(this.Files[index].Path)) {
 			}
 			return index;
 		}
@@ -75,7 +75,7 @@ namespace RECOIL
 		{
 			this.Index = index;
 			this.PreviousButton.IsEnabled = FindPrevious() >= 0;
-			this.NextButton.IsEnabled = FindNext() < this.Files.Count;
+			this.NextButton.IsEnabled = FindNext() < this.Files!.Count;
 			StorageFile file = this.Files[index];
 
 			// read
