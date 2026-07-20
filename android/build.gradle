@@ -106,10 +106,10 @@ android {
         sourceCompatibility 11
         targetCompatibility 11
     }
-    compileSdk = 36
+    compileSdk = 37
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 36
+        targetSdkVersion 37
     }
     signingConfigs {
         release {
