@@ -6,7 +6,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.12.1'
+        classpath 'com.android.tools.build:gradle:9.3.0'
     }
 }
 
@@ -18,42 +18,88 @@ allprojects {
 }
 
 final SOURCE_ICON = '../recoil-512x512.png'
-final ICON_DIR = file 'build/generated/res/icons'
-tasks.register('generateIcon', Exec) {
-    inputs.files SOURCE_ICON
-    outputs.file new File(ICON_DIR, 'drawable/ic_launcher.png')
-    commandLine 'magick', inputs.files.asPath, '-resize', '72x72', '-quality', '95', '-strip', outputs.files.asPath
-    doFirst { new File(ICON_DIR, 'drawable').mkdirs() }
+abstract class GenerateIconsTask extends DefaultTask {
+    @InputFile
+    abstract RegularFileProperty getInputFile()
+
+    @OutputDirectory
+    abstract DirectoryProperty getOutputDir()
+
+    @Inject
+    abstract ExecOperations getExecOps()
+
+    @TaskAction
+    void run() {
+        String inputPath = inputFile.get().asFile.absolutePath
+        File outDir = outputDir.get().asFile
+        new File(outDir, 'drawable').mkdirs()
+        execOps.exec { commandLine('magick', inputPath, '-resize', '72x72', '-quality', '95', '-strip', new File(outDir, 'drawable/ic_launcher.png').absolutePath) }
+        new File(outDir, 'drawable-v26').mkdirs()
+        execOps.exec { commandLine('magick', inputPath, '-resize', '128x128', '-gravity', 'Center', '-extent', '192x192', '-quality', '95', '-strip', new File(outDir, 'drawable-v26/ic_launcher.png').absolutePath) }
+    }
 }
-tasks.register('generateRoundIcon', Exec) {
-    inputs.files SOURCE_ICON
-    outputs.file new File(ICON_DIR, 'drawable-v26/ic_launcher.png')
-    commandLine 'magick', inputs.files.asPath, '-resize', '128x128', '-gravity', 'Center', '-extent', '192x192', '-quality', '95', '-strip', outputs.files.asPath
-    doFirst { new File(ICON_DIR, 'drawable-v26').mkdirs() }
+final generateIcons = tasks.register('generateIcons', GenerateIconsTask) {
+    inputFile.set SOURCE_ICON
 }
 
 tasks.register('generateStoreGfx', Exec) {
-    inputs.files SOURCE_ICON
+    inputs.file SOURCE_ICON
     outputs.file 'recoil-1024x500.png'
-    commandLine 'magick', inputs.files.asPath, '-crop', '334x163+89+140', '-sample', '1024x500', '-quality', '95', '-strip', outputs.files.asPath
+    commandLine 'magick', SOURCE_ICON, '-crop', '334x163+89+140', '-sample', '1024x500', '-quality', '95', '-strip', outputs.files.asPath
 }
 
-final FUT_RESOURCES = [ 'altirrantsc.pal', 'altirrapal.pal', 'atari8.fnt', 'c16.pal', 'c64.fnt', 'zx81.fnt' ]
-final FUT_JAVA_DIR = file 'build/generated/source/fut/net/sf/recoil'
-tasks.register('fut', Exec) {
-    inputs.files '../recoil.fu', FUT_RESOURCES.collect { '../' + it }
-    outputs.file new File(FUT_JAVA_DIR, 'RECOIL.java')
-    commandLine 'fut', '-n', 'net.sf.recoil', '-o', outputs.files.asPath, '-I', '..', '../recoil.fu'
-    doFirst { FUT_JAVA_DIR.mkdirs() }
+final FUT_RESOURCES = [ '../altirrantsc.pal', '../altirrapal.pal', '../atari8.fnt', '../c16.pal', '../c64.fnt', '../zx81.fnt' ]
+abstract class FutTask extends DefaultTask {
+    @OutputDirectory
+    abstract DirectoryProperty getOutputDir()
+
+    @Inject
+    abstract ExecOperations getExecOps()
+
+    @TaskAction
+    void run() {
+        File outDir = outputDir.get().asFile
+        outDir.mkdirs()
+        execOps.exec { commandLine('fut', '-l', 'java', '-n', 'net.sf.recoil', '-o', outDir.absolutePath, '-I', '..', '../recoil.fu') }
+    }
+}
+final fut = tasks.register('fut', FutTask) {
+    inputs.files '../recoil.fu', FUT_RESOURCES
 }
 
-final JAVA_RESOURCES_DIR = file 'build/generated/resources'
-tasks.register('copyJavaResources', Copy) {
-    from '..'
-    into new File(JAVA_RESOURCES_DIR, 'net/sf/recoil')
-    include FUT_RESOURCES
+abstract class CopyJavaResourcesTask extends DefaultTask {
+    @InputFiles
+    abstract ConfigurableFileCollection getInputFiles()
+
+    @OutputDirectory
+    abstract DirectoryProperty getOutputDir()
+
+    @Inject
+    abstract FileSystemOperations getFs()
+
+    @TaskAction
+    void run() {
+        fs.sync {
+            from inputFiles
+            into outputDir.dir('net/sf/recoil')
+        }
+    }
 }
-preBuild.dependsOn generateIcon, generateRoundIcon, copyJavaResources
+final copyJavaResources = tasks.register('copyJavaResources', CopyJavaResourcesTask) {
+    inputFiles.from FUT_RESOURCES
+}
+
+androidComponents {
+    onVariants(selector().all()) { variant ->
+        variant.sources.res?.addGeneratedSourceDirectory(generateIcons, { it.outputDir })
+        variant.sources.java?.addGeneratedSourceDirectory(fut, { it.outputDir })
+        variant.sources.resources?.addGeneratedSourceDirectory(copyJavaResources, { it.outputDir })
+        if (variant.name == 'release') {
+            final output = variant.outputs[0];
+            output.outputFileName.set "recoil-${output.versionName.get()}-android.apk"
+        }
+    }
+}
 
 android {
     compileOptions {
@@ -61,23 +107,9 @@ android {
         targetCompatibility 11
     }
     compileSdk = 36
-    sourceSets {
-        main {
-            resources {
-                srcDir JAVA_RESOURCES_DIR
-            }
-        }
-    }
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 36
-    }
-    applicationVariants.configureEach { variant ->
-        variant.registerGeneratedResFolders files(ICON_DIR)
-        variant.registerJavaGeneratingTask fut, FUT_JAVA_DIR
-        if (variant.name == 'release') {
-            variant.outputs[0].outputFileName = "recoil-$versionName-android.apk"
-        }
     }
     signingConfigs {
         release {
