@@ -901,6 +901,7 @@
 		</format>
 	</platform>
 	<platform name="PC" href="https://en.wikipedia.org/wiki/IBM_PC_compatible">
+		<format name="Planar Bitmap"><ext>BBM</ext></format>
 		<format name="Award BIOS logo"><ext>EPA</ext></format>
 		<format name="Handy Scanner 2000 POSTERING" width="840" colors="2"><ext>HS2</ext></format>
 		<format name="Turbo Rascal Syntax Error" width="320" height="200"><ext>FLF</ext></format>

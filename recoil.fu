@@ -20922,6 +20922,7 @@ public class RECOIL
 		case PackExt("BB4"):
 		case PackExt("BB5"):
 		case PackExt("BBG"):
+		case PackExt("BBM"):
 		case PackExt("BDP"):
 		case PackExt("BFL"):
 		case PackExt("BFLI"):
@@ -21554,6 +21555,8 @@ public class RECOIL
 			return DecodeBb5(content, contentLength, BbcPalette2Bit);
 		case PackExt("BBG"):
 			return DecodeBbg(content, contentLength);
+		case PackExt("BBM"):
+			return DecodeIff(content, contentLength, RECOILResolution.Pc1x1);
 		case PackExt("BDP"):
 			return DecodeBdp(content, contentLength);
 		case PackExt("BFL"):
