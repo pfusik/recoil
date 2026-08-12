@@ -14,8 +14,9 @@
 	<p>Install as follows:</p>
 	<ol>
 		<li>Open <code>recoil-<version />-macos.dmg</code>.</li>
-		<li>Drag <code>RECOIL.qlgenerator</code> to <code>QuickLook</code>.</li>
-		<li>Log out and in, or run <code>qlmanage -r</code>.</li>
+		<li>Drag <code>RECOIL.app</code> to <code>Applications</code>.</li>
+		<li>Open RECOIL.app from within <code>Applications</code>. Close the message box.</li>
+		<li>Log out and in.</li>
 	</ol>
 	<img src="qlrecoil.png" alt="Quick Look" />
 

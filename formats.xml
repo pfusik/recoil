@@ -34,7 +34,7 @@
 			<ext skip="uwp">DCTV</ext>
 		</format>
 	</platform>
-	<platform name="Amiga HAM-E" href="https://amiga.resource.cx/exp/hame">
+	<platform name="Amiga HAM-E" href="https://amiga.resource.cx/exp/hame" skip="ql">
 		<format name="HAM-E" maxWidth="384" maxHeight="480" colors="184320"><!-- colors limited by resolution -->
 			<ext>IFF</ext>
 		</format>
@@ -724,10 +724,10 @@
 		<format width="256" height="256" colors="4"><ext>PIC</ext></format>
 		<format maxWidth="512" height="256" maxFrames="2"><ext>BKS</ext></format>
 	</platform>
-	<platform name="Electronika MC 0515" href="http://www.leningrad.su/museum/show_calc.php?n=267">
+	<platform name="Electronika MC 0515" href="http://www.leningrad.su/museum/show_calc.php?n=267" skip="ql">
 		<format width="640" height="200" colors="2"><ext skip="uwp">SCR</ext></format>
 	</platform>
-	<platform name="FM Towns" href="https://en.wikipedia.org/wiki/FM_Towns">
+	<platform name="FM Towns" href="https://en.wikipedia.org/wiki/FM_Towns" skip="ql">
 		<format><ext>PI</ext></format>
 		<format><ext>PIC</ext></format>
 	</platform>
@@ -864,7 +864,7 @@
 	<platform name="MSX V9990 VDP" href="https://www.msx.org/wiki/Yamaha_V9990">
 		<format name="GFX9k" colors="32768"><ext>G9B</ext></format>
 	</platform>
-	<platform name="NEC PC-80" href="https://en.wikipedia.org/wiki/PC-8000_series">
+	<platform name="NEC PC-80" href="https://en.wikipedia.org/wiki/PC-8000_series" skip="ql">
 		<format name="Maki-chan Graphics" maxWidth="640" maxHeight="200" colors="8"><ext>MAG</ext></format>
 	</platform>
 	<platform name="NEC PC-88" href="https://en.wikipedia.org/wiki/PC-8800_series">
@@ -911,7 +911,7 @@
 	<platform name="PlayStation" href="https://en.wikipedia.org/wiki/PlayStation_(console)">
 		<format name="TIM"><ext>TIM</ext></format>
 	</platform>
-	<platform name="Psion Series 3" href="https://en.wikipedia.org/wiki/Psion_Series_3">
+	<platform name="Psion Series 3" href="https://en.wikipedia.org/wiki/Psion_Series_3" skip="ql">
 		<format colors="2">
 			<ext>PIC</ext>
 			<ext>ICN</ext>
@@ -928,11 +928,11 @@
 		</format>
 		<format maxWidth="512" height="192"><ext>SSX</ext></format>
 	</platform>
-	<platform name="Sharp X68000" href="https://en.wikipedia.org/wiki/X68000">
+	<platform name="Sharp X68000" href="https://en.wikipedia.org/wiki/X68000" skip="ql">
 		<format name="Maki-chan Graphics" colors="16"><ext>MAG</ext></format>
 		<format colors="65536"><ext>PIC</ext></format>
 	</platform>
-	<platform name="Tandy 1000" href="https://en.wikipedia.org/wiki/Tandy_1000">
+	<platform name="Tandy 1000" href="https://en.wikipedia.org/wiki/Tandy_1000" skip="ql">
 		<format name="DeskMate Paint" width="312" height="176" colors="16"><ext>PNT</ext></format>
 	</platform>
 	<platform name="Timex 2048" href="https://en.wikipedia.org/wiki/Timex_Computer_2048">
@@ -961,7 +961,7 @@
 		</format>
 		<format width="128" height="96" colors="4"><ext>P11</ext></format>
 	</platform>
-	<platform name="Vector-06C" href="https://en.wikipedia.org/wiki/Vector-06C">
+	<platform name="Vector-06C" href="https://en.wikipedia.org/wiki/Vector-06C" skip="ql">
 		<format name="256" height="256" colors="16"><ext>SPR</ext></format>
 	</platform>
 	<platform name="ZX81" href="https://en.wikipedia.org/wiki/ZX81">
@@ -1001,7 +1001,7 @@
 		<format name="ZX-Paintbrush" colors="15"><ext>ZXP</ext></format>
 		<format name="SpecSCII" width="256" height="192" colors="15"><ext>ZXS</ext></format>
 	</platform>
-	<platform name="ZX Spectrum Profi" href="https://en.wikipedia.org/wiki/List_of_ZX_Spectrum_clones#Profi">
+	<platform name="ZX Spectrum Profi" href="https://en.wikipedia.org/wiki/List_of_ZX_Spectrum_clones#Profi" skip="ql">
 		<format name="Profi" width="512" height="240" colors="16"><ext>GRF</ext></format>
 	</platform>
 	<platform name="ZX Spectrum ULAplus" href="https://sites.google.com/site/ulaplus/">
