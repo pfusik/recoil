@@ -5209,7 +5209,7 @@ public class RECOIL
 		return DecodeMono(content, contentOffset, contentLength, wordAlign);
 	}
 
-	bool DecodeRleBlackAndWhite!(RleStream! rle, int backgroundColor)
+	bool DecodeRleMono!(RleStream! rle, int color0, int color1)
 	{
 		int width = GetOriginalWidth();
 		int height = GetOriginalHeight();
@@ -5221,11 +5221,13 @@ public class RECOIL
 					if (b < 0)
 						return false;
 				}
-				SetScaledPixel(x, y, (b >> (~x & 7) & 1) == 0 ? backgroundColor : backgroundColor ^ 0xffffff);
+				SetScaledPixel(x, y, (b >> (~x & 7) & 1) == 0 ? color0 : color1);
 			}
 		}
 		return true;
 	}
+
+	bool DecodeRleBlackAndWhite!(RleStream! rle, int backgroundColor) => DecodeRleMono(rle, backgroundColor, backgroundColor ^ 0xffffff);
 
 	void DecodeBlackAndWhiteFont!(byte[] content, int contentOffset, int contentLength, int fontHeight)
 	{
@@ -5251,7 +5253,9 @@ public class RECOIL
 	bool DecodePgf!(byte[] content, int contentLength)
 	{
 		SetSize(240, 64, RECOILResolution.Portfolio1x1);
-		return DecodeBlackAndWhite(content, 0, contentLength, false, 0xffffff);
+		ContentPalette[0] = 0x8ec1ac;
+		ContentPalette[1] = 0x434797;
+		return DecodeMono(content, 0, contentLength, false);
 	}
 
 	bool DecodePgc!(byte[] content, int contentLength)
@@ -5261,7 +5265,7 @@ public class RECOIL
 			return false;
 		SetSize(240, 64, RECOILResolution.Portfolio1x1);
 		PgcStream() rle = { Content = content, ContentOffset = 3, ContentLength = contentLength };
-		return DecodeRleBlackAndWhite(rle, 0xffffff);
+		return DecodeRleMono(rle, 0x8ec1ac, 0x434797);
 	}
 
 	// Psion Series 3 formats.
