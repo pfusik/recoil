@@ -18,7 +18,7 @@ Description: Provides "recoil2png" command-line converter
 
 Package: recoil-gimp
 Architecture: any
-Depends: gimp, ${shlibs:Depends}
+Depends: gimp (<< 3~), ${shlibs:Depends}
 Description: GIMP plugin capable of loading pictures in native formats of
  Amiga, Amstrad CPC, Apple II, Atari 8-bit/Portfolio/ST/TT/Falcon,
  BBC Micro, Commodore VIC-20/64/16/116/Plus4/128, Electronika BK, FM Towns,
