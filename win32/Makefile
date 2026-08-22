@@ -160,7 +160,7 @@ rpm64:
 
 mac:
 	scp ../../recoil-$(VERSION).tar.gz wiesmac:.
-	ssh wiesmac 'security unlock-keychain login.keychain && rm -rf recoil-$(VERSION) && tar xf recoil-$(VERSION).tar.gz && PATH=/usr/local/bin:$$PATH make -C recoil-$(VERSION)/osx'
+	ssh wiesmac 'security unlock-keychain login.keychain && rm -rf recoil-$(VERSION) && tar xf recoil-$(VERSION).tar.gz && PATH=/usr/local/bin:$$PATH make -C recoil-$(VERSION)/osx -j8'
 	scp wiesmac:recoil-$(VERSION)/osx/recoil-$(VERSION)-macos.dmg ../../
 
 clean:
