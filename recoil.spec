@@ -29,11 +29,11 @@ and ZX Spectrum computers.
 
 %package gimp
 Summary: RECOIL plugin for GIMP
-Requires: gimp
-BuildRequires: gimp-devel
+Requires: gimp >= 2:3
+BuildRequires: gimp-devel >= 2:3
 
 %description gimp
-GIMP plugin capable of loading pictures in native formats of
+GIMP 3 plugin capable of loading pictures in native formats of
 Amiga, Amstrad CPC, Apple II, Atari 8-bit/Portfolio/ST/TT/Falcon, BBC Micro,
 Commodore VIC-20/64/16/116/Plus4/128, Electronika BK, FM Towns, HP 48,
 Macintosh 128K, MSX, NEC PC-80/88/98, Oric, Psion Series 3, SAM Coupe,
@@ -59,17 +59,17 @@ and ZX Spectrum computers.
 %setup -q
 
 %build
-make CFLAGS="%{build_cflags}" recoil2png file-recoil recoil-mime.xml
+make CFLAGS="%{build_cflags}" recoil2png file-recoil3 recoil-mime.xml
 
 %install
-make PREFIX=%{buildroot}%{_prefix} libdir=%{buildroot}%{_libdir} BUILDING_PACKAGE=1 install-gimp install-thumbnailer
+make PREFIX=%{buildroot}%{_prefix} libdir=%{buildroot}%{_libdir} BUILDING_PACKAGE=1 install-gimp3 install-thumbnailer
 
 %files 2png
 %{_bindir}/recoil2png
 %{_mandir}/man1/recoil2png.1*
 
 %files gimp
-%{_libdir}/gimp/2.0/plug-ins/file-recoil/file-recoil
+%{_libdir}/gimp/3.0/plug-ins/file-recoil/file-recoil
 
 %files thumbnailer
 %{_datadir}/mime/packages/recoil-mime.xml

@@ -68,10 +68,15 @@ Or, if you are still on GNOME 2:
 After you restart your system, Nautilus windows should display thumbnails
 of retro computer images.
 
-The GIMP plugin requires the GIMP development package (gimp-dev or gimp-devel).
-Install the GIMP plugin with:
+GIMP 2 and GIMP 3 plugins are incompatible.
+Both require the corresponding GIMP development package (gimp-dev or gimp-devel).
+Install the GIMP 2 plugin with:
 
-    make install-gimp
+    make install-gimp2
+
+Install the GIMP 3 plugin with:
+
+    make install-gimp3
 
 Installation of the ImageMagick coder requires that you have complete source
 distribution of ImageMagick.  Current version of the ImageMagick coder has been
@@ -158,8 +163,8 @@ From the command prompt navigate to the osx directory and run:
     make
 
 
-Building Windows 10 application
--------------------------------
+Building Windows 10/11 application
+----------------------------------
 
 Install Visual Studio 2022 and ImageMagick 7.
 

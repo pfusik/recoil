@@ -26,6 +26,9 @@ recoil2png: recoil2png.c pngsave.c pngsave.h recoil-stdio.c recoil-stdio.h recoi
 file-recoil: file-recoil.c recoil-stdio.c recoil-stdio.h recoil.c recoil.h formats.h
 	$(CC) $(CFLAGS) `gimptool-2.0 --cflags` file-recoil.c recoil-stdio.c recoil.c -o $@ `gimptool-2.0 --libs`
 
+file-recoil3: file-recoil3.c recoil-stdio.c recoil-stdio.h recoil.c recoil.h formats.h
+	$(CC) $(CFLAGS) `gimptool-3 --cflags` file-recoil3.c recoil-stdio.c recoil.c -o $@ `gimptool-3 --libs`
+
 ifdef CAN_INSTALL_MAGICK
 imagemagick/recoil.so: imagemagick/recoilmagick.c recoil.c recoil.h formats.h
 ifdef MAGICK_INCLUDE_PATH
@@ -49,7 +52,7 @@ benchmark: benchmark.c recoil-stdio.c recoil-stdio.h recoil.c recoil.h
 	$(CC) $(CFLAGS) benchmark.c recoil-stdio.c recoil.c -o $@
 
 clean:
-	rm -f recoil2png file-recoil imagemagick/recoil.so imagemagick/coder.xml.new formats.h recoil-mime.xml benchmark Xrecoil.usr
+	rm -f recoil2png file-recoil file-recoil3 imagemagick/recoil.so imagemagick/coder.xml.new formats.h recoil-mime.xml benchmark Xrecoil.usr
 
 install: install-thumbnailer $(if $(CAN_INSTALL_MAGICK),install-magick)
 
@@ -63,7 +66,7 @@ install-recoil2png: recoil2png recoil2png.1
 uninstall-recoil2png:
 	rm -f $(PREFIX)/bin/recoil2png $(PREFIX)/share/man/man1/recoil2png.1
 
-install-gimp: file-recoil
+install-gimp2: file-recoil
 ifdef BUILDING_PACKAGE
 	mkdir -p $(libdir)/gimp/2.0/plug-ins/file-recoil
 	$(INSTALL_PROGRAM) $< $(libdir)/gimp/2.0/plug-ins/file-recoil/file-recoil
@@ -71,8 +74,19 @@ else
 	gimptool-2.0 --install-admin-bin $<
 endif
 
-uninstall-gimp:
-	gimptool-2.0 --uninstall-admin-bin $<
+uninstall-gimp2:
+	gimptool-2.0 --uninstall-admin-bin file-recoil
+
+install-gimp3: file-recoil3
+ifdef BUILDING_PACKAGE
+	mkdir -p $(libdir)/gimp/3.0/plug-ins/file-recoil
+	$(INSTALL_PROGRAM) $< $(libdir)/gimp/3.0/plug-ins/file-recoil/file-recoil
+else
+	gimptool-3 --install-admin-bin $<
+endif
+
+uninstall-gimp3:
+	gimptool-3 --uninstall-admin-bin file-recoil
 
 ifdef CAN_INSTALL_MAGICK
 
@@ -144,7 +158,7 @@ cmp-examples: recoil2png
 	rm -f ../png/*.png
 	ls ../examples | xargs -P 5 -i sh -c "./recoil2png -o '../png/{}.png' '../examples/{}' && cmp '../ref/{}.png' '../png/{}.png'"
 
-.PHONY: all clean install uninstall install-recoil2png uninstall-recoil2png install-gimp uninstall-gimp \
+.PHONY: all clean install uninstall install-recoil2png uninstall-recoil2png install-gimp2 uninstall-gimp2 install-gimp3 uninstall-gimp3 \
     $(if $(CAN_INSTALL_MAGICK),install-magick uninstall-magick) install-mime uninstall-mime \
 	install-thumbnailer uninstall-thumbnailer install-gnome2-thumbnailer uninstall-gnome2-thumbnailer \
 	install-xnview uninstall-xnview deb missing-examples cmp-examples
