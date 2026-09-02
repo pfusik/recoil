@@ -149,6 +149,9 @@ uninstall-xnview:
 deb:
 	debuild -b -us -uc
 
+deb-gimp3:
+	debuild -b -us -uc -Pgimp3
+
 missing-examples:
 # first column: extensions that are missing in examples
 # second column: unknown extension in examples, perhaps companion files
@@ -161,6 +164,6 @@ cmp-examples: recoil2png
 .PHONY: all clean install uninstall install-recoil2png uninstall-recoil2png install-gimp2 uninstall-gimp2 install-gimp3 uninstall-gimp3 \
     $(if $(CAN_INSTALL_MAGICK),install-magick uninstall-magick) install-mime uninstall-mime \
 	install-thumbnailer uninstall-thumbnailer install-gnome2-thumbnailer uninstall-gnome2-thumbnailer \
-	install-xnview uninstall-xnview deb missing-examples cmp-examples
+	install-xnview uninstall-xnview deb deb-gimp3 missing-examples cmp-examples
 
 .DELETE_ON_ERROR:

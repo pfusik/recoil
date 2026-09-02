@@ -7,7 +7,7 @@
 	<h2>GIMP plugin</h2>
 	<p>Install:</p>
 	<ul>
-		<li>On Debian/Ubuntu: <download prefix="recoil-gimp_" suffix="-1_amd64.deb" /></li>
+		<li>On Debian/Ubuntu: <download prefix="recoil-gimp2_" suffix="-1_amd64.deb" /> or <download prefix="recoil-gimp3_" suffix="-1_amd64.deb" /></li>
 		<li>On Fedora: <download prefix="recoil-gimp-" suffix="-1.x86_64.rpm" /></li>
 		<li>From source code: <download prefix="recoil-" suffix=".tar.gz" />,
 		uncompress it and follow the instructions in the <code>INSTALL</code> file.</li>

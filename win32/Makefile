@@ -147,9 +147,14 @@ deb64:
 	scp ../../recoil-$(VERSION).tar.gz vm:.
 	ssh vm 'rm -rf recoil-$(VERSION) && tar xf recoil-$(VERSION).tar.gz && make -C recoil-$(VERSION) deb'
 	scp vm:recoil-2png_$(VERSION)-1_amd64.deb ../../
-	scp vm:recoil-gimp_$(VERSION)-1_amd64.deb ../../
+	scp vm:recoil-gimp2_$(VERSION)-1_amd64.deb ../../
 	scp vm:recoil-xnview_$(VERSION)-1_amd64.deb ../../
 	scp vm:recoil-thumbnailer_$(VERSION)-1_all.deb ../../
+
+deb64-gimp3:
+	scp ../../recoil-$(VERSION).tar.gz vm:.
+	ssh vm 'rm -rf recoil-$(VERSION) && tar xf recoil-$(VERSION).tar.gz && make -C recoil-$(VERSION) deb-gimp3'
+	scp vm:recoil-gimp3_$(VERSION)-1_amd64.deb ../../
 
 rpm64:
 	scp ../../recoil-$(VERSION).tar.gz vm:.
@@ -168,6 +173,6 @@ clean:
 		i686/recoil.wixobj x86_64/recoil.wixobj setup/formats.wxi setup/dialog.jpg setup/banner.jpg signed-msi signed \
 		paint.net/RecoilFileTypeFactory.cs paint.net/RECOIL.cs ../formats.h
 
-.PHONY: all clean bounds-examples install-gimp install-magick install-xnview install-paint.net ../MANIFEST srcdist dist deb64 rpm64 mac ../../recoil-$(VERSION).tar.gz
+.PHONY: all clean bounds-examples install-gimp install-magick install-xnview install-paint.net ../MANIFEST srcdist dist deb64 deb64-gimp3 rpm64 mac ../../recoil-$(VERSION).tar.gz
 
 .DELETE_ON_ERROR:
