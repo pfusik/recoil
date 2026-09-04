@@ -10,7 +10,8 @@ GIMP_LIBS = gimp-3.0 gimpbase-3.0 gegl-0.4 babl-0.1 gio-2.0 gobject-2.0 glib-2.0
 
 recoil-$(VERSION)-macos.dmg: bin/Applications bin/RECOIL.app/Contents/_CodeSignature/CodeResources bin/GIMP bin/file-recoil/file-recoil bin/XnViewMP bin/Xrecoil.usr bin/bin bin/recoil2png
 	hdiutil create -volname recoil-$(VERSION)-macos -srcfolder bin -format UDBZ -fs HFS+ -imagekey bzip2-level=3 -ov $@
-	/Applications/Xcode.app/Contents/Developer/usr/bin/notarytool submit --wait --keychain-profile foxnotary $@
+	xcrun notarytool submit --wait --keychain-profile foxnotary $@
+	xcrun stapler staple $@
 
 bin/Applications:
 	mkdir -p $(@D) && ln -s /Applications $@
