@@ -20766,7 +20766,8 @@ public class RECOIL
 			DecodeZx(content, 0, -1, ZxAttributesNone, 0);
 			return true;
 		case 6160:
-			return DecodeRad(content, contentLength);
+			return DecodeAmstradScr(filename, content, contentLength)
+				|| DecodeRad(content, contentLength);
 		case 6912:
 		case 6913: // border color - ignore
 			SetZx(RECOILResolution.Spectrum1x1);
