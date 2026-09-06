@@ -6044,7 +6044,24 @@ public class RECOIL
 		mode = SetAmstradPalette(filename);
 		if (mode < 0) {
 			mode = content[contentOffset + 0x17d0];
-			if (mode > 4 || !SetAmstradFirmwarePalette(content, contentOffset + 0x17d1, 1 << (4 >> mode % 3)))
+			int colors;
+			switch (mode) {
+			case 0:
+			case 3:
+				colors = 16;
+				break;
+			case 1:
+			case 4:
+				ContentPalette[3] = 0;
+				colors = content[contentOffset + 0x17d4] == 0xff ? 3 : 4;
+				break;
+			case 2:
+				colors = 2;
+				break;
+			default:
+				return false;
+			}
+			if (!SetAmstradFirmwarePalette(content, contentOffset + 0x17d1, colors))
 				return false;
 		}
 		switch (mode) {
@@ -6078,8 +6095,8 @@ public class RECOIL
 				// mode 1, stretched 2x2:
 				for (int x = 0; x < 320; x++) {
 					int offset = 1280 + y * 1280 + (x << 1);
-					int b = content[lineOffset + 0x800 + (x >> 2)] >> (~x & 3);
-					Pixels[offset + 641] = Pixels[offset + 640] = Pixels[offset + 1] = Pixels[offset] = ContentPalette[((b & 1) << 1) + (b >> 4 & 1)];
+					int b = content[lineOffset + 0x800 + (x >> 2)];
+					Pixels[offset + 641] = Pixels[offset + 640] = Pixels[offset + 1] = Pixels[offset] = ContentPalette[GetAmstradMode1Index(x, b)];
 				}
 			}
 			return true;
