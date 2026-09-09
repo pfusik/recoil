@@ -5831,8 +5831,12 @@ public class RECOIL
 	bool DecodeAmstradMode2!(byte[] content, int contentOffset, int width, int height)
 	{
 		SetSize(width, height << 1, RECOILResolution.Amstrad1x2);
-		for (int y = 0; y < height; y++)
-			DecodeAmstradMode2Line(content, contentOffset + ((y & 7) << 11) + (y >> 3) * (width >> 3), y);
+		for (int y = 0; y < height; y++) {
+			int lineOffset = contentOffset + ((y & 7) << 11) + (y >> 3) * (width >> 3);
+			if (height * (width >> 3) >= 0x4000 && y >= 128)
+				lineOffset += 0x3800;
+			DecodeAmstradMode2Line(content, lineOffset, y);
+		}
 		return true;
 	}
 
@@ -6019,6 +6023,10 @@ public class RECOIL
 		case 16336:
 		case 16384:
 			break;
+		case 31936:
+			width = 384;
+			height = 272;
+			break;
 		default:
 			if (IsStringAt(content, contentOffset, "PKSL")
 			 && UnpackConvImgCpc(content, contentOffset + 21, contentLength, unpacked)) {
@@ -6043,7 +6051,8 @@ public class RECOIL
 
 		mode = SetAmstradPalette(filename);
 		if (mode < 0) {
-			mode = content[contentOffset + 0x17d0];
+			int paletteOffset = contentOffset + (width == 384 ? 0x600 : 0x17d0);
+			mode = content[paletteOffset];
 			int colors;
 			switch (mode) {
 			case 0:
@@ -6053,7 +6062,7 @@ public class RECOIL
 			case 1:
 			case 4:
 				ContentPalette[3] = 0;
-				colors = content[contentOffset + 0x17d4] == 0xff ? 3 : 4;
+				colors = content[paletteOffset + 4] == 0xff ? 3 : 4;
 				break;
 			case 2:
 				colors = 2;
@@ -6061,7 +6070,7 @@ public class RECOIL
 			default:
 				return false;
 			}
-			if (!SetAmstradFirmwarePalette(content, contentOffset + 0x17d1, colors))
+			if (!SetAmstradFirmwarePalette(content, paletteOffset + 1, colors))
 				return false;
 		}
 		switch (mode) {
