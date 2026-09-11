@@ -6087,15 +6087,21 @@ public class RECOIL
 		case 4:
 			if (width != 320)
 				return false;
+			int yEgx = content[contentOffset + 0x37e5] - 0x8d;
+			if (yEgx >> 1 != 0)
+				return false;
 			SetSize(640, 400, RECOILResolution.Amstrad1x2);
-			for (int y = 0; y < 200; y += 2) {
+			for (int y = 0; y < 200; y++) {
 				int lineOffset = contentOffset + GetAmstradLineOffset(y, 80, false);
-				DecodeAmstradMode2Line(content, lineOffset, y);
-				// mode 1, stretched 2x2:
-				for (int x = 0; x < 320; x++) {
-					int offset = 1280 + y * 1280 + (x << 1);
-					int b = content[lineOffset + 0x800 + (x >> 2)];
-					Pixels[offset + 641] = Pixels[offset + 640] = Pixels[offset + 1] = Pixels[offset] = ContentPalette[GetAmstradMode1Index(x, b)];
+				if (((y ^ yEgx) & 1) == 0)
+					DecodeAmstradMode2Line(content, lineOffset, y);
+				else {
+					// mode 1, stretched 2x2:
+					for (int x = 0; x < 320; x++) {
+						int offset = y * 1280 + (x << 1);
+						int b = content[lineOffset + (x >> 2)];
+						Pixels[offset + 641] = Pixels[offset + 640] = Pixels[offset + 1] = Pixels[offset] = ContentPalette[GetAmstradMode1Index(x, b)];
+					}
 				}
 			}
 			return true;
