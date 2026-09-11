@@ -5828,12 +5828,12 @@ public class RECOIL
 		}
 	}
 
-	bool DecodeAmstradMode2!(byte[] content, int contentOffset, int width, int height)
+	bool DecodeAmstradMode2!(byte[] content, int contentOffset, int width, int height, bool overscan)
 	{
 		SetSize(width, height << 1, RECOILResolution.Amstrad1x2);
 		for (int y = 0; y < height; y++) {
 			int lineOffset = contentOffset + ((y & 7) << 11) + (y >> 3) * (width >> 3);
-			if (height * (width >> 3) >= 0x4000 && y >= 128)
+			if (overscan && y >= 128)
 				lineOffset += 0x3800;
 			DecodeAmstradMode2Line(content, lineOffset, y);
 		}
@@ -5847,7 +5847,7 @@ public class RECOIL
 			return false;
 		ContentPalette[0] = 0;
 		ContentPalette[1] = 0xffffff;
-		return DecodeAmstradMode2(content, contentOffset, 512, 256);
+		return DecodeAmstradMode2(content, contentOffset, 512, 256, false);
 	}
 
 	const int[32] AmstradPalette = {
@@ -6074,7 +6074,7 @@ public class RECOIL
 				DecodeAmstradMode1Line(content, contentOffset + ((y & 7) << 11) + (y >> 3) * (width >> 2), y);
 			return true;
 		case 2:
-			return DecodeAmstradMode2(content, contentOffset, width << 1, height);
+			return DecodeAmstradMode2(content, contentOffset, width << 1, height, height * (width >> 3) >= 0x4000);
 		case 3:
 			SetSize(width, height, RECOILResolution.Amstrad1x1);
 			for (int y = 0; y < height; y += 2) {
