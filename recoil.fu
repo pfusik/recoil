@@ -5970,8 +5970,14 @@ public class RECOIL
 	{
 		for (int i = 0; i < count; i++) {
 			int c = content[contentOffset + i];
-			if (c > 26)
-				return false;
+			if (c > 26) {
+				ContentPalette.Fill(0, i, count - i);
+				for (; i < count; i++) {
+					if (content[contentOffset + i] != 0xff)
+						return false;
+				}
+				break;
+			}
 			const byte[3] triLevel = { 0, 0x80, 0xff };
 			ContentPalette[i] = triLevel[c / 3 % 3] << 16 | triLevel[c / 9] << 8 | triLevel[c % 3];
 		}
@@ -6053,24 +6059,7 @@ public class RECOIL
 		if (mode < 0) {
 			int paletteOffset = contentOffset + (width == 384 ? 0x600 : 0x17d0);
 			mode = content[paletteOffset];
-			int colors;
-			switch (mode) {
-			case 0:
-			case 3:
-				colors = 16;
-				break;
-			case 1:
-			case 4:
-				ContentPalette[3] = 0;
-				colors = content[paletteOffset + 4] == 0xff ? 3 : 4;
-				break;
-			case 2:
-				colors = 2;
-				break;
-			default:
-				return false;
-			}
-			if (!SetAmstradFirmwarePalette(content, paletteOffset + 1, colors))
+			if (mode > 4 || !SetAmstradFirmwarePalette(content, paletteOffset + 1, 1 << (4 >> (mode % 3))))
 				return false;
 		}
 		switch (mode) {
