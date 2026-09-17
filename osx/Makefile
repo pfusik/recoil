@@ -4,8 +4,8 @@ OBJC = clang
 OBJCFLAGS = -O2 -Wall -fobjc-arc -mmacos-version-min=12.0 -arch x86_64 -arch arm64
 CFLAGS = -O2 -Wall -arch x86_64 -arch arm64
 CODESIGN = codesign --options runtime -f -s $(FOX_CODESIGNING_IDENTITY)
-GIMP_RES = /Applications/GIMP.app/Contents/Resources
-GIMP_X86_64_RES = ~/GIMP-x86_64/GIMP.app/Contents/Resources
+GIMP_DIR = /Applications/GIMP.app/Contents
+GIMP_X86_64_DIR = ~/GIMP-x86_64/GIMP.app/Contents
 GIMP_LIBS = gimp-3.0 gimpbase-3.0 gegl-0.4 babl-0.1 gio-2.0 gobject-2.0 glib-2.0
 
 recoil-$(VERSION)-macos.dmg: bin/Applications bin/RECOIL.app/Contents/_CodeSignature/CodeResources bin/GIMP bin/file-recoil/file-recoil bin/XnViewMP bin/Xrecoil.usr bin/bin bin/recoil2png
@@ -51,11 +51,11 @@ bin/RECOIL.app/Contents/Resources/AppIcon.icns: ../recoil-512x512.png
 	iconutil -c icns icon.iconset -o $@
 
 bin/GIMP:
-	mkdir -p $(@D) && ln -s $(GIMP_RES)/lib/gimp/3.0/plug-ins $@
+	mkdir -p $(@D) && ln -s $(GIMP_DIR)/lib/gimp/3.0/plug-ins $@
 
 bin/file-recoil/file-recoil: ../file-recoil.c ../formats.h ../recoil-stdio.c ../recoil-stdio.h ../recoil.c ../recoil.h
-	mkdir -p $(@D) && $(CC) $(CFLAGS) -mmacosx-version-min=11.0 $(addprefix -I $(GIMP_RES)/, include/gimp-3.0 include/gdk-pixbuf-2.0 include include/gegl-0.4 include/babl-0.1 include/pango-1.0 include/cairo include/harfbuzz include/glib-2.0 lib/glib-2.0/include) \
-		-o $@ -I .. ../file-recoil3.c ../recoil-stdio.c ../recoil.c -rpath $(GIMP_RES)/ $(GIMP_LIBS:%=$(GIMP_RES)/lib/lib%.dylib) $(GIMP_LIBS:%=$(GIMP_X86_64_RES)/lib/lib%.dylib)
+	mkdir -p $(@D) && $(CC) $(CFLAGS) -mmacosx-version-min=11.0 $(addprefix -I $(GIMP_DIR)/, include/gimp-3.0 include/gdk-pixbuf-2.0 include include/gegl-0.4 include/babl-0.1 include/pango-1.0 include/cairo include/harfbuzz include/glib-2.0 lib/glib-2.0/include) \
+		-o $@ -I .. ../file-recoil3.c ../recoil-stdio.c ../recoil.c -rpath $(GIMP_DIR)/ $(GIMP_LIBS:%=$(GIMP_DIR)/lib/lib%.dylib) $(GIMP_LIBS:%=$(GIMP_X86_64_DIR)/lib/lib%.dylib)
 ifdef FOX_CODESIGNING_IDENTITY
 	$(CODESIGN) --entitlements gimp-entitlements.xml $@
 endif
