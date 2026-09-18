@@ -55,7 +55,7 @@ bin/GIMP:
 
 bin/file-recoil/file-recoil: ../file-recoil.c ../formats.h ../recoil-stdio.c ../recoil-stdio.h ../recoil.c ../recoil.h
 	mkdir -p $(@D) && $(CC) $(CFLAGS) -mmacosx-version-min=11.0 $(addprefix -I $(GIMP_DIR)/, include/gimp-3.0 include/gdk-pixbuf-2.0 include include/gegl-0.4 include/babl-0.1 include/pango-1.0 include/cairo include/harfbuzz include/glib-2.0 lib/glib-2.0/include) \
-		-o $@ -I .. ../file-recoil3.c ../recoil-stdio.c ../recoil.c -rpath $(GIMP_DIR)/ $(GIMP_LIBS:%=$(GIMP_DIR)/lib/lib%.dylib) $(GIMP_LIBS:%=$(GIMP_X86_64_DIR)/lib/lib%.dylib)
+		-o $@ -I .. ../file-recoil3.c ../recoil-stdio.c ../recoil.c -rpath $(GIMP_DIR)/lib/ $(GIMP_LIBS:%=$(GIMP_DIR)/lib/lib%.dylib) $(GIMP_LIBS:%=$(GIMP_X86_64_DIR)/lib/lib%.dylib)
 ifdef FOX_CODESIGNING_IDENTITY
 	$(CODESIGN) --entitlements gimp-entitlements.xml $@
 endif
