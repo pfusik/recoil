@@ -15005,13 +15005,13 @@ public class RECOIL
 		// *-nib.c02   1-3     2    FF   4 pixels per byte
 		// *-nib.c04   1-3     4    FF   2 pixels per byte
 		int palette = content[7];
-		if (palette > 3)
+		if (palette > 4)
 			return false;
 		int depth = content[8];
 		int chunk = content[9];
 		int width = content[10] << 8 | content[11];
 		int height = content[12] << 8 | content[13];
-		const byte[4] paletteUnit = { 0, 2, 2, 4 };
+		const byte[5] paletteUnit = { 0, 2, 2, 4, 6 };
 		int bitmapOffset = 14 + (paletteUnit[palette] << depth);
 		int pixelsLength = width * height;
 		switch (chunk) {
@@ -15063,6 +15063,11 @@ public class RECOIL
 				return false;
 			ContentPalette.Fill(0);
 			SetFalconPalette(content, 14, 1 << depth);
+			break;
+		case 4:
+			if (!SetSize(width, height, RECOILResolution.Falcon1x1))
+				return false;
+			SetStVdiPalette(content, 14, 1 << depth, depth);
 			break;
 		default:
 			return false;
