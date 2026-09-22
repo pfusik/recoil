@@ -1,7 +1,7 @@
 /*
  * file-recoil3.c - RECOIL plugin for GIMP 3
  *
- * Copyright (C) 2021-2025  Piotr Fusik
+ * Copyright (C) 2021-2026  Piotr Fusik
  *
  * This file is part of RECOIL (Retro Computer Image Library),
  * see http://recoil.sourceforge.net
@@ -91,7 +91,7 @@ static GimpProcedure *create_procedure(GimpPlugIn *plug_in, const gchar *name)
 			"Loads files using Retro Computer Image Library (RECOIL)", name);
 		gimp_procedure_set_attribution(procedure,
 			"Piotr Fusik <fox@scene.pl>",
-			"Piotr Fusik <fox@scene.pl>", "2021-2025");
+			"Piotr Fusik <fox@scene.pl>", "2021-2026");
 		gimp_file_procedure_set_extensions(GIMP_FILE_PROCEDURE(procedure), GIMP_RECOIL_EXTS);
 		return procedure;
 	}
@@ -111,6 +111,7 @@ static void recoil_class_init(RecoilClass *klass)
 	GimpPlugInClass *plug_in_class = GIMP_PLUG_IN_CLASS(klass);
 	plug_in_class->query_procedures = query_procedures;
 	plug_in_class->create_procedure = create_procedure;
+	plug_in_class->set_i18n = NULL;
 }
 
 static void recoil_init(Recoil *recoil)
