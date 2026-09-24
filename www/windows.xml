@@ -10,8 +10,10 @@
 		<li>plugin for <a href="https://www.nyam.pe.kr/dev/imagine/">Imagine</a></li>
 		<li>plugin for <a href="https://www.getpaint.net">Paint.NET</a></li>
 		<li>plugin for <a href="https://www.gimp.org">GIMP</a></li>
+		<li>plugin for <a href="https://imagemagick.org">ImageMagick</a></li>
 		<li>RECOILWin - a standalone viewer</li>
 		<li>recoil2png - a command-line converter</li>
+		<li>plugins for <a href="https://tortoisegit.org">TortoiseGit</a> and <a href="https://tortoisesvn.net">TortoiseSVN</a></li>
 	</ul>
 	<img src="thumbrecoil.png" alt="Windows Explorer" />
 	<span> </span>

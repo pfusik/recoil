@@ -87,7 +87,7 @@ Run make specifying path to the sources:
     make install-magick MAGICK_INCLUDE_PATH=/path/to/im/sources
 
 To verify the installation, try to open some
-example files (http://recoil.sourceforge.net/examples.zip):
+example files (https://recoil.sourceforge.net/examples.zip):
 
     display COYOTE.RIP
 
