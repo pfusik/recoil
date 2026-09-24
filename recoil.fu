@@ -19032,6 +19032,7 @@ public class RECOIL
 
 	bool DecodeAtari8Ice!(byte[] content, int contentLength, bool font, int mode)
 	{
+		const byte[7] ice20Gtia11Colors = { 0, 1, 2, 3, 5, 7, 8 };
 		byte[256 * 288] frame1;
 		byte[256 * 288] frame2;
 		switch (mode) {
@@ -19320,7 +19321,6 @@ public class RECOIL
 				return false;
 			SetSize(256, 288, RECOILResolution.Xe4x1);
 			LeftSkip = 2;
-			const byte[7] ice20Gtia11Colors = { 0, 1, 2, 3, 5, 7, 8 };
 			for (int i = 0; i < 7; i++)
 				SetGtiaColor(ice20Gtia11Colors[i], content[1 + i]);
 			DecodeIce20Frame(content, false, 8, frame1, 10);
