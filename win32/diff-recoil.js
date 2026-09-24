@@ -51,5 +51,7 @@ wsh.Run("\"" + tpath+ "bin\\TortoiseIDiff.exe\" /left:\"" + png1 + "\" /right:\"
 
 // Delete temporary files when done
 
-fso.DeleteFile(png2);
-fso.DeleteFile(png1);
+if (fso.FileExists(png2))
+	fso.DeleteFile(png2);
+if (fso.FileExists(png1))
+	fso.DeleteFile(png1);
