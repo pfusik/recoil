@@ -80,7 +80,7 @@ Install the GIMP 3 plugin with:
 
 Installation of the ImageMagick coder requires that you have complete source
 distribution of ImageMagick.  Current version of the ImageMagick coder has been
-tested with version 6.7.4-0 of ImageMagick.
+tested with version 7.1.2-32 of ImageMagick.
 
 Run make specifying path to the sources:
 
@@ -89,11 +89,7 @@ Run make specifying path to the sources:
 To verify the installation, try to open some
 example files (https://recoil.sourceforge.net/examples.zip):
 
-    display COYOTE.RIP
-
-You can also install all components at the same time, for example:
-
-    make install PREFIX=/opt/recoil MAGICK_INCLUDE_PATH=/src/ImageMagick-6.7.4-0
+    magick recoil:COYOTE.RIP COYOTE.PNG
 
 
 Using recoil2png

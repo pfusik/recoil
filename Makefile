@@ -1,15 +1,7 @@
 PREFIX = /usr/local
 XNVIEW = /opt/XnView
-MAGICK_VERSION     := $(shell MagickCore-config --version 2>/dev/null)
-ifdef MAGICK_VERSION
-MAGICK_CFLAGS      := $(shell MagickCore-config --cflags --cppflags) -fPIC
-MAGICK_LDFLAGS     := $(shell MagickCore-config --ldflags)
-MAGICK_LIBS        := $(shell MagickCore-config --libs)
-MAGICK_PREFIX      := $(shell MagickCore-config --prefix)
-MAGICK_CODER_PATH  := $(wildcard $(MAGICK_PREFIX)/lib/ImageMagick-$(word 1,$(MAGICK_VERSION))/modules-$(word 2,$(MAGICK_VERSION))/coders)
-MAGICK_CONFIG_PATH := $(wildcard $(shell MagickCore-config --exec-prefix)/etc/ImageMagick)
-CAN_INSTALL_MAGICK := $(and $(MAGICK_CODER_PATH),$(MAGICK_CONFIG_PATH))
-endif
+MAGICK_CFLAGS = $(and $(filter 7.%,$(firstword $(shell MagickCore-config --version))),-DMAGICK7) `MagickCore-config --cflags --ldflags` -I. -I$(MAGICK_INCLUDE_PATH)
+MAGICK_CODER_PATH = $(shell (magick -list configure || convert -list configure) | awk '$$1 == "CODER_PATH" {print $$2}')
 
 FUT ?= fut
 CFLAGS ?= -O2 -Wall
@@ -17,7 +9,7 @@ INSTALL ?= install
 INSTALL_PROGRAM ?= $(INSTALL)
 INSTALL_DATA ?= $(INSTALL) -m 644
 
-all: recoil2png $(if $(CAN_INSTALL_MAGICK),imagemagick/recoil.so) recoil-mime.xml
+all: recoil2png recoil-mime.xml
 
 recoil2png: recoil2png.c pngsave.c pngsave.h recoil-stdio.c recoil-stdio.h recoil.c recoil.h
 	$(CC) $(CFLAGS) recoil2png.c pngsave.c recoil-stdio.c recoil.c -lpng -lz -o $@
@@ -28,17 +20,8 @@ file-recoil: file-recoil.c recoil-stdio.c recoil-stdio.h recoil.c recoil.h forma
 file-recoil3: file-recoil3.c recoil-stdio.c recoil-stdio.h recoil.c recoil.h formats.h
 	$(CC) $(CFLAGS) `gimptool-3 --cflags` file-recoil3.c recoil-stdio.c recoil.c -o $@ `gimptool-3 --libs`
 
-ifdef CAN_INSTALL_MAGICK
 imagemagick/recoil.so: imagemagick/recoilmagick.c recoil.c recoil.h formats.h
-ifdef MAGICK_INCLUDE_PATH
-	$(CC) $(CFLAGS) $(MAGICK_CFLAGS) -I$(MAGICK_INCLUDE_PATH) imagemagick/recoilmagick.c recoil.c -shared $(MAGICK_LDFLAGS) -ldl $(MAGICK_LIBS) -o $@
-else
-	@echo "\nDetected ImageMagick version $(MAGICK_VERSION) on your system."
-	@echo "To build RECOIL coder for ImageMagick,"
-	@echo "specify path to ImageMagick sources, e.g.:"
-	@echo "$ make MAGICK_INCLUDE_PATH=/path/to/im/source"
-endif
-endif
+	$(CC) $(CFLAGS) $(MAGICK_CFLAGS) -shared -fPIC imagemagick/recoilmagick.c recoil.c -o $@
 
 formats.h: formats.h.xsl formats.xml
 	xsltproc -o $@ formats.h.xsl formats.xml
@@ -51,11 +34,11 @@ benchmark: benchmark.c recoil-stdio.c recoil-stdio.h recoil.c recoil.h
 	$(CC) $(CFLAGS) benchmark.c recoil-stdio.c recoil.c -o $@
 
 clean:
-	rm -f recoil2png file-recoil file-recoil3 imagemagick/recoil.so imagemagick/coder.xml.new formats.h recoil-mime.xml benchmark Xrecoil.usr
+	rm -f recoil2png file-recoil file-recoil3 imagemagick/recoil.so formats.h recoil-mime.xml benchmark Xrecoil.usr
 
-install: install-thumbnailer $(if $(CAN_INSTALL_MAGICK),install-magick)
+install: install-thumbnailer
 
-uninstall: uninstall-thumbnailer $(if $(CAN_INSTALL_MAGICK),uninstall-magick)
+uninstall: uninstall-thumbnailer
 
 install-recoil2png: recoil2png recoil2png.1
 	mkdir -p $(PREFIX)/bin $(PREFIX)/share/man/man1
@@ -87,21 +70,12 @@ endif
 uninstall-gimp3:
 	gimptool-3 --uninstall-admin-bin file-recoil
 
-ifdef CAN_INSTALL_MAGICK
-
-install-magick: imagemagick/updatecoder.pl formats.xml imagemagick/recoil.so
-	perl imagemagick/updatecoder.pl formats.xml <$(MAGICK_CONFIG_PATH)/coder.xml >imagemagick/coder.xml.new
-	mkdir -p $(MAGICK_CODER_PATH)
+install-magick: imagemagick/recoil.so
 	$(INSTALL) imagemagick/recoil.so $(MAGICK_CODER_PATH)/recoil.so
 	echo "dlname='recoil.so'" >$(MAGICK_CODER_PATH)/recoil.la
-	mv imagemagick/coder.xml.new $(MAGICK_CONFIG_PATH)/coder.xml
 
 uninstall-magick:
-	perl imagemagick/updatecoder.pl <$(MAGICK_CONFIG_PATH)/coder.xml >imagemagick/coder.xml.new
 	rm -f $(MAGICK_CODER_PATH)/recoil.la $(MAGICK_CODER_PATH)/recoil.so
-	mv imagemagick/coder.xml.new $(MAGICK_CONFIG_PATH)/coder.xml
-
-endif
 
 recoil-mime.xml: recoil-mime.xsl formats.xml
 	xsltproc -o $@ recoil-mime.xsl formats.xml
@@ -161,7 +135,7 @@ cmp-examples: recoil2png
 	ls ../examples | xargs -P 5 -i sh -c "./recoil2png -o '../png/{}.png' '../examples/{}' && cmp '../ref/{}.png' '../png/{}.png'"
 
 .PHONY: all clean install uninstall install-recoil2png uninstall-recoil2png install-gimp2 uninstall-gimp2 install-gimp3 uninstall-gimp3 \
-    $(if $(CAN_INSTALL_MAGICK),install-magick uninstall-magick) install-mime uninstall-mime \
+    install-magick uninstall-magick install-mime uninstall-mime \
 	install-thumbnailer uninstall-thumbnailer install-gnome2-thumbnailer uninstall-gnome2-thumbnailer \
 	install-xnview uninstall-xnview deb deb-gimp3 missing-examples cmp-examples
 
