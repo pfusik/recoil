@@ -11,12 +11,11 @@ MAGICK_CONFIG_PATH := $(wildcard $(shell MagickCore-config --exec-prefix)/etc/Im
 CAN_INSTALL_MAGICK := $(and $(MAGICK_CODER_PATH),$(MAGICK_CONFIG_PATH))
 endif
 
-FUT = fut
-CC = gcc
-CFLAGS = -O2 -Wall
-INSTALL = install
-INSTALL_PROGRAM = $(INSTALL)
-INSTALL_DATA = $(INSTALL) -m 644
+FUT ?= fut
+CFLAGS ?= -O2 -Wall
+INSTALL ?= install
+INSTALL_PROGRAM ?= $(INSTALL)
+INSTALL_DATA ?= $(INSTALL) -m 644
 
 all: recoil2png $(if $(CAN_INSTALL_MAGICK),imagemagick/recoil.so) recoil-mime.xml
 
