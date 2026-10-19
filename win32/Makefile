@@ -88,7 +88,7 @@ BoundsCheck.exe: BoundsCheck.cs paint.net/RECOIL.cs
 recoil.ico: ../recoil-512x512.png
 	$(DO)$(MAGICK) $< -resize 48x48 $@
 
-COPYING.txt: ../COPYING
+LICENSE.txt: ../LICENSE
 	$(DO)$(UNIX2DOS) <$< >$@
 
 install-gimp: x86_64/file-recoil.exe
@@ -106,11 +106,11 @@ install-paint.net: paint.net/RecoilPaintDotNet.dll
 signed: $(WIN32_BIN) $(WIN64_BIN)
 	$(DO_SIGN)
 
-../../recoil-$(VERSION)-win32.zip: COPYING.txt $(WIN32_BIN) signed
-	$(DO)$(RM) $@ && $(SEVENZIP) -tzip $@ COPYING.txt $(WIN32_BIN:%=./%)
+../../recoil-$(VERSION)-win32.zip: LICENSE.txt $(WIN32_BIN) signed
+	$(DO)$(RM) $@ && $(SEVENZIP) -tzip $@ LICENSE.txt $(WIN32_BIN:%=./%)
 
-../../recoil-$(VERSION)-win64.zip: COPYING.txt $(WIN64_BIN) signed
-	$(DO)$(RM) $@ && $(SEVENZIP) -tzip $@ COPYING.txt $(WIN64_BIN:%=./%)
+../../recoil-$(VERSION)-win64.zip: LICENSE.txt $(WIN64_BIN) signed
+	$(DO)$(RM) $@ && $(SEVENZIP) -tzip $@ LICENSE.txt $(WIN64_BIN:%=./%)
 
 ../../recoil-$(VERSION)-win32.msi: setup/recoil.wxs setup/formats.wxi recoil.ico setup/dialog.jpg setup/banner.jpg setup/license.rtf $(WIN32_BIN) signed
 	$(DO)$(WIX) build -o $@ -ext WixToolset.UI.wixext $<
@@ -169,7 +169,7 @@ mac:
 	scp wiesmac:recoil-$(VERSION)/osx/recoil-$(VERSION)-macos.dmg ../../
 
 clean:
-	$(RM) i686/recoil2png.exe i686/recoilwin.exe $(WINBOTH_BIN) i686/recoilwin-res.o x86_64/recoilwin-res.o BoundsCheck.exe BoundsCheck.pdb recoil.ico COPYING.txt \
+	$(RM) i686/recoil2png.exe i686/recoilwin.exe $(WINBOTH_BIN) i686/recoilwin-res.o x86_64/recoilwin-res.o BoundsCheck.exe BoundsCheck.pdb recoil.ico LICENSE.txt \
 		i686/recoil.wixobj x86_64/recoil.wixobj setup/formats.wxi setup/dialog.jpg setup/banner.jpg signed-msi signed \
 		paint.net/RecoilFileTypeFactory.cs paint.net/RECOIL.cs ../formats.h
 

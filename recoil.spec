@@ -2,7 +2,7 @@ Name: recoil
 Version: 6.4.5
 Release: 1
 Summary: Viewer of retro computer image files
-License: GPLv2+
+License: MIT
 Source: https://downloads.sourceforge.net/recoil/recoil-%{version}.tar.gz
 URL: https://recoil.sourceforge.net/
 BuildRequires: gcc, libxslt

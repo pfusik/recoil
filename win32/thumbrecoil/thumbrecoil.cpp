@@ -1,30 +1,15 @@
-/*
- * thumbrecoil.cpp - Windows thumbnail provider for RECOIL
- *
- * Copyright (C) 2011-2022  Piotr Fusik
- *
- * This file is part of RECOIL (Retro Computer Image Library),
- * see http://recoil.sourceforge.net
- *
- * RECOIL is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published
- * by the Free Software Foundation; either version 2 of the License,
- * or (at your option) any later version.
- *
- * RECOIL is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty
- * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with RECOIL; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- */
+// thumbrecoil.cpp - Windows thumbnail provider for RECOIL
+//
+// Copyright (C) 2011-2022 Piotr Fusik
+// SPDX-License-Identifier: MIT
+//
+// This file is part of RECOIL (Retro Computer Image Library),
+// see https://recoil.sourceforge.net
 
-/* There are two separate implementations for different Windows versions:
-   IPersistFile+IExtractImage for Windows 2000 and XP.
-   IInitializeWithStream+IThumbnailProvider for Windows Vista+
-   (even though the Windows 2000/XP interfaces could work). */
+// There are two separate implementations for different Windows versions:
+// 1. IPersistFile+IExtractImage for Windows 2000 and XP.
+// 2. IInitializeWithStream+IThumbnailProvider for Windows Vista+
+//    (even though the Windows 2000/XP interfaces could work).
 
 #include <windows.h>
 #include <objidl.h>

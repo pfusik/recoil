@@ -1,23 +1,10 @@
 // recoil.fu - RECOIL core
 //
-// Copyright (C) 2009-2026  Piotr Fusik
+// Copyright (C) 2009-2026 Piotr Fusik
+// SPDX-License-Identifier: MIT
 //
 // This file is part of RECOIL (Retro Computer Image Library),
-// see http://recoil.sourceforge.net
-//
-// RECOIL is free software; you can redistribute it and/or modify it
-// under the terms of the GNU General Public License as published
-// by the Free Software Foundation; either version 2 of the License,
-// or (at your option) any later version.
-//
-// RECOIL is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-// See the GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with RECOIL; if not, write to the Free Software Foundation, Inc.,
-// 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+// see https://recoil.sourceforge.net
 
 // The following conventions are used in this file:
 // Exceptions are not used.
@@ -4665,11 +4652,7 @@ public class RECOIL
 
 	/// Short license notice.
 	/// Display after the credits.
-	public const string Copyright =
-		"This program is free software; you can redistribute it and/or modify it " +
-		"under the terms of the GNU General Public License as published " +
-		"by the Free Software Foundation; either version 2 of the License, " +
-		"or (at your option) any later version.";
+	public const string License = "This program is licensed under the MIT License.";
 
 	/// Constructs a decoder of images.
 	/// The decoder can be used for several images, one after another.

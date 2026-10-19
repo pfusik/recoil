@@ -1,25 +1,10 @@
-/*
- * benchmark.c - RECOIL benchmark
- *
- * Copyright (C) 2013-2021  Piotr Fusik
- *
- * This file is part of RECOIL (Retro Computer Image Library),
- * see http://recoil.sourceforge.net
- *
- * RECOIL is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published
- * by the Free Software Foundation; either version 2 of the License,
- * or (at your option) any later version.
- *
- * RECOIL is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty
- * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with RECOIL; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- */
+// benchmark.c - RECOIL benchmark
+//
+// Copyright (C) 2013-2021 Piotr Fusik
+// SPDX-License-Identifier: MIT
+//
+// This file is part of RECOIL (Retro Computer Image Library),
+// see https://recoil.sourceforge.net
 
 #include <stdint.h>
 #include <stdio.h>
@@ -63,11 +48,11 @@ int main(int argc, char **argv)
 
 		printf("%3dx%3d %4d colors Decode=%2ld GetColors=%2ld,%2ld ToPalette=%2ld,%2ld %s\n",
 			RECOIL_GetWidth(recoil), RECOIL_GetHeight(recoil), colors,
-			(  decode_time -    start_time) * 1000L / CLOCKS_PER_SEC, /* RECOIL_Decode time */
-			(  colors_time -   decode_time) * 1000L / CLOCKS_PER_SEC, /* RECOIL_GetColors time */
-			( colors2_time - palette2_time) * 1000L / CLOCKS_PER_SEC, /* RECOIL_GetColors after RECOIL_Palette, should be smaller */
-			(palette2_time -  palette_time) * 1000L / CLOCKS_PER_SEC, /* RECOIL_GetPalette time */
-			( palette_time -   colors_time) * 1000L / CLOCKS_PER_SEC, /* RECOIL_GetPalette after RECOIL_GetColors, should be smaller */
+			(  decode_time -    start_time) * 1000L / CLOCKS_PER_SEC, // RECOIL_Decode time
+			(  colors_time -   decode_time) * 1000L / CLOCKS_PER_SEC, // RECOIL_GetColors time
+			( colors2_time - palette2_time) * 1000L / CLOCKS_PER_SEC, // RECOIL_GetColors after RECOIL_Palette, should be smaller
+			(palette2_time -  palette_time) * 1000L / CLOCKS_PER_SEC, // RECOIL_GetPalette time
+			( palette_time -   colors_time) * 1000L / CLOCKS_PER_SEC, // RECOIL_GetPalette after RECOIL_GetColors, should be smaller
 			arg);
 	}
 	return 0;
