@@ -1,9 +1,6 @@
 ﻿RECOIL - Retro Computer Image Library
 =====================================
 
-Development has moved to https://github.com/pfusik/recoil
-This SourceForge repository is no longer updated.
-
 RECOIL is a viewer of pictures in native formats of vintage computers:
 Amiga, Amstrad CPC, Apple II, Atari 8-bit, Atari Portfolio, Atari ST/TT/Falcon,
 BBC Micro, Commodore VIC-20, Commodore 64, Commodore 16/116/Plus4,

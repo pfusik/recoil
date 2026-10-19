@@ -32,9 +32,9 @@ Getting latest source code
 Alternatively you may get the latest version from the Git repository.
 To do this using a command-line Git client:
 
-    git clone git://git.code.sf.net/p/recoil/code recoil-code
+    git clone https://github.com/pfusik/recoil.git
 
-This will fetch the latest code to a new directory called recoil-code.
+This will fetch the latest code to a new directory called "recoil".
 
 
 Building recoil2png, GNOME thumbnailer, XnView MP,

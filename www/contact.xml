@@ -14,15 +14,15 @@
 	</authors>
 
 	<h2>Feedback</h2>
-	<p>If you are interested in the RECOIL project, please subscribe its
-	<a href="https://lists.sourceforge.net/lists/listinfo/recoil-users">mailing list</a>.
-	This list is for users and developers.
-	Once you subscribe, you can post comments, ideas and questions about RECOIL.</p>
-	<p>You may submit bug reports and feature requests <a href="https://sourceforge.net/p/recoil/bugs/">here</a>.</p>
+	<p>Please submit bug reports and feature requests in the
+	<a href="https://github.com/pfusik/recoil/issues">GitHub tracker</a>.
+	Old tickets are in the <a href="https://sourceforge.net/p/recoil/bugs/">SourceForge tracker</a>.</p>
+	<p>Ask questions in <a href="https://github.com/pfusik/recoil/discussions">GitHub discussions</a>.
+	The <a href="https://lists.sourceforge.net/lists/listinfo/recoil-users">SourceForge mailing list</a> wiil be retired soon.</p>
 
 	<h2>For software developers</h2>
 	<p>Download the latest source release: <download prefix="recoil-" suffix=".tar.gz" />
-	or <a href="https://sourceforge.net/p/recoil/code/ci/master/tree/">browse Git repository</a>.</p>
+	or <a href="https://github.com/pfusik/recoil">browse Git repository</a>.</p>
 	<p>RECOIL is based on a development library, which you can easily embed in your program.
 	It's not only a fully portable C library - it's better than that.
 	Since RECOIL is written in <a href="https://fusion-lang.org">Fusion</a>,
