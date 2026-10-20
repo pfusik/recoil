@@ -9042,7 +9042,7 @@ public class RECOIL
 			Pixels[pixelsOffset] = -1;
 		RecentInts() colors;
 		int color = 0;
-		for (int pixelsOffset = -1; ;) {
+		for (int pixelsOffset = -1;;) {
 			int length = stream.ReadLength();
 			if (length < 0)
 				return false;
@@ -14279,7 +14279,7 @@ public class RECOIL
 		 || !parser.ExpectAfterWhitespace("{"))
 			return false;
 		byte[maxWidth / 8 * maxHeight] bitmap;
-		for (int i = 0; ; ) {
+		for (int i = 0;;) {
 			int value = parser.ParseHex();
 			if (value < 0)
 				return false;
@@ -16134,7 +16134,7 @@ public class RECOIL
 				int c = content[contentOffset + (x >> 3)] >> (~x & 7) & 1;
 				frame[frameOffset + x] = colors[c];
 			}
-			for ( ; x < Width + LeftSkip; x++)
+			for (; x < Width + LeftSkip; x++)
 				frame[frameOffset + x] = GtiaColors[8];
 			contentOffset += Width + 7 >> 3;
 			frameOffset += Width;
@@ -16198,7 +16198,7 @@ public class RECOIL
 				c = c == 0 ? GtiaColors[8] & 0xf0 : GtiaColors[8] | c;
 				frame[frameOffset + x] = c;
 			}
-			for ( ; x < Width + LeftSkip; x++)
+			for (; x < Width + LeftSkip; x++)
 				frame[frameOffset + x] = GtiaColors[8] & 0xf0;
 			contentOffset += Width >> 3;
 			frameOffset += frameStride;
@@ -16212,7 +16212,7 @@ public class RECOIL
 			int x;
 			for (x = LeftSkip - 2; x < 0; x++)
 				frame[frameOffset + x] = GtiaColors[0];
-			for ( ; x < Width + LeftSkip - 2; x++) {
+			for (; x < Width + LeftSkip - 2; x++) {
 				int c = content[contentOffset + (x >> 3)] >> (~x & 4) & 0x0f;
 				frame[frameOffset + x] = GtiaColors[c];
 			}
@@ -16223,7 +16223,7 @@ public class RECOIL
 
 	void DecodeAtari8Gr11PalBlend(byte[] content, int contentOffset, int contentStride, byte[]! frame, int y)
 	{
-		for ( ; y < Height; y += 2) {
+		for (; y < Height; y += 2) {
 			int frameOffset = y * Width - LeftSkip;
 			for (int x = LeftSkip; x < Width; x++) {
 				int c = content[contentOffset + (x >> 3)] << (x & 4) & 0xf0;
@@ -18939,7 +18939,7 @@ public class RECOIL
 				DecodeAtari8Gr8(bitmap, 0, frame, frameOffset, 1);
 				break;
 			case IceFrameMode.Gr12:
-				for (int x = Width ; x < Width + LeftSkip; x++)
+				for (int x = Width; x < Width + LeftSkip; x++)
 					frame[frameOffset + x] = GtiaColors[8];
 				break;
 			case IceFrameMode.Gr0Gtia9:
@@ -19479,7 +19479,7 @@ public class RECOIL
 			if (control == 0x08)
 				return true;
 			// bits 7-4: length-1
-			for ( ; control >= 0; control -= 16) {
+			for (; control >= 0; control -= 16) {
 				// bit 2: pen up
 				if ((control & 4) == 0)
 					frame[frameOffset + 1] = frame[frameOffset] = 0x0e;
@@ -19618,7 +19618,7 @@ public class RECOIL
 				y1 = y2;
 				y2 = ty;
 			}
-			for ( ; x1 <= x2; x1++) {
+			for (; x1 <= x2; x1++) {
 				if (x1 < 160 && y1 < 192)
 					pixels[160 * y1 + x1] = color;
 				e -= dy * 2;
@@ -19638,7 +19638,7 @@ public class RECOIL
 				y1 = y2;
 				y2 += dy;
 			}
-			for ( ; y1 <= y2; y1++) {
+			for (; y1 <= y2; y1++) {
 				if (x1 < 160 && y1 < 192)
 					pixels[160 * y1 + x1] = color;
 				e -= dx * 2;
