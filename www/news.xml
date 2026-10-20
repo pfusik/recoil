@@ -1,4 +1,34 @@
 ﻿<page title="News">
+	<release project="RECOIL" version="7.0.0" date="2026-10-20">
+		<p>Changed the license to MIT, more permissible than the previous GPL 2+.</p>
+		<ul title="New formats">
+			<li>Amstrad CPC: SCR without PAL</li>
+			<li>eLeMeNt ZX: 546, HAM, HGH, HGL, HGS, HKL, HRC, HRX, SHR, SKL, XKL</li>
+			<li>Timex 2048: TCU, THC, THR</li>
+			<li>ZX Spectrum: GSC</li>
+			<li>ZX-Uno: RAD</li>
+		</ul>
+		<ul title="Improved formats">
+			<li>Atari Falcon: UIMG</li>
+			<li>Atari Portfolio: PGC, PGF (LCD screen colors)</li>
+			<li>C64: SHS</li>
+			<li>MSX: SR5, SR6, SR7, SR7, SR8, SRA, SCC</li>
+			<li>Sam Coupe: SS4</li>
+		</ul>
+		<ul title="Ports">
+			<li>New Quick Look plugin, compatible with macOS 10.15+ (the old plugin stopped working in macOS 15)</li>
+			<li>GIMP 3 plugin</li>
+			<li>"Share as PNG" was crashing on Android 9 and older and is now disabled on these systems</li>
+			<li>Fixed TortoiseGit/TortoiseSVN plugins not working in recent releases</li>
+			<li>Updated the install location for new XnView MP on Windows</li>
+			<li>Support for both ImageMagick 6 and 7 on Linux</li>
+		</ul>
+		<ul title="Infrastructure">
+			<li>Made the website mobile-friendly</li>
+			<li>Switched to GitHub.com for code repository, tickets and discussions</li>
+		</ul>
+	</release>
+
 	<release project="RECOIL" version="6.4.5" date="2024-10-27">
 		<ul>
 			<li>Added VIC-20 "MINIPAINT" format (MG)</li>

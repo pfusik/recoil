@@ -1,4 +1,4 @@
-VERSION = 6.4.5
+VERSION = 7.0.0
 
 OBJC = clang
 OBJCFLAGS = -O2 -Wall -fobjc-arc -mmacos-version-min=12.0 -arch x86_64 -arch arm64
