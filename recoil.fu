@@ -6014,7 +6014,7 @@ public class RECOIL
 
 	bool DecodeAmstradScr!(string filename, byte[] content, int contentLength)
 	{
-		byte[16384] unpacked;
+		byte[31936] unpacked;
 		int contentOffset = GetAmstradHeader(content, contentLength);
 		int width = 320;
 		int height = 200;
@@ -6043,11 +6043,22 @@ public class RECOIL
 					if (DecodeAmstradScrPk(content, contentOffset, contentLength, unpacked, 256, 192))
 						return true;
 					break;
+				case 'V':
+					if (UnpackConvImgCpc(content, contentOffset + 4, contentLength, unpacked, 31936)
+					 && unpacked[0x600] == 0) {
+						if (!SetAmstradFirmwarePalette(unpacked, 0x601, 16))
+							return false;
+						SetSize(384, 272, RECOILResolution.Amstrad2x1);
+						for (int y = 0; y < 272; y++)
+							DecodeAmstradMode0Line(unpacked, GetAmstradLineOffset(y, 96, true), y);
+						return true;
+					}
+					break;
 				default:
 					break;
 				}
 			}
-			if (!AmstradStream.UnpackFile(content, contentOffset, contentLength, unpacked, unpacked.Length))
+			if (!AmstradStream.UnpackFile(content, contentOffset, contentLength, unpacked, 16384))
 				return false;
 			content = unpacked;
 			contentOffset = 0;
