@@ -5883,9 +5883,8 @@ public class RECOIL
 		return pal[palOffset];
 	}
 
-	static bool UnpackConvImgCpc(byte[] content, int contentOffset, int contentLength, byte[]! unpacked)
+	static bool UnpackConvImgCpc(byte[] content, int contentOffset, int contentLength, byte[]! unpacked, int unpackedLength)
 	{
-		const int unpackedLength = 16000;
 		int unpackedOffset = 0;
 		int bits = 0;
 		while (contentOffset < contentLength) {
@@ -5996,6 +5995,23 @@ public class RECOIL
 			Pixels[y * Width + x] = ContentPalette[GetAmstradMode1Index(x, content[lineOffset + (x >> 2)])];
 	}
 
+	bool DecodeAmstradScrPk!(byte[] content, int contentOffset, int contentLength, byte[]! unpacked, int width, int height)
+	{
+		 if (!UnpackConvImgCpc(content, contentOffset + 21, contentLength, unpacked, (width >> 2) * height))
+			 return false;
+		int mode = content[contentOffset + 4];
+		if (mode > 1 || !SetAmstradFirmwarePalette(content, contentOffset + 5, mode == 0 ? 16 : 4))
+			return false;
+		SetSize(width, height, mode == 0 ? RECOILResolution.Amstrad2x1 : RECOILResolution.Amstrad1x1);
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				int b = unpacked[(x >> 2) * height + y];
+				Pixels[y * width + x] = ContentPalette[mode == 0 ? GetAmstradMode0Index(x, b) : GetAmstradMode1Index(x, b)];
+			}
+		}
+		return true;
+	}
+
 	bool DecodeAmstradScr!(string filename, byte[] content, int contentLength)
 	{
 		byte[16384] unpacked;
@@ -6003,7 +6019,6 @@ public class RECOIL
 		int width = 320;
 		int height = 200;
 		bool overscan = false;
-		int mode;
 		switch (contentLength - contentOffset) {
 		case 15872:
 			width = 256;
@@ -6018,19 +6033,19 @@ public class RECOIL
 			overscan = true;
 			break;
 		default:
-			if (IsStringAt(content, contentOffset, "PKSL")
-			 && UnpackConvImgCpc(content, contentOffset + 21, contentLength, unpacked)) {
-				mode = content[contentOffset + 4];
-				if (mode > 1 || !SetAmstradFirmwarePalette(content, contentOffset + 5, mode == 0 ? 16 : 4))
-					return false;
-				SetSize(320, 200, mode == 0 ? RECOILResolution.Amstrad2x1 : RECOILResolution.Amstrad1x1);
-				for (int y = 0; y < 200; y++) {
-					for (int x = 0; x < 320; x++) {
-						int b = unpacked[(x >> 2) * 200 + y];
-						Pixels[y * 320 + x] = ContentPalette[mode == 0 ? GetAmstradMode0Index(x, b) : GetAmstradMode1Index(x, b)];
-					}
+			if (content[contentOffset] == 'P' && content[contentOffset + 1] == 'K' && content[contentOffset + 3] == 'L') {
+				switch (content[contentOffset + 2]) {
+				case 'S':
+					if (DecodeAmstradScrPk(content, contentOffset, contentLength, unpacked, 320, 200))
+						return true;
+					break;
+				case 'U':
+					if (DecodeAmstradScrPk(content, contentOffset, contentLength, unpacked, 256, 192))
+						return true;
+					break;
+				default:
+					break;
 				}
-				return true;
 			}
 			if (!AmstradStream.UnpackFile(content, contentOffset, contentLength, unpacked, unpacked.Length))
 				return false;
@@ -6039,7 +6054,7 @@ public class RECOIL
 			break;
 		}
 
-		mode = SetAmstradPalette(filename);
+		int mode = SetAmstradPalette(filename);
 		if (mode < 0) {
 			int paletteOffset = contentOffset + (width == 384 ? 0x600 : 0x17d0);
 			mode = content[paletteOffset];
