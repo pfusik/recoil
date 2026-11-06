@@ -132,7 +132,7 @@
 			<!-- I only see up to 40x21 in the editor, but the sample file SIANO.ART is bigger --><ext>ART</ext>
 		</format>
 		<format name="Artist by David Eaton" width="160" height="80" colors="4"><ext fake="true">ART</ext></format>
-		<format colors="2"><ext>ART</ext></format><!-- not sure if Atari 8-bit -->
+		<format colors="2"><ext>ART</ext></format><!-- not sure whether this is Atari 8-bit -->
 		<format name="ASCII maker" width="40" height="24" unit="characters" colors="2"><ext>ASC</ext></format>
 		<format width="160" height="192" grayscale="16">
 			<ext>BG9</ext>
@@ -421,11 +421,11 @@
 		<format name="Sinbad Slideshow" width="320" height="200" colors="16"><ext>SSB</ext></format>
 		<format name="Tiny Stuff" width="320" height="200" colors="16">
 			<ext>TN1</ext>
-			<ext>TN4</ext><!-- with palette animation we don't support -->
+			<ext>TN4</ext><!-- palette animation, which we do not support -->
 		</format>
 		<format name="Tiny Stuff" width="640" height="200" colors="4">
 			<ext>TN2</ext>
-			<ext skip="uwp">TN5</ext><!-- with palette animation we don't support -->
+			<ext skip="uwp">TN5</ext><!-- palette animation, which we do not support -->
 		</format>
 		<format name="Tiny Stuff" width="640" height="400" colors="2">
 			<ext>TN3</ext>

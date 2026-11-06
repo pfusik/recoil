@@ -58,8 +58,8 @@ static void query(void)
 		{ GIMP_PDB_IMAGE, "image", "Output image" }
 	};
 	gimp_install_procedure(LOAD_PROC,
-		"Loads files using Retro Computer Image Library (RECOIL)",
-		"Loads files using Retro Computer Image Library (RECOIL)",
+		"Loads files using the Retro Computer Image Library (RECOIL)",
+		"Loads files using the Retro Computer Image Library (RECOIL)",
 		"Piotr Fusik <fox@scene.pl>",
 		"Piotr Fusik <fox@scene.pl>",
 		"2021",

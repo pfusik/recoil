@@ -1,6 +1,6 @@
 ﻿<page title="News">
 	<release project="RECOIL" version="7.0.0" date="2026-10-20">
-		<p>Changed the license to MIT, more permissible than the previous GPL 2+.</p>
+		<p>Changed the license to MIT, which is more permissive than the previous GPL 2+.</p>
 		<ul title="New formats">
 			<li>Amstrad CPC: SCR without PAL</li>
 			<li>eLeMeNt ZX: 546, HAM, HGH, HGL, HGS, HKL, HRC, HRX, SHR, SKL, XKL</li>
@@ -13,7 +13,7 @@
 			<li>Atari Portfolio: PGC, PGF (LCD screen colors)</li>
 			<li>C64: SHS</li>
 			<li>MSX: SR5, SR6, SR7, SR7, SR8, SRA, SCC</li>
-			<li>Sam Coupe: SS4</li>
+			<li>SAM Coupe: SS4</li>
 		</ul>
 		<ul title="Ports">
 			<li>New Quick Look plugin, compatible with macOS 10.15+ (the old plugin stopped working in macOS 15)</li>
@@ -77,7 +77,7 @@
 	<release project="RECOIL" version="6.3.4" date="2023-03-26">
 		<ul>
 			<li>New Atari ST/TT/Falcon formats: Grafix (GRX), UIMG (BP1/BP2/BP4/BP6/BP8/C01/C02/C04/C06/C08/C16/C24/C32)</li>
-			<li>New Sam Coupe formats: SS1, SS2, SS3, LCE</li>
+			<li>New SAM Coupe formats: SS1, SS2, SS3, LCE</li>
 			<li>More variants of formats: ABK, G9B, SS4, TIM</li>
 			<li>Fixed colors in: CWG, PI4, PI5, MSX2+ YJK mode</li>
 		</ul>
@@ -109,10 +109,10 @@
 
 	<release project="RECOIL" version="6.3.0" date="2022-08-26">
 		<ul title="New formats">
-			<li>Dozens of Commodore 64 formats, thanks Soci for sample files and reference implementation in <a href="http://view64.sourceforge.net">view64</a></li>
+			<li>Dozens of Commodore 64 formats, thanks to Soci for sample files and a reference implementation in <a href="http://view64.sourceforge.net">view64</a></li>
 			<li>Atari 8-bit: Graph2Font vertical scroll (VSC+G2F)</li>
-			<li>Elektronika BK: BKS</li>
-			<li>Elektronika MC 0515: SCR</li>
+			<li>Electronika BK: BKS</li>
+			<li>Electronika MC 0515: SCR</li>
 			<li>Vector-06C: SPR</li>
 			<li>ZX Spectrum: big font (CHX), SevenuP (SEV), SpecSCII (ZXS)</li>
 		</ul>
@@ -134,7 +134,7 @@
 			<li>VIC-20: Best Paint (BP), Picasso (PIC0+PIC1)</li>
 			<li>C64: CFLI Designer (CFLI), GoDot clip (CLP), Hires-Editor (HET), PetDraw64 (PDR)</li>
 			<li>HP 48: GROB (GRB/GRO)</li>
-			<li>Sam Coupe: SSX</li>
+			<li>SAM Coupe: SSX</li>
 			<li>ZX Spectrum Profi: GRF</li>
 		</ul>
 		<ul title="Improved formats">
@@ -282,14 +282,14 @@
 	</release>
 
 	<release project="RECOIL" version="4.2.1" date="2018-03-02">
-		<p>Windows 10 only release, because 4.2.0 failed a Windows store certification.</p>
+		<p>Windows 10-only release, because 4.2.0 failed Windows Store certification.</p>
 		<p>New Atari 8-bit formats: F80, FN2.</p>
 	</release>
 
 	<release project="RECOIL" version="4.2.0" date="2018-02-20">
 		<ul title="New formats">
 			<li>Atari 8-bit: SlideShow for VBXE (DAP), KSS-Paint (KSS), PowerGraphics (PGR), Hard Color Map (HCM)</li>
-			<li>MSX: GL5+PL5, GL6+PL6, GL7+PL7, GL8, GLA+PLA, GLC, SC3, SC4, SC5+S15, SC6, SC6+S16, SC7+S17, SC8+S18, SCA+S1A, SCC+S1C, SR6, SRI+PL7, PCT, STP, FNT, thanks FRS</li>
+			<li>MSX: GL5+PL5, GL6+PL6, GL7+PL7, GL8, GLA+PLA, GLC, SC3, SC4, SC5+S15, SC6, SC6+S16, SC7+S17, SC8+S18, SCA+S1A, SCC+S1C, SR6, SRI+PL7, PCT, STP, FNT, thanks to FRS</li>
 			<li>PC: Image 72 font (FNT)</li>
 			<li>Timex 2048: hi-res (SCR)</li>
 			<li>TRS-80: MagicDraw (SHR)</li>
@@ -449,7 +449,7 @@
 		</ul>
 		<ul title="Other changes">
 			<li>Disable per-line background color in the Funpaint (FUN) format.</li>
-			<li>Reset RECOILWin zoom after a large image is open.</li>
+			<li>Reset RECOILWin zoom after a large image is opened.</li>
 		</ul>
 	</release>
 

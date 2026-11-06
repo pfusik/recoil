@@ -72,8 +72,8 @@ static GimpProcedure *create_procedure(GimpPlugIn *plug_in, const gchar *name)
 	if (strcmp(name, LOAD_PROC) == 0) {
 		GimpProcedure *procedure = gimp_load_procedure_new(plug_in, name, GIMP_PDB_PROC_TYPE_PLUGIN, load, NULL, NULL);
 		gimp_procedure_set_documentation(procedure,
-			"Loads files using Retro Computer Image Library (RECOIL)",
-			"Loads files using Retro Computer Image Library (RECOIL)", name);
+			"Loads files using the Retro Computer Image Library (RECOIL)",
+			"Loads files using the Retro Computer Image Library (RECOIL)", name);
 		gimp_procedure_set_attribution(procedure,
 			"Piotr Fusik <fox@scene.pl>",
 			"Piotr Fusik <fox@scene.pl>", "2021-2026");

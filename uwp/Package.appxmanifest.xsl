@@ -31,7 +31,7 @@
 						DisplayName="RECOIL"
 						Square150x150Logo="Assets\Square150x150Logo.png"
 						Square44x44Logo="Assets\Square44x44Logo.png"
-						Description="Shows images in native formats of vintage computers"
+						Description="Shows images in the native formats of vintage computers"
 						BackgroundColor="#006374">
 						<uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" ShortName="RECOIL">
 							<uap:ShowNameOnTiles>

@@ -37,7 +37,7 @@ namespace RECOIL
 			DataTransferManager.GetForCurrentView().DataRequested += OnDataRequested;
 		}
 
-		const string Disclaimer = "\nAre you opening a graphics file originating from a 20th century computer? " +
+		const string Disclaimer = "\nAre you opening a graphics file originating from a 20th-century computer? " +
 			"This app only supports such files.";
 
 		int FindPrevious()

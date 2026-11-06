@@ -8,7 +8,7 @@ URL: https://recoil.sourceforge.net/
 BuildRequires: gcc, libxslt
 
 %description
-Decoder of pictures in native formats of
+Decoder of pictures in the native formats of
 Amiga, Amstrad CPC, Apple II, Atari 8-bit/Portfolio/ST/TT/Falcon, BBC Micro,
 Commodore VIC-20/64/16/116/Plus4/128, Electronika BK, FM Towns, HP 48,
 Macintosh 128K, MSX, NEC PC-80/88/98, Oric, Psion Series 3, SAM Coupe,
@@ -20,7 +20,7 @@ Summary: Converter of retro computer image files
 BuildRequires: libpng-devel
 
 %description 2png
-Provides "recoil2png" command-line converter of pictures in native formats of
+Provides a "recoil2png" command-line converter of pictures in the native formats of
 Amiga, Amstrad CPC, Apple II, Atari 8-bit/Portfolio/ST/TT/Falcon, BBC Micro,
 Commodore VIC-20/64/16/116/Plus4/128, Electronika BK, FM Towns, HP 48,
 Macintosh 128K, MSX, NEC PC-80/88/98, Oric, Psion Series 3, SAM Coupe,
@@ -33,7 +33,7 @@ Requires: gimp >= 2:3
 BuildRequires: gimp-devel >= 2:3
 
 %description gimp
-GIMP 3 plugin capable of loading pictures in native formats of
+GIMP 3 plugin capable of loading pictures in the native formats of
 Amiga, Amstrad CPC, Apple II, Atari 8-bit/Portfolio/ST/TT/Falcon, BBC Micro,
 Commodore VIC-20/64/16/116/Plus4/128, Electronika BK, FM Towns, HP 48,
 Macintosh 128K, MSX, NEC PC-80/88/98, Oric, Psion Series 3, SAM Coupe,
@@ -46,7 +46,7 @@ Requires: recoil-2png
 BuildArch: noarch
 
 %description thumbnailer
-GNOME thumbnailer for pictures in native formats of
+GNOME thumbnailer for pictures in the native formats of
 Amiga, Amstrad CPC, Apple II, Atari 8-bit/Portfolio/ST/TT/Falcon, BBC Micro,
 Commodore VIC-20/64/16/116/Plus4/128, Electronika BK, FM Towns, HP 48,
 Macintosh 128K, MSX, NEC PC-80/88/98, Oric, Psion Series 3, SAM Coupe,

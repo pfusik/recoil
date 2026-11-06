@@ -22,7 +22,7 @@
 
 	<h2>For software developers</h2>
 	<p>Download the latest source release: <download prefix="recoil-" suffix=".tar.gz" />
-	or <a href="https://github.com/pfusik/recoil">browse Git repository</a>.</p>
+	or <a href="https://github.com/pfusik/recoil">browse the Git repository</a>.</p>
 	<p>RECOIL is based on a development library, which you can easily embed in your program.
 	It's not only a fully portable C library - it's better than that.
 	Since RECOIL is written in <a href="https://fusion-lang.org">Fusion</a>,

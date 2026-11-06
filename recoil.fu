@@ -10,8 +10,8 @@
 // Exceptions are not used.
 // Errors are signalled by returning false, -1 or null.
 // Called methods precede the calling methods.
-// Simple code (e.g. uncompressed black&white images)
-// precedes the more complicated.
+// Simple code (e.g. uncompressed black-and-white images)
+// precedes more complicated code.
 // Each format is decoded by a method with a signature like:
 // bool DecodeXxx!(byte[] content, int contentLength)
 // where `Xxx` is the filename extension.  `content` is read-only.
@@ -21,7 +21,7 @@
 // The order of platforms is such that simple code comes first.
 // New formats must be added in `IsOurFile`, `Decode` and `formats.xml`.
 // Invalid files shouldn't result in a buffer overflow
-// (always check `contentLength` first!), divide by zero or endless loop.
+// (always check `contentLength` first!), division by zero, or an endless loop.
 // Code must be tested, because format documentation is often incorrect.
 // Test C, Java (Android), C# (Windows 10 or Paint.NET) and JavaScript.
 // Prefer concise, readable code over microoptimizations.
@@ -30,7 +30,7 @@
 // Don't introduce variables for return values and loop control
 // if `return` and `break` statements are more concise.
 // Minimize the scope of variables. Use `byte` only for arrays.
-// Braces on new line for enums, classes and methods, inline for code blocks.
+// Braces on a new line for enums, classes and methods, inline for code blocks.
 // Avoid unneeded parentheses.
 // Use tabs, but only for indentation (that is, at line beginnings).
 // Align long `if` conditions this way:
@@ -922,8 +922,8 @@ abstract class RleStream : BitStream
 		return true;
 	}
 
-	/// Uncompresses laiding out bytes vertically column by column,
-	/// `unpackedStride` being line width.
+	/// Uncompresses bytes laid out vertically, column by column,
+	/// with `unpackedStride` as the line width.
 	/// Returns `true` on success, `false` on error.
 	internal bool UnpackColumns!(byte[]! unpacked, int unpackedOffset, int unpackedStride, int unpackedEnd)
 	{
@@ -954,7 +954,7 @@ abstract class RleStream : BitStream
 		return true;
 	}
 
-	/// Uncompresses writing first byte to `unpacked[unpackedEnd]`, `unpacked[unpackedEnd - 1]`, ...
+	/// Uncompresses by writing the first byte to `unpacked[unpackedEnd]`, `unpacked[unpackedEnd - 1]`, ...
 	/// until `unpacked[unpackedOffset]`.
 	/// Returns `true` on success, `false` on error.
 	internal bool UnpackBackwards!(byte[]! unpacked, int unpackedOffset, int unpackedEnd)
@@ -3323,7 +3323,7 @@ class RecentInts
 
 	/// Store the value.
 	/// Will use the Least Recently Used key.
-	/// Its previous value is discarded and now it maps to `value`
+	/// Its previous value is discarded. It now maps to `value`
 	/// and becomes the Most Recently Used.
 	internal void Add!(int value)
 	{
@@ -3458,7 +3458,7 @@ class IcnParser : Stream
 }
 
 // Interpreter of a subset of ZX81 Sinclair BASIC.
-// Typical *.p picture program looks like this:
+// A typical *.p picture program looks like this:
 // 10 FAST
 // 20 CLS
 // 30 CLEAR
@@ -3476,8 +3476,8 @@ class IcnParser : Stream
 // 150 PAUSE 4E4
 // FAST disables the display so that the program runs faster. SLOW enables it.
 // CLS clears the screen. CLEAR undefines all variables.
-// Semicolon at the end of PRINT means "no new line".
-// Lines 70-130 fill the bottom two rows which PRINT cannot access.
+// A semicolon at the end of PRINT means "no new line".
+// Lines 70-130 fill the bottom two rows that PRINT cannot access.
 class PInterpreter : Stream
 {
 	internal byte[32 * 24] Screen;

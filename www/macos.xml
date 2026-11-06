@@ -16,7 +16,7 @@
 		<li>Open <code>recoil-<version />-macos.dmg</code>.</li>
 		<li>Drag <code>RECOIL.app</code> to <code>Applications</code>.</li>
 		<li>Open RECOIL.app from within <code>Applications</code>. Close the message box.</li>
-		<li>Log out and in.</li>
+		<li>Log out and back in.</li>
 	</ol>
 	<img src="qlrecoil.png" alt="Quick Look" />
 
@@ -29,6 +29,6 @@
 	</ol>
 
 	<h2>Command-line converter</h2>
-	<p>To install, open <code>recoil-<version />-macos.dmg</code> then drag <code>recoil2png</code> to <code>bin</code>.</p>
+	<p>To install, open <code>recoil-<version />-macos.dmg</code>, then drag <code>recoil2png</code> to <code>bin</code>.</p>
 	<recoil2png />
 </page>

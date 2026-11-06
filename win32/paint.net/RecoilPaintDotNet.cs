@@ -14,7 +14,7 @@ using PaintDotNet;
 using Recoil;
 
 [assembly: AssemblyTitle("Paint.NET RECOIL plugin")]
-//[assembly: AssemblyDescription("Decodes images in native formats of vintage computers")]
+//[assembly: AssemblyDescription("Decodes images in the native formats of vintage computers")]
 [assembly: AssemblyCompany("Piotr Fusik")]
 [assembly: AssemblyProduct("RECOIL")]
 [assembly: AssemblyCopyright("Copyright © 2013-2026")]

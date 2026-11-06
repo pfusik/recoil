@@ -6,9 +6,9 @@ Required tools
 --------------
 
 RECOIL is written in the Fusion programming language.
-Official releases include translation of RECOIL to C,
-so you only need a C compiler and Make utility.
-In other cases (Git, Paint.NET, HTML 5, Android, UWP)
+Official releases include a translation of RECOIL to C,
+so you only need a C compiler and the Make utility.
+In other cases (Git, Paint.NET, HTML5, Android, UWP),
 you'll need fut (https://fusion-lang.org).
 
 
@@ -26,10 +26,10 @@ On Unix-like systems:
 On Windows you may use 7-Zip (https://www.7-zip.org/).
 
 
-Getting latest source code
---------------------------
+Getting the latest source code
+------------------------------
 
-Alternatively you may get the latest version from the Git repository.
+Alternatively, you may get the latest version from the Git repository.
 To do this using a command-line Git client:
 
     git clone https://github.com/pfusik/recoil.git
@@ -43,7 +43,7 @@ GIMP and ImageMagick plugins on Unix-like systems
 
 Install development files for libpng.
 
-From your shell prompt navigate to the directory which contains recoil.ci.
+From your shell prompt, navigate to the directory which contains recoil.fu.
 
 Review the contents of Makefile and run:
 
@@ -78,11 +78,11 @@ Install the GIMP 3 plugin with:
 
     make install-gimp3
 
-Installation of the ImageMagick coder requires that you have complete source
-distribution of ImageMagick.  Current version of the ImageMagick coder has been
+Installation of the ImageMagick coder requires that you have the complete source
+distribution of ImageMagick. The current version of the ImageMagick coder has been
 tested with version 7.1.2-32 of ImageMagick.
 
-Run make specifying path to the sources:
+Run make, specifying the path to the sources:
 
     make install-magick MAGICK_INCLUDE_PATH=/path/to/im/sources
 
@@ -97,7 +97,7 @@ Using recoil2png
 
 Run recoil2png without arguments to learn the syntax.
 Unless you specify the -o/--output option, the output filename will be
-constructed from the input filename with the extension changed to png.
+constructed from the input filename with the extension changed to ".png".
 
 
 Building recoil2png, XnView/XnView MP/GIMP/ImageMagick/Imagine/Windows Explorer
@@ -111,56 +111,56 @@ Install MSYS2 (https://www.msys2.org/), then additional packages:
 Install ImageMagick 7 (https://www.imagemagick.org/)
 and edit its directories in RECOIL's win32/Makefile.
 
-To build RECOIL, from the command prompt navigate to the win32 directory and run:
+To build RECOIL, from the command prompt, navigate to the win32 directory and run:
 
     make
 
 
-Building Paint.NET plugin on Windows
-------------------------------------
+Building the Paint.NET plugin on Windows
+----------------------------------------
 
 Install Paint.NET and GNU Make (e.g. from MSYS2, see above).
 
 Make sure fut is on your PATH.
 
-From the command prompt navigate to the win32 directory and run:
+From the command prompt, navigate to the win32 directory and run:
 
     make paint.net/RecoilPaintDotNet.dll
 
 
-Building HTML 5 based viewer
-----------------------------
+Building the HTML5 viewer
+-------------------------
 
 Make sure fut is on your PATH.
 
-From the command prompt navigate to the www directory and run:
+From the command prompt, navigate to the www directory and run:
 
     make
 
 
-Building Android application
-----------------------------
+Building the Android application
+--------------------------------
 
 Install Android Studio (https://developer.android.com/studio/).
 
 Make sure fut and ImageMagick 7 (https://imagemagick.org/) are on your PATH.
 
-Build the project as any other Android project.
+Build the project like any other Android project.
 
 
 Building recoil2png and Quick Look / XnView MP plugins on macOS
 ---------------------------------------------------------------
 
 Install Xcode Command Line Tools.
-For recoil2png, install libpng with homebrew.
+For recoil2png, install libpng with Homebrew.
 
-From the command prompt navigate to the osx directory and run:
+From the command prompt, navigate to the osx directory and run:
 
     make
 
 
-Building Windows 10/11 application
-----------------------------------
+Building the Windows 10/11 application
+--------------------------------------
 
 Install Visual Studio 2022 and ImageMagick 7.
 

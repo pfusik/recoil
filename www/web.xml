@@ -1,7 +1,7 @@
 ﻿<page title="Web">
 	<script type="module" src="html5recoil.js"> </script>
 	<p>This page displays pictures in file formats native to retro computers.
-	Decoding takes place in your browser, nothing is sent over the network.</p>
+	Decoding takes place in your browser. Nothing is sent over the network.</p>
 	<p>
 		Select file(s):
 		<input id="fileInput" type="file" multiple="multiple" />

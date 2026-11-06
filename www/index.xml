@@ -1,12 +1,12 @@
 ﻿<page title="Home">
 	<img src="recoil-180x180.png" alt="Logo" style="float: right; margin-left: 2em;" />
 
-	<p class="big">RECOIL is a modern viewer and converter of pictures in native formats of 20th century computers:
+	<p class="big">RECOIL is a modern viewer and converter of pictures in the native formats of 20th-century computers:
 	Commodore, Amiga, Atari, ZX Spectrum, MSX and many more.
 	Current version <version /> opens <formats-count /> different file formats
 	- see the <a href="formats.html">full list</a>.</p>
 
-	<p class="big">Standalone apps and plugins to image viewers, file managers and image editors are available on
+	<p class="big">Standalone apps and plugins for image viewers, file managers and image editors are available on
 	<a href="android.html">Android</a>, <a href="windows.html">Windows</a>, <a href="macos.html">macOS</a>
 	and <a href="linux.html">Linux</a>.
 	You can also use RECOIL <a href="web.html">in your web browser</a>.</p>
