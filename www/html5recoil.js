@@ -1,4 +1,4 @@
-// html5recoil.js - HTML 5 viewer
+// html5recoil.js - HTML5 viewer
 //
 // Copyright (C) 2013-2023 Piotr Fusik
 // SPDX-License-Identifier: MIT
