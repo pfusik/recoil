@@ -233,7 +233,7 @@
 
 	<xsl:template match="download">
 		<xsl:variable name="file" select="concat(@prefix, $version, @suffix)" />
-		<a href="https://sourceforge.net/projects/recoil/files/recoil/{$version}/{$file}/download"><xsl:value-of select="$file" /></a>
+		<a href="https://github.com/pfusik/recoil/releases/download/recoil-{$version}/{$file}"><xsl:value-of select="$file" /></a>
 	</xsl:template>
 
 	<xsl:template match="recoil2png">
