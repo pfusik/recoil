@@ -457,7 +457,7 @@
 		<p>RECOIL is a continuation of the First Atari Image Library (FAIL) project.
 		In addition to the Atari 8-bit/Portfolio/ST/Falcon formats, RECOIL decodes
 		Amiga, Commodore 64 and ZX Spectrum files.</p>
-		<ul title="Other changes from FAIL 2.0.2">
+		<ul title="Other changes since FAIL 2.0.2">
 			<li>New ports: Android, Paint.NET plugin.</li>
 			<li>New Atari 8-bit formats: BGP, DGI, LEO, LUM, SIF.</li>
 			<li>The default Atari 8-bit palette is now Altirra's PAL.</li>
