@@ -21,7 +21,7 @@ GIMP_PLUGIN_DIR = $(LOCALAPPDATA)/Programs/GIMP 3/lib/gimp/3.0/plug-ins
 IMAGEMAGICK_i686_DIR = C:/Program Files (x86)/ImageMagick-7.1.2-Q16-HDRI
 IMAGEMAGICK_x86_64_DIR = C:/Program Files/ImageMagick-7.1.2-Q16-HDRI
 XNVIEWMP_DIR = C:/Program Files/XnViewMP
-PAINT_NET_DIR = C:/Program Files/paint.net
+PAINT_NET_DIR = C:/Program Files/Paint.NET
 DOTNET_REF_DIR = `echo C:/Program\ Files/dotnet/packs/Microsoft.NETCore.App.Ref/11.0.*/ref/net11.0`
 ifdef V
 DO = mkdir -p $(@D) && 
