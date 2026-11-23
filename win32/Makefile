@@ -9,7 +9,7 @@ CC = $(@D)-w64-mingw32-gcc
 CXX = $(@D)-w64-mingw32-g++
 DO_CC = $(CC) -o $@ $(CFLAGS) $(if $(filter %.exe,$@),,$(LDFLAGS_DLL)) $(CSOURCES)
 WINDRES = $(@D)-w64-mingw32-windres
-CSC = "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/Roslyn/csc.exe" -nologo -o+ -out:$@
+CSC = "C:/Program Files/Microsoft Visual Studio/18/Community/MSBuild/Current/Bin/Roslyn/csc.exe" -nologo -o+ -out:$@
 RM = rm -f
 UNIX2DOS = unix2dos
 GIT = git
@@ -40,7 +40,7 @@ all: $(WIN32_BIN) $(WIN64_BIN)
 	$(DO)$(DO_CC) -static -lpng16 -lz
 
 %/file-recoil.exe: ../file-recoil3.c ../recoil-stdio.c ../recoil-stdio.h ../recoil.c ../recoil.h
-	$(DO)$(DO_CC) `gimptool-3.0 --cflags` -Wl,-subsystem,windows `gimptool-3.0 --libs`
+	$(DO)$(DO_CC) `gimptool-3 --cflags` -Wl,-subsystem,windows `gimptool-3 --libs`
 
 %/IM_MOD_RL_recoil_.dll: ../imagemagick/recoilmagick.c ../formats.h ../recoil.c ../recoil.h
 	$(DO)$(DO_CC) -D MAGICK7 -I"$(IMAGEMAGICK_$(@D)_DIR)"/include -lCORE_RL_MagickCore_ -L"$(IMAGEMAGICK_$(@D)_DIR)" -static-libgcc

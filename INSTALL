@@ -106,7 +106,7 @@ plugins and RECOILWin on Windows
 
 Install MSYS2 (https://www.msys2.org/), then additional packages:
 
-    pacman -S make mingw-w64-i686-gcc mingw-w64-x86_64-gcc mingw-w64-i686-libpng mingw-w64-x86_64-libpng mingw-w64-x86_64-gimp
+    pacman -S make mingw-w64-i686-gcc mingw-w64-x86_64-gcc mingw-w64-i686-libpng mingw-w64-ucrt-x86_64-gimp
 
 Install ImageMagick 7 (https://www.imagemagick.org/)
 and edit its directories in RECOIL's win32/Makefile.
