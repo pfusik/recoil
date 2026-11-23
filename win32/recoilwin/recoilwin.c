@@ -1,6 +1,6 @@
 // recoilwin.c - Windows API port of RECOIL
 //
-// Copyright (C) 2009-2025 Piotr Fusik
+// Copyright (C) 2009-2026 Piotr Fusik
 // SPDX-License-Identifier: MIT
 //
 // This file is part of RECOIL (Retro Computer Image Library),
@@ -17,7 +17,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if 1 // Windows XP compatibility
+#ifdef __i386__ // Windows XP compatibility
 errno_t wcscpy_s(wchar_t *dest, rsize_t destsz, const wchar_t *src)
 {
 	for (rsize_t i = 0; i < destsz; i++) {
