@@ -22913,9 +22913,25 @@ public class RECOIL
 	public int GetXPixelsPerMeter()
 	{
 		switch (Resolution) {
+		case RECOILResolution.Amstrad1x1:
+		case RECOILResolution.Amstrad2x1:
+			// https://www.cpcwiki.eu/index.php/Gate_Array
+			return Ntsc ? NtscTvYPixelsPerMeter * 8000 / (NtscSquareDotClock / 1000)
+				: PalTvYPixelsPerMeter * 8000 / (PalSquareDotClock / 1000);
+		case RECOILResolution.Amstrad1x2:
+			// https://www.cpcwiki.eu/index.php/Gate_Array
+			return Ntsc ? NtscTvYPixelsPerMeter * 16000 / (NtscSquareDotClock / 1000)
+				: PalTvYPixelsPerMeter * 16000 / (PalSquareDotClock / 1000);
 		case RECOILResolution.AppleII1x1:
 			// https://pineight.com/mw/index.php?title=Dot_clock_rates
-			return NtscTvYPixelsPerMeter * 7 / 12;
+			// https://wiki.reactivemicro.com/Apple_II_Plus_Rev_7_RFI
+			return Ntsc ? NtscTvYPixelsPerMeter * 7 / 12
+				: PalTvYPixelsPerMeter * (14250450 / 2 / 1000) / (PalSquareDotClock / 1000);
+		case RECOILResolution.AppleIIe1x2:
+			// https://pineight.com/mw/index.php?title=Dot_clock_rates
+			// https://wiki.reactivemicro.com/Apple_II_Plus_Rev_7_RFI
+			return Ntsc ? NtscTvYPixelsPerMeter * 7 / 6
+				: PalTvYPixelsPerMeter * (14250450 / 1000) / (PalSquareDotClock / 1000);
 		case RECOILResolution.Xe1x1:
 		case RECOILResolution.Xe2x1:
 		case RECOILResolution.Xe4x1:
@@ -22962,17 +22978,31 @@ public class RECOIL
 		case RECOILResolution.Msx14x4:
 		case RECOILResolution.Msx21x1:
 		case RECOILResolution.Msx2Plus1x1:
-			// https://pineight.com/mw/index.php?title=Dot_clock_rates
-			return NtscTvYPixelsPerMeter * 7 / 16;
+			// 10.738635 MHz / 2. TMS9929A (PAL) uses the same crystal.
+			// https://bitsavers.org/components/ti/TMS9900/TMS9918A_TMS9928A_TMS9929A_Video_Display_Processors_Data_Manual_Nov82.pdf
+			return Ntsc ? NtscTvYPixelsPerMeter * 7 / 16
+				: PalTvYPixelsPerMeter * (10738635 / 2 / 1000) / (PalSquareDotClock / 1000);
 		case RECOILResolution.Msx21x2:
 		case RECOILResolution.Msx21x1i:
 		case RECOILResolution.Msx22x1i:
 		case RECOILResolution.Msx2Plus2x1i:
-			// https://pineight.com/mw/index.php?title=Dot_clock_rates
-			return NtscTvYPixelsPerMeter * 7 / 8;
+			// V9938 high-res dot clock is 10.738635 MHz in PAL and NTSC.
+			// https://www.bitsavers.org/pdf/yamaha/Yamaha_V9938_MSX-Video_Technical_Data_Book_Aug85.pdf
+			return Ntsc ? NtscTvYPixelsPerMeter * 7 / 8
+				: PalTvYPixelsPerMeter * (10738635 / 1000) / (PalSquareDotClock / 1000);
 		case RECOILResolution.Oric1x1:
 			// http://oric.free.fr/HARDWARE/ula.html
 			return PalTvYPixelsPerMeter * 6000 / (PalSquareDotClock / 1000);
+		case RECOILResolution.SamCoupe1x1:
+			// https://foro.speccy.org/viewtopic.php?t=4485
+			return PalTvYPixelsPerMeter * 6000 / (PalSquareDotClock / 1000);
+		case RECOILResolution.SamCoupe1x2:
+		case RECOILResolution.SamCoupe2x1i:
+			// https://foro.speccy.org/viewtopic.php?t=4485
+			return PalTvYPixelsPerMeter * 12000 / (PalSquareDotClock / 1000);
+		case RECOILResolution.Tandy1x1:
+			// https://archive.org/details/Tandy_1000_Computer_Service_Manual_1985_Tandy
+			return NtscTvYPixelsPerMeter * 7 / 12;
 		case RECOILResolution.Vector1x1:
 			// https://mister-devel.github.io/MkDocs_MiSTer/advanced/nativeres/#computer-core-default-native-resolutions
 			return PalTvYPixelsPerMeter * 6000 / (PalSquareDotClock / 1000);
@@ -22987,6 +23017,10 @@ public class RECOIL
 			return PalTvYPixelsPerMeter * 7000 / (PalSquareDotClock / 1000);
 		case RECOILResolution.Timex1x2:
 			return PalTvYPixelsPerMeter * 7000 * 2 / (PalSquareDotClock / 1000);
+		case RECOILResolution.Coco1x1:
+		case RECOILResolution.Coco2x2:
+			// https://web.mit.edu/6.115/www/document/MC6847.pdf
+			return NtscTvYPixelsPerMeter * 7 / 12;
 		// TODO: other platforms
 		default:
 			return 0;
@@ -22997,8 +23031,15 @@ public class RECOIL
 	public int GetYPixelsPerMeter()
 	{
 		switch (Resolution) {
+		case RECOILResolution.Amstrad1x1:
+		case RECOILResolution.Amstrad2x1:
+			return Ntsc ? NtscTvYPixelsPerMeter / 2 : PalTvYPixelsPerMeter / 2;
+		case RECOILResolution.Amstrad1x2:
+			return Ntsc ? NtscTvYPixelsPerMeter : PalTvYPixelsPerMeter;
 		case RECOILResolution.AppleII1x1:
-			return NtscTvYPixelsPerMeter / 2;
+			return Ntsc ? NtscTvYPixelsPerMeter / 2 : PalTvYPixelsPerMeter / 2;
+		case RECOILResolution.AppleIIe1x2:
+			return Ntsc ? NtscTvYPixelsPerMeter : PalTvYPixelsPerMeter;
 		case RECOILResolution.Xe1x1:
 		case RECOILResolution.Xe2x1:
 		case RECOILResolution.Xe4x1:
@@ -23028,15 +23069,21 @@ public class RECOIL
 		case RECOILResolution.Msx14x4:
 		case RECOILResolution.Msx21x1:
 		case RECOILResolution.Msx2Plus1x1:
-			// TODO: PAL?
-			return NtscTvYPixelsPerMeter / 2;
+			return Ntsc ? NtscTvYPixelsPerMeter / 2 : PalTvYPixelsPerMeter / 2;
 		case RECOILResolution.Msx21x2:
 		case RECOILResolution.Msx21x1i:
 		case RECOILResolution.Msx22x1i:
 		case RECOILResolution.Msx2Plus2x1i:
-			return NtscTvYPixelsPerMeter;
+			return Ntsc ? NtscTvYPixelsPerMeter : PalTvYPixelsPerMeter;
 		case RECOILResolution.Oric1x1:
 			return PalTvYPixelsPerMeter / 2;
+		case RECOILResolution.SamCoupe1x1:
+			return PalTvYPixelsPerMeter / 2;
+		case RECOILResolution.SamCoupe1x2:
+		case RECOILResolution.SamCoupe2x1i:
+			return PalTvYPixelsPerMeter;
+		case RECOILResolution.Tandy1x1:
+			return NtscTvYPixelsPerMeter / 2;
 		case RECOILResolution.Vector1x1:
 			return PalTvYPixelsPerMeter / 2;
 		case RECOILResolution.Zx811x1:
@@ -23050,6 +23097,9 @@ public class RECOIL
 			return PalTvYPixelsPerMeter / 2;
 		case RECOILResolution.Timex1x2:
 			return PalTvYPixelsPerMeter;
+		case RECOILResolution.Coco1x1:
+		case RECOILResolution.Coco2x2:
+			return NtscTvYPixelsPerMeter / 2;
 		// TODO: other platforms
 		default:
 			return 0;
